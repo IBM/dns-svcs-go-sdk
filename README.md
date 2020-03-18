@@ -52,6 +52,7 @@ Use this command to download and install the `dns-svcs-go-sdk` project to allow 
 use it:
 ```
 go get -u github.com/IBM/dns-svcs-go-sdk/dnssvcsv1
+go get -u github.com/IBM/dns-svcs-go-sdk/dnssvcsinstancesv2
 ```
 ### 2. Go modules
 If your application is using Go modules, you can add a suitable import to your
@@ -59,6 +60,7 @@ Go application, like this:
 ```go
 import (
     "github.com/IBM/dns-svcs-go-sdk/dnssvcsv1"
+    "github.com/IBM/dns-svcs-go-sdk/dnssvcsinstancesv2"
 )
 ```
 then run `go mod tidy` to download and install the new dependency and update your Go application's
@@ -69,6 +71,10 @@ to your `Gopkg.toml` file.  Here is an example:
 ```
 [[constraint]]
   name = "github.com/IBM/dns-svcs-go/dnssvcsv1"
+  version = "0.0.1"
+
+[[constraint]]
+  name = "github.com/IBM/dns-svcs-go/dnssvcsinstancesv2"
   version = "0.0.1"
 
 ```
