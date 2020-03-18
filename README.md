@@ -51,7 +51,7 @@ Go application:
 Use this command to download and install the `dns-svcs-go-sdk` project to allow your Go application to
 use it:
 ```
-go get -u github.com/IBM/dns-svcs-go-sdk
+go get -u github.com/IBM/dns-svcs-go-sdk/dnssvcsv1
 ```
 ### 2. Go modules
 If your application is using Go modules, you can add a suitable import to your
