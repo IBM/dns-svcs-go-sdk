@@ -87,7 +87,7 @@ func listDnsZones() {
 func createDnsZone(zoneName string) {
 	createZoneOptions := dnsSvc.NewCreateDnszoneOptions(instanceID, zoneName)
 	createZoneOptions.SetDescription("zone description")
-	createZoneOptions.SetLabel("zone label")
+	createZoneOptions.SetLabel("zone_label")
 	_, createZoneResponse, reqErr := dnsSvc.CreateDnszone(createZoneOptions)
 	if reqErr == nil {
 		fmt.Println(createZoneResponse.String())
@@ -111,7 +111,7 @@ func getDnsZone(zoneID string) {
 func updateDnsZone(zoneID string) {
 	updateZoneOptions := dnsSvc.NewUpdateDnszoneOptions(instanceID, zoneID)
 	updateZoneOptions.SetDescription("update description")
-	updateZoneOptions.SetLabel("update label")
+	updateZoneOptions.SetLabel("update_label")
 
 	_, updateZoneResponse, reqErr := dnsSvc.UpdateDnszone(updateZoneOptions)
 	if reqErr == nil {
