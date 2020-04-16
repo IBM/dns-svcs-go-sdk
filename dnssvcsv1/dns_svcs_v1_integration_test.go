@@ -35,7 +35,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 	It(`Successfully loading .env file`, func() {
 		Expect(err).To(BeNil())
 	})
-
 	authenticator := &core.IamAuthenticator{
 		ApiKey: os.Getenv("IAMAPIKEY"),
 	}
@@ -59,6 +58,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 	It(`Successfully Get dns zone ID`, func() {
 		Expect(instanceID).NotTo(BeEmpty())
 	})
+	parts := strings.SplitN(zoneID, ":", 2)
+	zoneName := parts[0]
 
 	Describe(`List Dns Zones`, func() {
 		Context(`Successfully list dns zones by instanceID`, func() {
@@ -971,7 +972,291 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(err).To(BeNil())
 			})
 		})
-
 	})
 
+	Describe(`DNS Load Balancer`, func() {
+		Context(`Create GLB Monitor`, func() {
+			createDnsGlbMonitorOptions := service.NewCreateMonitorOptions(instanceID)
+			createDnsGlbMonitorOptions.SetDescription("Load balancer monitor for example.com")
+			createDnsGlbMonitorOptions.SetType("HTTPS")
+			createDnsGlbMonitorOptions.SetPort(int64(8080))
+			createDnsGlbMonitorOptions.SetInterval(int64(60))
+			createDnsGlbMonitorOptions.SetRetries(int64(2))
+			createDnsGlbMonitorOptions.SetTimeout(int64(5))
+			createDnsGlbMonitorOptions.SetMethod("GET")
+			createDnsGlbMonitorOptions.SetPath("/health")
+			header := map[string][]string{"Host": []string{"example.com"}, "X-App-ID": []string{"abc123"}}
+			createDnsGlbMonitorOptions.SetHeader(header)
+			createDnsGlbMonitorOptions.SetAllowInsecure(false)
+			createDnsGlbMonitorOptions.SetExpectedCodes("200")
+			createDnsGlbMonitorOptions.SetExpectedBody("alive")
+			createDnsGlbMonitorOptions.SetFollowRedirects(false)
+			GlbMonitorResult, detailedResponse, err := service.CreateMonitor(createDnsGlbMonitorOptions)
+			It(`Successfully create new load balancer monitor`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbMonitorResult.Type).To(Equal("HTTPS"))
+				Expect(*GlbMonitorResult.Method).To(Equal("GET"))
+				Expect(*GlbMonitorResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`List GLB Monitor`, func() {
+			listDnsGlbMonitorOptions := service.NewListMonitorsOptions(instanceID)
+			GlbMonitorsResult, detailedResponse, err := service.ListMonitors(listDnsGlbMonitorOptions)
+			It(`Successfully list load balancer monitors`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				firstResource := GlbMonitorsResult.Monitors[0]
+				Expect(*firstResource.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Get GLB Monitor`, func() {
+			monitorID := os.Getenv("MONITOR_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(monitorID).NotTo(BeEmpty())
+			})
+			getDnsGlbMonitorOptions := service.NewGetMonitorOptions(instanceID, monitorID)
+			GlbMonitorResult, detailedResponse, err := service.GetMonitor(getDnsGlbMonitorOptions)
+			It(`Successfully get load balancer monitor`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbMonitorResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Update GLB Monitor`, func() {
+			monitorID := os.Getenv("MONITOR_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(monitorID).NotTo(BeEmpty())
+			})
+			updateDnsGlbMonitorOptions := service.NewUpdateMonitorOptions(instanceID, monitorID)
+			updateDnsGlbMonitorOptions.SetDescription("Update Load balancer monitor for example.com")
+			updateDnsGlbMonitorOptions.SetType("HTTP")
+			updateDnsGlbMonitorOptions.SetPort(int64(8080))
+			updateDnsGlbMonitorOptions.SetInterval(int64(60))
+			updateDnsGlbMonitorOptions.SetRetries(int64(2))
+			updateDnsGlbMonitorOptions.SetTimeout(int64(5))
+			updateDnsGlbMonitorOptions.SetMethod("GET")
+			updateDnsGlbMonitorOptions.SetPath("/health")
+			header := map[string][]string{"Host": []string{"example.com"}, "X-App-ID": []string{"abc456"}}
+			updateDnsGlbMonitorOptions.SetHeader(header)
+			updateDnsGlbMonitorOptions.SetAllowInsecure(false)
+			updateDnsGlbMonitorOptions.SetExpectedCodes("200")
+			updateDnsGlbMonitorOptions.SetExpectedBody("alive")
+			updateDnsGlbMonitorOptions.SetFollowRedirects(false)
+			GlbMonitorResult, detailedResponse, err := service.UpdateMonitor(updateDnsGlbMonitorOptions)
+			It(`Successfully update load balancer monitor`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbMonitorResult.Type).To(Equal("HTTP"))
+				Expect(*GlbMonitorResult.Method).To(Equal("GET"))
+				Expect(*GlbMonitorResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Delete GLB Monitor`, func() {
+			monitorID := os.Getenv("DELETE_MONITOR_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(monitorID).NotTo(BeEmpty())
+			})
+			deleteDnsGlbMonitorOptions := service.NewDeleteMonitorOptions(instanceID, monitorID)
+			detailedResponse, err := service.DeleteMonitor(deleteDnsGlbMonitorOptions)
+			It(`Successfully delete load balancer monitor`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(204))
+			})
+		})
+
+		Context(`Create GLB Pool`, func() {
+			monitorID := os.Getenv("MONITOR_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(monitorID).NotTo(BeEmpty())
+			})
+			createDnsGlbPoolOptions := service.NewCreatePoolOptions(instanceID)
+			createDnsGlbPoolOptions.SetName("dal-pool")
+			createDnsGlbPoolOptions.SetDescription("dallas pool for example.com")
+			createDnsGlbPoolOptions.SetEnabled(true)
+			createDnsGlbPoolOptions.SetMinimumOrigins(int64(1))
+			origin1 := new(dnssvcsv1.Origin)
+			origin1.Name = core.StringPtr("dal-origin01")
+			origin1.Description = core.StringPtr("description of the origin server")
+			origin1.Address = core.StringPtr("10.10.16.8")
+			origin1.Enabled = core.BoolPtr(true)
+			origin1.Weight = core.Int64Ptr(int64(1))
+			createDnsGlbPoolOptions.SetOrigins([]dnssvcsv1.Origin{*origin1})
+			createDnsGlbPoolOptions.SetMonitor(monitorID)
+			createDnsGlbPoolOptions.SetNotificationType(dnssvcsv1.CreatePoolOptions_NotificationType_Email)
+			createDnsGlbPoolOptions.SetNotificationChannel("xxx@email.example.com")
+			GlbPoolResult, detailedResponse, err := service.CreatePool(createDnsGlbPoolOptions)
+			It(`Successfully create new load balancer monitor`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbPoolResult.Name).To(Equal("dal-pool"))
+				Expect(*GlbPoolResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`List GLB Pools`, func() {
+			listDnsGlbPoolOptions := service.NewListPoolsOptions(instanceID)
+			GlbPoolsResult, detailedResponse, err := service.ListPools(listDnsGlbPoolOptions)
+			It(`Successfully list load balancer pools`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				firstResource := GlbPoolsResult.Pools[0]
+				Expect(*firstResource.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Get GLB Pool`, func() {
+			poolID := os.Getenv("POOL_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(poolID).NotTo(BeEmpty())
+			})
+			getDnsGlbPoolOptions := service.NewGetPoolOptions(instanceID, poolID)
+			GlbPoolResult, detailedResponse, err := service.GetPool(getDnsGlbPoolOptions)
+			It(`Successfully get load balancer pool`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbPoolResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Update GLB Pool`, func() {
+			poolID := os.Getenv("POOL_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(poolID).NotTo(BeEmpty())
+			})
+			monitorID := os.Getenv("MONITOR_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(monitorID).NotTo(BeEmpty())
+			})
+			updateDnsGlbPoolOptions := service.NewUpdatePoolOptions(instanceID, poolID)
+			updateDnsGlbPoolOptions.SetName("dal-pool-update")
+			updateDnsGlbPoolOptions.SetDescription("dallas pool update for example.com")
+			updateDnsGlbPoolOptions.SetEnabled(true)
+			updateDnsGlbPoolOptions.SetMinimumOrigins(int64(1))
+			origin2 := new(dnssvcsv1.Origin)
+			origin2.Name = core.StringPtr("dal-origin02")
+			origin2.Description = core.StringPtr("description of the origin server")
+			origin2.Address = core.StringPtr("10.10.16.9")
+			origin2.Enabled = core.BoolPtr(true)
+			origin2.Weight = core.Int64Ptr(int64(1))
+			updateDnsGlbPoolOptions.SetOrigins([]dnssvcsv1.Origin{*origin2})
+			updateDnsGlbPoolOptions.SetMonitor(monitorID)
+			updateDnsGlbPoolOptions.SetNotificationType(dnssvcsv1.CreatePoolOptions_NotificationType_Email)
+			updateDnsGlbPoolOptions.SetNotificationChannel("xxx@email.example.com")
+			GlbPoolResult, detailedResponse, err := service.UpdatePool(updateDnsGlbPoolOptions)
+			It(`Successfully update load balancer pool`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbPoolResult.Name).To(Equal("dal-pool-update"))
+				Expect(*GlbPoolResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Delete GLB Pool`, func() {
+			poolID := os.Getenv("DELETE_POOL_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(poolID).NotTo(BeEmpty())
+			})
+			deleteDnsGlbPoolOptions := service.NewDeletePoolOptions(instanceID, poolID)
+			detailedResponse, err := service.DeletePool(deleteDnsGlbPoolOptions)
+			It(`Successfully delete load balancer pool`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(204))
+			})
+		})
+
+		Context(`Create GLB`, func() {
+			poolID := os.Getenv("POOL_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(poolID).NotTo(BeEmpty())
+			})
+			createDnsGlbOptions := service.NewCreateLoadBalancerOptions(instanceID, zoneID)
+			createDnsGlbOptions.SetName("glbtest")
+			createDnsGlbOptions.SetDescription("Global load balancer 01")
+			createDnsGlbOptions.SetEnabled(true)
+			createDnsGlbOptions.SetTTL(int64(300))
+			createDnsGlbOptions.SetDefaultPools([]string{poolID})
+			createDnsGlbOptions.SetFallbackPool(poolID)
+			azPools := new(dnssvcsv1.AzPools)
+			azPools.UsSouth1 = []string{poolID}
+			createDnsGlbOptions.SetAzPools(azPools)
+			GlbResult, detailedResponse, err := service.CreateLoadBalancer(createDnsGlbOptions)
+			It(`Successfully create load balancer`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbResult.Name).To(Equal("glbtest." + zoneName))
+				Expect(*GlbResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`List GLBs`, func() {
+			listDnsGlbOptions := service.NewListLoadBalancersOptions(instanceID, zoneID)
+			GlbsResult, detailedResponse, err := service.ListLoadBalancers(listDnsGlbOptions)
+			It(`Successfully list load balancers`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				firstResource := GlbsResult.LoadBalancers[0]
+				Expect(*firstResource.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Get GLB`, func() {
+			glbID := os.Getenv("GLB_ID")
+			It(`Successfully Get LB ID`, func() {
+				Expect(glbID).NotTo(BeEmpty())
+			})
+			getDnsGlbOptions := service.NewGetLoadBalancerOptions(instanceID, zoneID, glbID)
+			GlbResult, detailedResponse, err := service.GetLoadBalancer(getDnsGlbOptions)
+			It(`Successfully get load balancer`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Update GLB`, func() {
+			glbID := os.Getenv("GLB_ID")
+			It(`Successfully Get LB ID`, func() {
+				Expect(glbID).NotTo(BeEmpty())
+			})
+			poolID := os.Getenv("POOL_ID")
+			It(`Successfully Get LB pool ID`, func() {
+				Expect(poolID).NotTo(BeEmpty())
+			})
+			updateDnsGlbOptions := service.NewUpdateLoadBalancerOptions(instanceID, zoneID, glbID)
+			updateDnsGlbOptions.SetName("updateglbtest")
+			updateDnsGlbOptions.SetDescription("Update Global load balancer 01")
+			updateDnsGlbOptions.SetEnabled(true)
+			updateDnsGlbOptions.SetTTL(int64(300))
+			updateDnsGlbOptions.SetDefaultPools([]string{poolID})
+			updateDnsGlbOptions.SetFallbackPool(poolID)
+			updateazPools := new(dnssvcsv1.AzPools)
+			updateazPools.UsSouth1 = []string{poolID}
+			updateDnsGlbOptions.SetAzPools(updateazPools)
+			GlbResult, detailedResponse, err := service.UpdateLoadBalancer(updateDnsGlbOptions)
+			It(`Successfully update load balancer`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(200))
+				Expect(*GlbResult.Name).To(Equal("updateglbtest." + zoneName))
+				Expect(*GlbResult.ID).NotTo(BeNil())
+			})
+		})
+
+		Context(`Delete GLB`, func() {
+			glbID := os.Getenv("DELETE_GLB_ID")
+			It(`Successfully Get LB ID`, func() {
+				Expect(glbID).NotTo(BeEmpty())
+			})
+			deleteDnsGlbOptions := service.NewDeleteLoadBalancerOptions(instanceID, zoneID, glbID)
+			detailedResponse, err := service.DeleteLoadBalancer(deleteDnsGlbOptions)
+			It(`Successfully delete load balancer pool`, func() {
+				Expect(err).To(BeNil())
+				Expect(detailedResponse.StatusCode).To(Equal(204))
+			})
+		})
+	})
 })
