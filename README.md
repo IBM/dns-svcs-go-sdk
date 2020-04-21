@@ -1,5 +1,4 @@
 # IBM Cloud DNS Services Go SDK
-[![Build Status](https://travis.ibm.com/ibmcloud/dns-svcs-go-sdk.svg?token=5N69GxPxKisDHsait9qz&branch=master)](https://travis.ibm.com/ibmcloud/dns-svcs-go-sdk)
 
 Go client library to use the [IBM Cloud DNS Services API](https://cloud.ibm.com/docs/dns-svcs?topic=dns-svcs-dns-svcs-api).
 
