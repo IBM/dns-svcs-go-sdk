@@ -19,1244 +19,964 @@
 package dnssvcsv1_test
 
 import (
+	"log"
 	"os"
 	"strings"
+	"testing"
 
 	"github.com/IBM/dns-svcs-go-sdk/dnssvcsv1"
 	"github.com/IBM/go-sdk-core/v3/core"
 	"github.com/joho/godotenv"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe(`DnsSvcsV1`, func() {
+var service *dnssvcsv1.DnsSvcsV1
+var serviceErr error
+var instanceID string
+var zoneID string
+var zoneName string
 
+func init() {
 	err := godotenv.Load("../.env")
-	It(`Successfully loading .env file`, func() {
-		Expect(err).To(BeNil())
-	})
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// Create the authenticator.
 	authenticator := &core.IamAuthenticator{
 		ApiKey: os.Getenv("IAMAPIKEY"),
 	}
-	options := &dnssvcsv1.DnsSvcsV1Options{
-		ServiceName:   "DnsSvcsV1_Mokcing",
-		Authenticator: authenticator,
+
+	service, serviceErr = dnssvcsv1.NewDnsSvcsV1(
+		&dnssvcsv1.DnsSvcsV1Options{
+			Authenticator: authenticator,
+		})
+
+	// Retrieive dns service instance ID and zone ID
+	instanceID = os.Getenv("INSTANCE_ID")
+	if len(instanceID) == 0 {
+		log.Fatal("No instanceID set")
 	}
-	service, err := dnssvcsv1.NewDnsSvcsV1UsingExternalConfig(options)
-	It(`Successfully created DnsSvcsV1 service instance`, func() {
-		Expect(err).To(BeNil())
-	})
-	err = service.SetServiceURL(dnssvcsv1.DefaultServiceURL)
-	It(`Successfully set DnsSvcsV1 service URL`, func() {
-		Expect(err).To(BeNil())
-	})
-	instanceID := os.Getenv("INSTANCE_ID")
-	It(`Successfully Get instance ID`, func() {
-		Expect(instanceID).NotTo(BeEmpty())
-	})
-	zoneID := os.Getenv("ZONE_ID")
-	It(`Successfully Get dns zone ID`, func() {
-		Expect(instanceID).NotTo(BeEmpty())
-	})
+	zoneID = os.Getenv("ZONE_ID")
+	if len(instanceID) == 0 {
+		log.Fatal("No zoneID set")
+	}
 	parts := strings.SplitN(zoneID, ":", 2)
-	zoneName := parts[0]
-
-	Describe(`List Dns Zones`, func() {
-		Context(`Successfully list dns zones by instanceID`, func() {
-			listDnszonesOptions := service.NewListDnszonesOptions(instanceID)
-			It(`Successfully list all dns zones`, func() {
-				result, detailedResponse, err := service.ListDnszones(listDnszonesOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				firstResource := result.Dnszones[0]
-				Expect(*firstResource.InstanceID).To(Equal(instanceID))
-			})
-		})
-
-		Context(`Failed to list dns zones by instanceID`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			badinstanceID := "bad_bird"
-			listDnszonesOptions := &dnssvcsv1.ListDnszonesOptions{}
-			listDnszonesOptions.SetInstanceID(badinstanceID)
-			listDnszonesOptions.SetHeaders(header)
-			It(`Failed to list all dns zones`, func() {
-				_, _, err := service.ListDnszones(listDnszonesOptions)
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`Create/Update/Get/Delete a DNS zone`, func() {
-		Context(`Successfully create/get/update/delete dns zone`, func() {
-			var (
-				zoneID string
-			)
-			zoneName := "test.com"
-			createDnszoneOptions := service.NewCreateDnszoneOptions(instanceID, zoneName)
-			zoneresult, detailedResponse, err := service.CreateDnszone(createDnszoneOptions)
-			It(`Successfully create new dns zone`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*zoneresult.Name).To(Equal(zoneName))
-				Expect(*zoneresult.InstanceID).To(Equal(instanceID))
-				Expect(*zoneresult.ID).NotTo(BeNil())
-			})
-
-			BeforeEach(func() {
-				zoneID = *zoneresult.ID
-			})
-
-			It(`Successfully update dns zone`, func() {
-				updateDnszoneOptions := service.NewUpdateDnszoneOptions(instanceID, zoneID).
-					SetDescription("testUpdate")
-				result, detailedResponse, err := service.UpdateDnszone(updateDnszoneOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.InstanceID).To(Equal(instanceID))
-				Expect(*result.ID).To(Equal(zoneID))
-			})
-
-			It(`Successfully get dns zone`, func() {
-				getDnszoneOptions := service.NewGetDnszoneOptions(instanceID, zoneID)
-				result, detailedResponse, err := service.GetDnszone(getDnszoneOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-
-				Expect(*result.ID).To(Equal(zoneID))
-				Expect(*result.Description).To(Equal("testUpdate"))
-			})
-
-			It(`Successfully delete dns zone`, func() {
-				deleteDnszoneOptions := service.NewDeleteDnszoneOptions(instanceID, zoneID)
-				detailedResponse, err := service.DeleteDnszone(deleteDnszoneOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(204))
-			})
-		})
-
-		Context(`Fail to create dns zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			createDnszoneOptions := &dnssvcsv1.CreateDnszoneOptions{}
-			createDnszoneOptions.SetInstanceID(instanceID)
-			createDnszoneOptions.SetName("ibm.com")
-			createDnszoneOptions.SetDescription("testString")
-			createDnszoneOptions.SetLabel("testString")
-			createDnszoneOptions.SetXCorrelationID("testString")
-			createDnszoneOptions.SetHeaders(header)
-			It(`Fail to create dns zone`, func() {
-				result, detailedResponse, err := service.CreateDnszone(createDnszoneOptions)
-				Expect(result).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(400))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-
-		Context(`Failed to update dns zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			badZoneID := "111"
-			updateDnszoneOptions := &dnssvcsv1.UpdateDnszoneOptions{}
-			updateDnszoneOptions.SetInstanceID(instanceID)
-			updateDnszoneOptions.SetDnszoneID(badZoneID)
-			updateDnszoneOptions.SetDescription("testString")
-			updateDnszoneOptions.SetLabel("testString")
-			updateDnszoneOptions.SetXCorrelationID("testString")
-			updateDnszoneOptions.SetHeaders(header)
-			It(`Failed to update dns zone`, func() {
-				result, detailedResponse, err := service.UpdateDnszone(updateDnszoneOptions)
-				Expect(result).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(400))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-
-		Context(`Failed to get dns zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			badZoneID := "111"
-			getDnszoneOptions := &dnssvcsv1.GetDnszoneOptions{}
-			getDnszoneOptions.SetInstanceID(instanceID)
-			getDnszoneOptions.SetDnszoneID(badZoneID)
-			getDnszoneOptions.SetXCorrelationID("testString")
-			getDnszoneOptions.SetHeaders(header)
-			It(`Failed to get dns zone`, func() {
-				result, detailedResponse, err := service.GetDnszone(getDnszoneOptions)
-				Expect(result).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(400))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-
-		Context(`Failed to delete dns zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			badZoneID := "111"
-			deleteDnszoneOptions := &dnssvcsv1.DeleteDnszoneOptions{}
-			deleteDnszoneOptions.SetInstanceID(instanceID)
-			deleteDnszoneOptions.SetDnszoneID(badZoneID)
-			deleteDnszoneOptions.SetXCorrelationID("testString")
-			deleteDnszoneOptions.SetHeaders(header)
-			It(`Failed to delete dns zone`, func() {
-				detailedResponse, err := service.DeleteDnszone(deleteDnszoneOptions)
-				Expect(detailedResponse.StatusCode).To(Equal(400))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`Add a permitted network`, func() {
-		Context(`Successfully create permitted network on zone`, func() {
-			zoneID := os.Getenv("ZONE_ID")
-			vpcCrn := os.Getenv("VPC_CRN")
-			permittednetworkID := os.Getenv("VPC_ID")
-			createPermittedNetworkOptions := service.NewCreatePermittedNetworkOptions(instanceID, zoneID)
-			permittedNetworkCrn := &dnssvcsv1.PermittedNetworkVpc{
-				VpcCrn: &vpcCrn,
-			}
-			createPermittedNetworkOptions.SetPermittedNetwork(permittedNetworkCrn)
-			createPermittedNetworkOptions.SetType(dnssvcsv1.CreatePermittedNetworkOptions_Type_Vpc)
-			It(`Successfully create new dns zone`, func() {
-				result, detailedResponse, err := service.CreatePermittedNetwork(createPermittedNetworkOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.Type).To(Equal(dnssvcsv1.CreatePermittedNetworkOptions_Type_Vpc))
-				Expect(*result.State).To(Equal("ACTIVE"))
-				Expect(*result.ID).To(Equal(permittednetworkID))
-			})
-		})
-
-		Context(`Fail to create permitted network on zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			zoneID := os.Getenv("ZONE_ID")
-			vpcCrn := "bad_crn"
-			createPermittedNetworkOptions := &dnssvcsv1.CreatePermittedNetworkOptions{}
-			createPermittedNetworkOptions.SetInstanceID(instanceID)
-			createPermittedNetworkOptions.SetDnszoneID(zoneID)
-			permittedNetworkCrn := &dnssvcsv1.PermittedNetworkVpc{
-				VpcCrn: &vpcCrn,
-			}
-			createPermittedNetworkOptions.SetPermittedNetwork(permittedNetworkCrn)
-			createPermittedNetworkOptions.SetType(dnssvcsv1.CreatePermittedNetworkOptions_Type_Vpc)
-			createPermittedNetworkOptions.SetXCorrelationID("testString")
-			createPermittedNetworkOptions.SetHeaders(header)
-			It(`Fail to create new resource`, func() {
-				result, detailedResponse, err := service.CreatePermittedNetwork(createPermittedNetworkOptions)
-				Expect(result).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(400))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`List permitted networks`, func() {
-		Context(`Successfully list permitted network on zone`, func() {
-			zoneID := os.Getenv("ZONE_ID")
-			listPermittedNetworksOptions := service.NewListPermittedNetworksOptions(instanceID, zoneID)
-			It(`Successfully list all resources`, func() {
-				result, detailedResponse, err := service.ListPermittedNetworks(listPermittedNetworksOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				firstResource := result.PermittedNetworks[0]
-				Expect(*firstResource.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Failed to list permitted network on zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			badzoneID := "bad_bird"
-			listPermittedNetworksOptions := &dnssvcsv1.ListPermittedNetworksOptions{}
-			listPermittedNetworksOptions.SetInstanceID(instanceID)
-			listPermittedNetworksOptions.SetDnszoneID(badzoneID)
-			listPermittedNetworksOptions.SetXCorrelationID("testString")
-			listPermittedNetworksOptions.SetHeaders(header)
-			It(`Failed to list all resouces`, func() {
-				_, _, err := service.ListPermittedNetworks(listPermittedNetworksOptions)
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`Get a permitted network`, func() {
-		Context(`Successfully get permitted network on zone`, func() {
-			zoneID := os.Getenv("ZONE_ID")
-			permittednetworkID := os.Getenv("VPC_ID")
-			getPermittedNetworkOptions := service.NewGetPermittedNetworkOptions(instanceID, zoneID, permittednetworkID)
-			It(`Successfully get permitted network on zone`, func() {
-				result, detailedResponse, err := service.GetPermittedNetwork(getPermittedNetworkOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-
-				Expect(*result.ID).To(Equal(permittednetworkID))
-				Expect(*result.State).To(Equal("ACTIVE"))
-			})
-		})
-
-		Context(`Failed to get permitted network on zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			zoneID := os.Getenv("ZONE_ID")
-			permittednetworkID := "bad_bird"
-			getPermittedNetworkOptions := &dnssvcsv1.GetPermittedNetworkOptions{}
-			getPermittedNetworkOptions.SetInstanceID(instanceID)
-			getPermittedNetworkOptions.SetDnszoneID(zoneID)
-			getPermittedNetworkOptions.SetPermittedNetworkID(permittednetworkID)
-			getPermittedNetworkOptions.SetXCorrelationID("testString")
-			getPermittedNetworkOptions.SetHeaders(header)
-			It(`Failed to get dns zone`, func() {
-				result, detailedResponse, err := service.GetPermittedNetwork(getPermittedNetworkOptions)
-				Expect(result).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(404))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`Remove a permited network`, func() {
-		Context(`Successfully remove permitted network on zone`, func() {
-			zoneID := os.Getenv("ZONE_ID")
-			permittednetworkID := os.Getenv("VPC_ID")
-			deletePermittedNetworkOptions := service.NewDeletePermittedNetworkOptions(instanceID, zoneID, permittednetworkID)
-			It(`Successfully remove permitted network on zone`, func() {
-				result, detailedResponse, err := service.DeletePermittedNetwork(deletePermittedNetworkOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(202))
-
-				Expect(*result.ID).To(Equal(permittednetworkID))
-			})
-		})
-
-		Context(`Failed to remove permitted network on zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			zoneID := os.Getenv("ZONE_ID")
-			permittednetworkID := "bad_bird"
-			deletePermittedNetworkOptions := &dnssvcsv1.DeletePermittedNetworkOptions{}
-			deletePermittedNetworkOptions.SetInstanceID(instanceID)
-			deletePermittedNetworkOptions.SetDnszoneID(zoneID)
-			deletePermittedNetworkOptions.SetPermittedNetworkID(permittednetworkID)
-			deletePermittedNetworkOptions.SetXCorrelationID("testString")
-			deletePermittedNetworkOptions.SetHeaders(header)
-			It(`Failed to get dns zone`, func() {
-				result, detailedResponse, err := service.DeletePermittedNetwork(deletePermittedNetworkOptions)
-				Expect(result).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(404))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`Resource Record A`, func() {
-		Context(`Successfully create "A" record on zone`, func() {
-			createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
-			createResourceRecordOptions.SetName("testa")
-			createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_A)
-			createResourceRecordOptions.SetTTL(120)
-			rdataARecord, err := service.NewResourceRecordInputRdataRdataARecord("1.1.1.1")
-			It(`Successfully set create "A" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			createResourceRecordOptions.SetRdata(rdataARecord)
-			rcaresult, detailedResponse, err := service.CreateResourceRecord(createResourceRecordOptions)
-			It(`Successfully set create "A" record on zone`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*rcaresult.Type).To(Equal(dnssvcsv1.CreateResourceRecordOptions_Type_A))
-				Expect(*rcaresult.ID).NotTo(BeNil())
-
-			})
-		})
-
-		Context(`Successfully update "A" record on zone`, func() {
-			racID := os.Getenv("ARECORD")
-			It(`Successfully Get A record ID`, func() {
-				Expect(racID).NotTo(BeEmpty())
-			})
-			updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, racID)
-			updateResourceRecordOptions.SetName("updatea")
-			updateResourceRecordOptions.SetTTL(300)
-			updaterdataARecord, err := service.NewResourceRecordUpdateInputRdataRdataARecord("1.1.1.2")
-			It(`Successfully set update "A" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			updateResourceRecordOptions.SetRdata(updaterdataARecord)
-
-			It(`Successfully update "A" record on zone`, func() {
-				result, detailedResponse, err := service.UpdateResourceRecord(updateResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(racID))
-			})
-		})
-
-		Context(`Successfully get "A" record on zone`, func() {
-			racID := os.Getenv("ARECORD")
-			It(`Successfully Get A record ID`, func() {
-				Expect(racID).NotTo(BeEmpty())
-			})
-			getResourceRecordOptions := service.NewGetResourceRecordOptions(instanceID, zoneID, racID)
-			It(`Successfully get "A" record on zone`, func() {
-				result, detailedResponse, err := service.GetResourceRecord(getResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(racID))
-			})
-		})
-
-		Context(`Fail to create "A" record on zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			createResourceRecordOptions := &dnssvcsv1.CreateResourceRecordOptions{}
-			createResourceRecordOptions.SetInstanceID(instanceID)
-			createResourceRecordOptions.SetDnszoneID(zoneID)
-			createResourceRecordOptions.SetName("testbad")
-			createResourceRecordOptions.SetXCorrelationID("teststring")
-			createResourceRecordOptions.SetHeaders(header)
-			createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_A)
-			createResourceRecordOptions.SetTTL(120)
-			rdataARecord, err := service.NewResourceRecordInputRdataRdataARecord("1.1.1")
-			It(`Set create "A" record Rdata for fail`, func() {
-				Expect(err).To(BeNil())
-			})
-			createResourceRecordOptions.SetRdata(rdataARecord)
-			It(`Fail to set create "A" record on zone`, func() {
-				rcaresult, detailedResponse, err := service.CreateResourceRecord(createResourceRecordOptions)
-				Expect(rcaresult).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(400))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-
-		Context(`Fail to get "A" record on zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			racID := "bad_bird"
-			getResourceRecordOptions := &dnssvcsv1.GetResourceRecordOptions{}
-			getResourceRecordOptions.SetInstanceID(instanceID)
-			getResourceRecordOptions.SetDnszoneID(zoneID)
-			getResourceRecordOptions.SetRecordID(racID)
-			getResourceRecordOptions.SetXCorrelationID("teststring")
-			getResourceRecordOptions.SetHeaders(header)
-			It(`Fail to get "A" record on zone`, func() {
-				result, detailedResponse, err := service.GetResourceRecord(getResourceRecordOptions)
-				Expect(result).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(400))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`Resource Record AAAA`, func() {
-		Context(`Successfully create "AAAA" record on zone`, func() {
-			createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
-			createResourceRecordOptions.SetName("testaaaa")
-			createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Aaaa)
-			createResourceRecordOptions.SetTTL(120)
-			rdataAaaaRecord, err := service.NewResourceRecordInputRdataRdataAaaaRecord("2001::8888")
-			It(`Successfully set create "AAAA" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			createResourceRecordOptions.SetRdata(rdataAaaaRecord)
-			rcaaaaresult, detailedResponse, err := service.CreateResourceRecord(createResourceRecordOptions)
-			It(`Successfully create "AAAA" record on zone`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*rcaaaaresult.Type).To(Equal(dnssvcsv1.CreateResourceRecordOptions_Type_Aaaa))
-				Expect(*rcaaaaresult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Successfully update "AAAA" record on zone`, func() {
-			rcaaaaID := os.Getenv("AAAARECORD")
-			It(`Successfully Get AAAA record ID`, func() {
-				Expect(rcaaaaID).NotTo(BeEmpty())
-			})
-			updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, rcaaaaID)
-			updateResourceRecordOptions.SetName("updateaaaa")
-			updateResourceRecordOptions.SetTTL(300)
-			updaterdataAaaaRecord, err := service.NewResourceRecordUpdateInputRdataRdataAaaaRecord("2001::8889")
-			It(`Successfully set update "AAAA" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			updateResourceRecordOptions.SetRdata(updaterdataAaaaRecord)
-
-			It(`Successfully update "AAAA" record on zone`, func() {
-				result, detailedResponse, err := service.UpdateResourceRecord(updateResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(rcaaaaID))
-			})
-		})
-
-		Context(`Successfully get "AAAA" record on zone`, func() {
-			rcaaaaID := os.Getenv("AAAARECORD")
-			getResourceRecordOptions := service.NewGetResourceRecordOptions(instanceID, zoneID, rcaaaaID)
-			It(`Successfully get "A" record on zone`, func() {
-				result, detailedResponse, err := service.GetResourceRecord(getResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(rcaaaaID))
-			})
-		})
-
-	})
-
-	Describe(`Resource Record CNAME`, func() {
-		Context(`Successfully create "CNAME" record on zone`, func() {
-			createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
-			createResourceRecordOptions.SetName("testcname")
-			createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Cname)
-			createResourceRecordOptions.SetTTL(120)
-			rdataCnameRecord, err := service.NewResourceRecordInputRdataRdataCnameRecord("testcnamedata.com")
-			It(`Successfully set create "CNAME" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			createResourceRecordOptions.SetRdata(rdataCnameRecord)
-			rccnameresult, detailedResponse, err := service.CreateResourceRecord(createResourceRecordOptions)
-			It(`Successfully create "CNAME" record on zone`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*rccnameresult.Type).To(Equal(dnssvcsv1.CreateResourceRecordOptions_Type_Cname))
-				Expect(*rccnameresult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Successfully update "CNAME" record on zone`, func() {
-			rccnameID := os.Getenv("CNAMERECORD")
-			It(`Successfully Get CNAME record ID`, func() {
-				Expect(rccnameID).NotTo(BeEmpty())
-			})
-			updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, rccnameID)
-			updateResourceRecordOptions.SetName("updatecname")
-			updateResourceRecordOptions.SetTTL(300)
-			updaterdataCnameRecord, err := service.NewResourceRecordUpdateInputRdataRdataCnameRecord("updatecnamedata.com")
-			It(`Successfully set update "CNAME" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			updateResourceRecordOptions.SetRdata(updaterdataCnameRecord)
-
-			It(`Successfully update "CNAME" record on zone`, func() {
-				result, detailedResponse, err := service.UpdateResourceRecord(updateResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(rccnameID))
-			})
-		})
-	})
-
-	Describe(`Resource Record MX`, func() {
-		Context(`Successfully create/update/delete "MX" record on zone`, func() {
-			createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
-			createResourceRecordOptions.SetName("testmx")
-			createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Mx)
-			createResourceRecordOptions.SetTTL(120)
-			rdataMxRecord, err := service.NewResourceRecordInputRdataRdataMxRecord("mail.testmx.com", 1)
-			It(`Successfully set create "MX" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			createResourceRecordOptions.SetRdata(rdataMxRecord)
-			rcmxresult, detailedResponse, err := service.CreateResourceRecord(createResourceRecordOptions)
-			It(`Successfully create "MX" record on zone`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*rcmxresult.Type).To(Equal(dnssvcsv1.CreateResourceRecordOptions_Type_Mx))
-				Expect(*rcmxresult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Successfully update "MX" record on zone`, func() {
-			rcmxID := os.Getenv("MXRECORD")
-			It(`Successfully Get MX record ID`, func() {
-				Expect(rcmxID).NotTo(BeEmpty())
-			})
-			updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, rcmxID)
-			updateResourceRecordOptions.SetName("testupdatemx")
-			updateResourceRecordOptions.SetTTL(300)
-			updaterdataMxRecord, err := service.NewResourceRecordUpdateInputRdataRdataMxRecord("mail1.testmx.com", 2)
-			It(`Successfully set update "MX" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			updateResourceRecordOptions.SetRdata(updaterdataMxRecord)
-			It(`Successfully update "MX" record on zone`, func() {
-				result, detailedResponse, err := service.UpdateResourceRecord(updateResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(rcmxID))
-			})
-		})
-	})
-
-	Describe(`Resource Record PTR`, func() {
-		Context(`Successfully create/update/delete "PTR" record on zone`, func() {
-			parts := strings.SplitN(zoneID, ":", 2)
-			zoneName := parts[0]
-			createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
-			createResourceRecordOptions.SetName("1.1.1.1")
-			createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Ptr)
-			createResourceRecordOptions.SetTTL(120)
-			rdataPtrRecord, err := service.NewResourceRecordInputRdataRdataPtrRecord("testa." + zoneName)
-			It(`Successfully set "PTR" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			createResourceRecordOptions.SetRdata(rdataPtrRecord)
-			rcptrresult, detailedResponse, err := service.CreateResourceRecord(createResourceRecordOptions)
-			It(`Successfully create "PTR" record on zone`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*rcptrresult.Type).To(Equal(dnssvcsv1.CreateResourceRecordOptions_Type_Ptr))
-				Expect(*rcptrresult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Successfully update "PTR" record on zone`, func() {
-			rcptrID := os.Getenv("PTRRECORD")
-			It(`Successfully Get PTR record ID`, func() {
-				Expect(rcptrID).NotTo(BeEmpty())
-			})
-			updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, rcptrID)
-			updateResourceRecordOptions.SetTTL(300)
-			It(`Successfully update "PTR" record on zone`, func() {
-				result, detailedResponse, err := service.UpdateResourceRecord(updateResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(rcptrID))
-			})
-		})
-	})
-
-	Describe(`Resource Record SRV`, func() {
-		Context(`Successfully create "SRV" record on zone`, func() {
-			createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
-			createResourceRecordOptions.SetName("testsrv")
-			createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Srv)
-			createResourceRecordOptions.SetTTL(120)
-			createResourceRecordOptions.SetService("_sip")
-			createResourceRecordOptions.SetProtocol("udp")
-			rdataSrvRecord, err := service.NewResourceRecordInputRdataRdataSrvRecord(1, 1, "siphost.com", 1)
-			It(`Successfully set "SRV" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			createResourceRecordOptions.SetRdata(rdataSrvRecord)
-
-			rcsrvresult, detailedResponse, err := service.CreateResourceRecord(createResourceRecordOptions)
-			It(`Successfully create "SRV" record on zone`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*rcsrvresult.Type).To(Equal(dnssvcsv1.CreateResourceRecordOptions_Type_Srv))
-				Expect(*rcsrvresult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Successfully update "SRV" record on zone`, func() {
-			rcsrvID := os.Getenv("SRVRECORD")
-			It(`Successfully Get SRV record ID`, func() {
-				Expect(rcsrvID).NotTo(BeEmpty())
-			})
-			updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, rcsrvID)
-			updateResourceRecordOptions.SetName("updatesrv")
-			updateResourceRecordOptions.SetTTL(300)
-			updaterdataSrvRecord, err := service.NewResourceRecordUpdateInputRdataRdataSrvRecord(2, 2, "updatesiphost.com", 2)
-			It(`Successfully set update "SRV" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			updateResourceRecordOptions.SetRdata(updaterdataSrvRecord)
-			It(`Successfully update "SRV" record on zone`, func() {
-				result, detailedResponse, err := service.UpdateResourceRecord(updateResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(rcsrvID))
-			})
-		})
-	})
-
-	Describe(`Resource Record TXT`, func() {
-		Context(`Successfully create "TXT" record on zone`, func() {
-			createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
-			createResourceRecordOptions.SetName("testtxt")
-			createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Txt)
-			createResourceRecordOptions.SetTTL(120)
-			rdataTxtRecord, err := service.NewResourceRecordInputRdataRdataTxtRecord("txtdata string")
-			It(`Successfully set "TXT" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			createResourceRecordOptions.SetRdata(rdataTxtRecord)
-			rctxtresult, detailedResponse, err := service.CreateResourceRecord(createResourceRecordOptions)
-			It(`Successfully create "TXT" record on zone`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*rctxtresult.Type).To(Equal(dnssvcsv1.CreateResourceRecordOptions_Type_Txt))
-				Expect(*rctxtresult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Successfully update "TXT" record on zone`, func() {
-			rctxtID := os.Getenv("TXTRECORD")
-			It(`Successfully Get TXT record ID`, func() {
-				Expect(rctxtID).NotTo(BeEmpty())
-			})
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			updateResourceRecordOptions := &dnssvcsv1.UpdateResourceRecordOptions{}
-			updateResourceRecordOptions.SetInstanceID(instanceID)
-			updateResourceRecordOptions.SetDnszoneID(zoneID)
-			updateResourceRecordOptions.SetRecordID(rctxtID)
-			updateResourceRecordOptions.SetTTL(300)
-			updateResourceRecordOptions.SetHeaders(header)
-			updateResourceRecordOptions.SetName("updatesttxt")
-			updaterdataTxtRecord, err := service.NewResourceRecordUpdateInputRdataRdataTxtRecord("update txtdata string")
-			It(`Successfully set update "TXT" record Rdata`, func() {
-				Expect(err).To(BeNil())
-			})
-			updateResourceRecordOptions.SetRdata(updaterdataTxtRecord)
-			It(`Successfully set update "TXT" record Rdata`, func() {
-				result, detailedResponse, err := service.UpdateResourceRecord(updateResourceRecordOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*result.ID).To(Equal(rctxtID))
-			})
-		})
-
-		Context(`Fail to delete "TXT" record on zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			rctxtID := "bad_bird"
-			deleteResourceRecordOptions := &dnssvcsv1.DeleteResourceRecordOptions{}
-			deleteResourceRecordOptions.SetInstanceID(instanceID)
-			deleteResourceRecordOptions.SetDnszoneID(zoneID)
-			deleteResourceRecordOptions.SetRecordID(rctxtID)
-			deleteResourceRecordOptions.SetHeaders(header)
-			deleteResourceRecordOptions.SetXCorrelationID("teststring")
-			It(`Fail delete "TXT" record on zone`, func() {
-				detailedResponse, err := service.DeleteResourceRecord(deleteResourceRecordOptions)
-				Expect(detailedResponse.StatusCode).To(Equal(400))
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`List resource records`, func() {
-		Context(`Successfully list resource records on zone`, func() {
-			zoneID := os.Getenv("ZONE_ID")
-			listResourceRecordsOptions := service.NewListResourceRecordsOptions(instanceID, zoneID)
-			It(`Successfully list all resources`, func() {
-				result, detailedResponse, err := service.ListResourceRecords(listResourceRecordsOptions)
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				firstResource := result.ResourceRecords[0]
-				Expect(*firstResource.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Failed to list resource records on zone`, func() {
-			header := map[string]string{
-				"Content-type": "application/json",
-			}
-			zoneID := "bad_bird"
-			listResourceRecordsOptions := &dnssvcsv1.ListResourceRecordsOptions{}
-			listResourceRecordsOptions.SetInstanceID(instanceID)
-			listResourceRecordsOptions.SetDnszoneID(zoneID)
-			listResourceRecordsOptions.SetHeaders(header)
-			listResourceRecordsOptions.SetXCorrelationID("teststring")
-			It(`Failed to list all resouces`, func() {
-				_, _, err := service.ListResourceRecords(listResourceRecordsOptions)
-				Expect(err).Should(HaveOccurred())
-			})
-		})
-	})
-
-	Describe(`Common Record Unmarshal utility test`, func() {
-		var (
-			testInputData map[string]interface{}
-		)
-		BeforeEach(func() {
-			testInputData = map[string]interface{}{
-				"ip":         "1.1.1.1",
-				"cname":      "cname",
-				"exchange":   "exchange",
-				"preference": float64(1),
-				"port":       float64(1),
-				"priority":   float64(1),
-				"target":     "target",
-				"weight":     float64(1),
-				"text":       "text",
-				"ptrdname":   "ptrdname",
-			}
-		})
-
-		Context(`Successfully Invoke utility test`, func() {
-			It(`Invoke UnmarshalResourceRecordInputRdata() successfully`, func() {
-				result, err := dnssvcsv1.UnmarshalResourceRecordInputRdata(testInputData)
-				Expect(result).NotTo(BeNil())
-				Expect(err).To(BeNil())
-			})
-
-			It(`Invoke UnmarshalResourceRecordUpdateInputRdata() successfully`, func() {
-				result, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdata(testInputData)
-				Expect(result).NotTo(BeNil())
-				Expect(err).To(BeNil())
-			})
-
-		})
-	})
-
-	Describe(`Record Rdata Unmarshal utility test`, func() {
-		Context(`Successfully Invoke A rdata utility test`, func() {
-			var (
-				aRdata map[string]interface{}
-			)
-
-			BeforeEach(func() {
-				aRdata = map[string]interface{}{
-					"ip": "1.1.1.1",
-				}
-			})
-			It(`Invoke UnmarshalResourceRecordInputRdataRdataARecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataARecord(aRdata)
-				Expect(err).To(BeNil())
-			})
-
-			It(`Invoke UnmarshalResourceRecordUpdateInputRdataRdataARecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataARecord(aRdata)
-				Expect(err).To(BeNil())
-			})
-		})
-
-		Context(`Successfully Invoke AAAA rdata utility test`, func() {
-			var (
-				aaaaRdata map[string]interface{}
-			)
-
-			BeforeEach(func() {
-				aaaaRdata = map[string]interface{}{
-					"ip": "2001::1234",
-				}
-			})
-
-			It(`Invoke UnmarshalResourceRecordInputRdataRdataAaaaRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataAaaaRecord(aaaaRdata)
-				Expect(err).To(BeNil())
-			})
-
-			It(`Invoke UnmarshalResourceRecordUpdateInputRdataRdataAaaaRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataAaaaRecord(aaaaRdata)
-				Expect(err).To(BeNil())
-			})
-		})
-
-		Context(`Successfully Invoke CNAME rdata utility test`, func() {
-			var (
-				cnameRdata map[string]interface{}
-			)
-
-			BeforeEach(func() {
-				cnameRdata = map[string]interface{}{
-					"cname": "example.com",
-				}
-			})
-
-			It(`Invoke UnmarshalResourceRecordInputRdataRdataCnameRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataCnameRecord(cnameRdata)
-				Expect(err).To(BeNil())
-			})
-
-			It(`Invoke UnmarshalResourceRecordUpdateInputRdataRdataCnameRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataCnameRecord(cnameRdata)
-				Expect(err).To(BeNil())
-			})
-		})
-
-		Context(`Successfully Invoke MX rdata utility test`, func() {
-			var (
-				mxRdata map[string]interface{}
-			)
-
-			BeforeEach(func() {
-				mxRdata = map[string]interface{}{
-					"preference": float64(2),
-					"exchange":   "mail1.example.com",
-				}
-			})
-
-			It(`Invoke UnmarshalResourceRecordInputRdataRdataMxRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataMxRecord(mxRdata)
-				Expect(err).To(BeNil())
-			})
-
-			It(`Invoke UnmarshalResourceRecordUpdateInputRdataRdataMxRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataMxRecord(mxRdata)
-				Expect(err).To(BeNil())
-			})
-		})
-
-		Context(`Successfully Invoke PTR rdata utility test`, func() {
-			var (
-				ptrRdata map[string]interface{}
-			)
-
-			BeforeEach(func() {
-				ptrRdata = map[string]interface{}{
-					"ptrdname": "example.com",
-				}
-			})
-
-			It(`Invoke UnmarshalResourceRecordInputRdataRdataPtrRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataPtrRecord(ptrRdata)
-				Expect(err).To(BeNil())
-			})
-
-			It(`Invoke UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord(ptrRdata)
-				Expect(err).To(BeNil())
-			})
-		})
-
-		Context(`Successfully Invoke SVR rdata utility test`, func() {
-			var (
-				srvRdata map[string]interface{}
-			)
-
-			BeforeEach(func() {
-				srvRdata = map[string]interface{}{
-					"priority": float64(2),
-					"weight":   float64(2),
-					"port":     float64(2),
-					"target":   "example.com",
-				}
-			})
-
-			It(`Invoke UnmarshalResourceRecordInputRdataRdataSrvRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataSrvRecord(srvRdata)
-				Expect(err).To(BeNil())
-			})
-
-			It(`Invoke UnmarshalResourceRecordUpdateInputRdataRdataSrvRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataSrvRecord(srvRdata)
-				Expect(err).To(BeNil())
-			})
-		})
-
-		Context(`Successfully Invoke TXT rdata utility test`, func() {
-			var (
-				txtRdata map[string]interface{}
-			)
-
-			BeforeEach(func() {
-				txtRdata = map[string]interface{}{
-					"text": "text string",
-				}
-			})
-
-			It(`Invoke UnmarshalResourceRecordInputRdataRdataTxtRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataTxtRecord(txtRdata)
-				Expect(err).To(BeNil())
-			})
-
-			It(`Invoke UnmarshalResourceRecordUpdateInputRdataRdataTxtRecord() successfully`, func() {
-				_, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataTxtRecord(txtRdata)
-				Expect(err).To(BeNil())
-			})
-		})
-	})
-
-	Describe(`DNS Load Balancer`, func() {
-		Context(`Create GLB Monitor`, func() {
-			createDnsGlbMonitorOptions := service.NewCreateMonitorOptions(instanceID)
-			createDnsGlbMonitorOptions.SetDescription("Load balancer monitor for example.com")
-			createDnsGlbMonitorOptions.SetType("HTTPS")
-			createDnsGlbMonitorOptions.SetPort(int64(8080))
-			createDnsGlbMonitorOptions.SetInterval(int64(60))
-			createDnsGlbMonitorOptions.SetRetries(int64(2))
-			createDnsGlbMonitorOptions.SetTimeout(int64(5))
-			createDnsGlbMonitorOptions.SetMethod("GET")
-			createDnsGlbMonitorOptions.SetPath("/health")
-			header := map[string][]string{"Host": []string{"example.com"}, "X-App-ID": []string{"abc123"}}
-			createDnsGlbMonitorOptions.SetHeader(header)
-			createDnsGlbMonitorOptions.SetAllowInsecure(false)
-			createDnsGlbMonitorOptions.SetExpectedCodes("200")
-			createDnsGlbMonitorOptions.SetExpectedBody("alive")
-			createDnsGlbMonitorOptions.SetFollowRedirects(false)
-			GlbMonitorResult, detailedResponse, err := service.CreateMonitor(createDnsGlbMonitorOptions)
-			It(`Successfully create new load balancer monitor`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbMonitorResult.Type).To(Equal("HTTPS"))
-				Expect(*GlbMonitorResult.Method).To(Equal("GET"))
-				Expect(*GlbMonitorResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`List GLB Monitor`, func() {
-			listDnsGlbMonitorOptions := service.NewListMonitorsOptions(instanceID)
-			GlbMonitorsResult, detailedResponse, err := service.ListMonitors(listDnsGlbMonitorOptions)
-			It(`Successfully list load balancer monitors`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				firstResource := GlbMonitorsResult.Monitors[0]
-				Expect(*firstResource.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Get GLB Monitor`, func() {
-			monitorID := os.Getenv("MONITOR_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(monitorID).NotTo(BeEmpty())
-			})
-			getDnsGlbMonitorOptions := service.NewGetMonitorOptions(instanceID, monitorID)
-			GlbMonitorResult, detailedResponse, err := service.GetMonitor(getDnsGlbMonitorOptions)
-			It(`Successfully get load balancer monitor`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbMonitorResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Update GLB Monitor`, func() {
-			monitorID := os.Getenv("MONITOR_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(monitorID).NotTo(BeEmpty())
-			})
-			updateDnsGlbMonitorOptions := service.NewUpdateMonitorOptions(instanceID, monitorID)
-			updateDnsGlbMonitorOptions.SetDescription("Update Load balancer monitor for example.com")
-			updateDnsGlbMonitorOptions.SetType("HTTP")
-			updateDnsGlbMonitorOptions.SetPort(int64(8080))
-			updateDnsGlbMonitorOptions.SetInterval(int64(60))
-			updateDnsGlbMonitorOptions.SetRetries(int64(2))
-			updateDnsGlbMonitorOptions.SetTimeout(int64(5))
-			updateDnsGlbMonitorOptions.SetMethod("GET")
-			updateDnsGlbMonitorOptions.SetPath("/health")
-			header := map[string][]string{"Host": []string{"example.com"}, "X-App-ID": []string{"abc456"}}
-			updateDnsGlbMonitorOptions.SetHeader(header)
-			updateDnsGlbMonitorOptions.SetAllowInsecure(false)
-			updateDnsGlbMonitorOptions.SetExpectedCodes("200")
-			updateDnsGlbMonitorOptions.SetExpectedBody("alive")
-			updateDnsGlbMonitorOptions.SetFollowRedirects(false)
-			GlbMonitorResult, detailedResponse, err := service.UpdateMonitor(updateDnsGlbMonitorOptions)
-			It(`Successfully update load balancer monitor`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbMonitorResult.Type).To(Equal("HTTP"))
-				Expect(*GlbMonitorResult.Method).To(Equal("GET"))
-				Expect(*GlbMonitorResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Delete GLB Monitor`, func() {
-			monitorID := os.Getenv("DELETE_MONITOR_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(monitorID).NotTo(BeEmpty())
-			})
-			deleteDnsGlbMonitorOptions := service.NewDeleteMonitorOptions(instanceID, monitorID)
-			detailedResponse, err := service.DeleteMonitor(deleteDnsGlbMonitorOptions)
-			It(`Successfully delete load balancer monitor`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(204))
-			})
-		})
-
-		Context(`Create GLB Pool`, func() {
-			monitorID := os.Getenv("MONITOR_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(monitorID).NotTo(BeEmpty())
-			})
-			createDnsGlbPoolOptions := service.NewCreatePoolOptions(instanceID)
-			createDnsGlbPoolOptions.SetName("dal-pool")
-			createDnsGlbPoolOptions.SetDescription("dallas pool for example.com")
-			createDnsGlbPoolOptions.SetEnabled(true)
-			createDnsGlbPoolOptions.SetMinimumOrigins(int64(1))
-			origin1 := new(dnssvcsv1.Origin)
-			origin1.Name = core.StringPtr("dal-origin01")
-			origin1.Description = core.StringPtr("description of the origin server")
-			origin1.Address = core.StringPtr("10.10.16.8")
-			origin1.Enabled = core.BoolPtr(true)
-			origin1.Weight = core.Int64Ptr(int64(1))
-			createDnsGlbPoolOptions.SetOrigins([]dnssvcsv1.Origin{*origin1})
-			createDnsGlbPoolOptions.SetMonitor(monitorID)
-			createDnsGlbPoolOptions.SetNotificationType(dnssvcsv1.CreatePoolOptions_NotificationType_Email)
-			createDnsGlbPoolOptions.SetNotificationChannel("xxx@email.example.com")
-			GlbPoolResult, detailedResponse, err := service.CreatePool(createDnsGlbPoolOptions)
-			It(`Successfully create new load balancer monitor`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbPoolResult.Name).To(Equal("dal-pool"))
-				Expect(*GlbPoolResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`List GLB Pools`, func() {
-			listDnsGlbPoolOptions := service.NewListPoolsOptions(instanceID)
-			GlbPoolsResult, detailedResponse, err := service.ListPools(listDnsGlbPoolOptions)
-			It(`Successfully list load balancer pools`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				firstResource := GlbPoolsResult.Pools[0]
-				Expect(*firstResource.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Get GLB Pool`, func() {
-			poolID := os.Getenv("POOL_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(poolID).NotTo(BeEmpty())
-			})
-			getDnsGlbPoolOptions := service.NewGetPoolOptions(instanceID, poolID)
-			GlbPoolResult, detailedResponse, err := service.GetPool(getDnsGlbPoolOptions)
-			It(`Successfully get load balancer pool`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbPoolResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Update GLB Pool`, func() {
-			poolID := os.Getenv("POOL_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(poolID).NotTo(BeEmpty())
-			})
-			monitorID := os.Getenv("MONITOR_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(monitorID).NotTo(BeEmpty())
-			})
-			updateDnsGlbPoolOptions := service.NewUpdatePoolOptions(instanceID, poolID)
-			updateDnsGlbPoolOptions.SetName("dal-pool-update")
-			updateDnsGlbPoolOptions.SetDescription("dallas pool update for example.com")
-			updateDnsGlbPoolOptions.SetEnabled(true)
-			updateDnsGlbPoolOptions.SetMinimumOrigins(int64(1))
-			origin2 := new(dnssvcsv1.Origin)
-			origin2.Name = core.StringPtr("dal-origin02")
-			origin2.Description = core.StringPtr("description of the origin server")
-			origin2.Address = core.StringPtr("10.10.16.9")
-			origin2.Enabled = core.BoolPtr(true)
-			origin2.Weight = core.Int64Ptr(int64(1))
-			updateDnsGlbPoolOptions.SetOrigins([]dnssvcsv1.Origin{*origin2})
-			updateDnsGlbPoolOptions.SetMonitor(monitorID)
-			updateDnsGlbPoolOptions.SetNotificationType(dnssvcsv1.CreatePoolOptions_NotificationType_Email)
-			updateDnsGlbPoolOptions.SetNotificationChannel("xxx@email.example.com")
-			GlbPoolResult, detailedResponse, err := service.UpdatePool(updateDnsGlbPoolOptions)
-			It(`Successfully update load balancer pool`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbPoolResult.Name).To(Equal("dal-pool-update"))
-				Expect(*GlbPoolResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Delete GLB Pool`, func() {
-			poolID := os.Getenv("DELETE_POOL_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(poolID).NotTo(BeEmpty())
-			})
-			deleteDnsGlbPoolOptions := service.NewDeletePoolOptions(instanceID, poolID)
-			detailedResponse, err := service.DeletePool(deleteDnsGlbPoolOptions)
-			It(`Successfully delete load balancer pool`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(204))
-			})
-		})
-
-		Context(`Create GLB`, func() {
-			poolID := os.Getenv("POOL_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(poolID).NotTo(BeEmpty())
-			})
-			createDnsGlbOptions := service.NewCreateLoadBalancerOptions(instanceID, zoneID)
-			createDnsGlbOptions.SetName("glbtest")
-			createDnsGlbOptions.SetDescription("Global load balancer 01")
-			createDnsGlbOptions.SetEnabled(true)
-			createDnsGlbOptions.SetTTL(int64(300))
-			createDnsGlbOptions.SetDefaultPools([]string{poolID})
-			createDnsGlbOptions.SetFallbackPool(poolID)
-			azPools := new(dnssvcsv1.AzPools)
-			azPools.UsSouth1 = []string{poolID}
-			createDnsGlbOptions.SetAzPools(azPools)
-			GlbResult, detailedResponse, err := service.CreateLoadBalancer(createDnsGlbOptions)
-			It(`Successfully create load balancer`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbResult.Name).To(Equal("glbtest." + zoneName))
-				Expect(*GlbResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`List GLBs`, func() {
-			listDnsGlbOptions := service.NewListLoadBalancersOptions(instanceID, zoneID)
-			GlbsResult, detailedResponse, err := service.ListLoadBalancers(listDnsGlbOptions)
-			It(`Successfully list load balancers`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				firstResource := GlbsResult.LoadBalancers[0]
-				Expect(*firstResource.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Get GLB`, func() {
-			glbID := os.Getenv("GLB_ID")
-			It(`Successfully Get LB ID`, func() {
-				Expect(glbID).NotTo(BeEmpty())
-			})
-			getDnsGlbOptions := service.NewGetLoadBalancerOptions(instanceID, zoneID, glbID)
-			GlbResult, detailedResponse, err := service.GetLoadBalancer(getDnsGlbOptions)
-			It(`Successfully get load balancer`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Update GLB`, func() {
-			glbID := os.Getenv("GLB_ID")
-			It(`Successfully Get LB ID`, func() {
-				Expect(glbID).NotTo(BeEmpty())
-			})
-			poolID := os.Getenv("POOL_ID")
-			It(`Successfully Get LB pool ID`, func() {
-				Expect(poolID).NotTo(BeEmpty())
-			})
-			updateDnsGlbOptions := service.NewUpdateLoadBalancerOptions(instanceID, zoneID, glbID)
-			updateDnsGlbOptions.SetName("updateglbtest")
-			updateDnsGlbOptions.SetDescription("Update Global load balancer 01")
-			updateDnsGlbOptions.SetEnabled(true)
-			updateDnsGlbOptions.SetTTL(int64(300))
-			updateDnsGlbOptions.SetDefaultPools([]string{poolID})
-			updateDnsGlbOptions.SetFallbackPool(poolID)
-			updateazPools := new(dnssvcsv1.AzPools)
-			updateazPools.UsSouth1 = []string{poolID}
-			updateDnsGlbOptions.SetAzPools(updateazPools)
-			GlbResult, detailedResponse, err := service.UpdateLoadBalancer(updateDnsGlbOptions)
-			It(`Successfully update load balancer`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(200))
-				Expect(*GlbResult.Name).To(Equal("updateglbtest." + zoneName))
-				Expect(*GlbResult.ID).NotTo(BeNil())
-			})
-		})
-
-		Context(`Delete GLB`, func() {
-			glbID := os.Getenv("DELETE_GLB_ID")
-			It(`Successfully Get LB ID`, func() {
-				Expect(glbID).NotTo(BeEmpty())
-			})
-			deleteDnsGlbOptions := service.NewDeleteLoadBalancerOptions(instanceID, zoneID, glbID)
-			detailedResponse, err := service.DeleteLoadBalancer(deleteDnsGlbOptions)
-			It(`Successfully delete load balancer pool`, func() {
-				Expect(err).To(BeNil())
-				Expect(detailedResponse.StatusCode).To(Equal(204))
-			})
-		})
-	})
-})
+	zoneName = parts[0]
+}
+
+func shouldSkipTest(t *testing.T) {
+	if service == nil {
+		t.Skip("Skipping test as service credentials are missing")
+	}
+}
+
+func TestDnsZonesOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test List DNS Zone
+	_, _, returnValueErr := service.ListDnszones(nil)
+	assert.NotNil(t, returnValueErr)
+
+	listDnszonesOptions := service.NewListDnszonesOptions(instanceID)
+	listDnszonesOptions.SetXCorrelationID("abc123")
+	listDnszonesOptions.SetHeaders(header)
+	results, response, reqErr := service.ListDnszones(listDnszonesOptions)
+	assert.NotNil(t, results)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+	firstResource := results.Dnszones[0]
+	assert.Equal(t, instanceID, *firstResource.InstanceID)
+
+	// Test Create DNS Zone
+	zoneName := "test.com"
+	createDnszoneOptions := service.NewCreateDnszoneOptions(instanceID, zoneName)
+	createDnszoneOptions.SetDescription("testString")
+	createDnszoneOptions.SetLabel("testString")
+	createDnszoneOptions.SetXCorrelationID("abc123")
+	createDnszoneOptions.SetHeaders(header)
+	result, response, reqErr := service.CreateDnszone(createDnszoneOptions)
+	assert.NotNil(t, result)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "testString", *result.Description)
+	assert.Nil(t, reqErr)
+
+	testzoneID := result.ID
+	// Test Get DNS Zone
+	getDnszoneOptions := service.NewGetDnszoneOptions(instanceID, *testzoneID)
+	getDnszoneOptions.SetXCorrelationID("abc123")
+	getDnszoneOptions.SetHeaders(header)
+	result, response, reqErr = service.GetDnszone(getDnszoneOptions)
+	assert.NotNil(t, result)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "testString", *result.Description)
+	assert.Nil(t, reqErr)
+
+	// Test Update DNS Zone
+	updateDnszoneOptions := service.NewUpdateDnszoneOptions(instanceID, *testzoneID)
+	updateDnszoneOptions.SetDescription("testUpdate")
+	updateDnszoneOptions.SetLabel("testUpdate")
+	updateDnszoneOptions.SetXCorrelationID("abc123")
+	updateDnszoneOptions.SetHeaders(header)
+	result, response, reqErr = service.UpdateDnszone(updateDnszoneOptions)
+	assert.NotNil(t, result)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "testUpdate", *result.Description)
+	assert.Nil(t, reqErr)
+
+	// Test Delete DNS Zone
+	deleteDnszoneOptions := service.NewDeleteDnszoneOptions(instanceID, *testzoneID)
+	deleteDnszoneOptions.SetXCorrelationID("abc123")
+	deleteDnszoneOptions.SetHeaders(header)
+	response, reqErr = service.DeleteDnszone(deleteDnszoneOptions)
+	assert.Nil(t, reqErr)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+
+	// Test Delete DNS Zone fail
+	fdeleteDnszoneOptions := new(dnssvcsv1.DeleteDnszoneOptions)
+	fdeleteDnszoneOptions.SetInstanceID(instanceID)
+	fdeleteDnszoneOptions.SetDnszoneID("invalid_id")
+	_, reqErr = service.DeleteDnszone(fdeleteDnszoneOptions)
+	assert.NotNil(t, reqErr)
+}
+
+func TestDnsPermittedNetworkOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	vpcCrn := os.Getenv("VPC_CRN")
+	assert.NotEmpty(t, vpcCrn)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test Add Permitted Network
+	createPermittedNetworkOptions := service.NewCreatePermittedNetworkOptions(instanceID, zoneID)
+	permittedNetworkCrn := &dnssvcsv1.PermittedNetworkVpc{
+		VpcCrn: &vpcCrn,
+	}
+	createPermittedNetworkOptions.SetPermittedNetwork(permittedNetworkCrn)
+	createPermittedNetworkOptions.SetType(dnssvcsv1.CreatePermittedNetworkOptions_Type_Vpc)
+	createPermittedNetworkOptions.SetXCorrelationID("abc123")
+	createPermittedNetworkOptions.SetHeaders(header)
+	result, response, reqErr := service.CreatePermittedNetwork(createPermittedNetworkOptions)
+	assert.NotNil(t, result)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "ACTIVE", *result.State)
+	assert.Nil(t, reqErr)
+
+	permittednetworkID := result.ID
+
+	// Test List Permitted Networks
+	listPermittedNetworksOptions := service.NewListPermittedNetworksOptions(instanceID, zoneID)
+	listPermittedNetworksOptions.SetXCorrelationID("abc123")
+	listPermittedNetworksOptions.SetHeaders(header)
+	results, response, reqErr := service.ListPermittedNetworks(listPermittedNetworksOptions)
+	assert.NotNil(t, results)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+	firstResource := results.PermittedNetworks[0]
+	assert.NotNil(t, *firstResource.ID)
+
+	// Test Get Permitted Network
+	getPermittedNetworkOptions := service.NewGetPermittedNetworkOptions(instanceID, zoneID, *permittednetworkID)
+	getPermittedNetworkOptions.SetXCorrelationID("abc123")
+	getPermittedNetworkOptions.SetHeaders(header)
+	result, response, reqErr = service.GetPermittedNetwork(getPermittedNetworkOptions)
+	assert.NotNil(t, result)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "ACTIVE", *result.State)
+	assert.Nil(t, reqErr)
+
+	// Test Get Permitted Network Fail
+	fgetPermittedNetworkOptions := new(dnssvcsv1.GetPermittedNetworkOptions)
+	fgetPermittedNetworkOptions.SetInstanceID(instanceID)
+	fgetPermittedNetworkOptions.SetDnszoneID(zoneID)
+	fgetPermittedNetworkOptions.SetPermittedNetworkID("invalid_id")
+	_, _, reqErr = service.GetPermittedNetwork(fgetPermittedNetworkOptions)
+	assert.NotNil(t, reqErr)
+
+	// Test Remove Permitted Network
+	deletePermittedNetworkOptions := service.NewDeletePermittedNetworkOptions(instanceID, zoneID, *permittednetworkID)
+	deletePermittedNetworkOptions.SetXCorrelationID("abc123")
+	deletePermittedNetworkOptions.SetHeaders(header)
+	result, response, reqErr = service.DeletePermittedNetwork(deletePermittedNetworkOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 202, response.GetStatusCode())
+	assert.Equal(t, "REMOVAL_IN_PROGRESS", *result.State)
+	assert.Nil(t, reqErr)
+
+	// Test Rmove Permitted Network Fail
+	fdeletePermittedNetworkOptions := new(dnssvcsv1.DeletePermittedNetworkOptions)
+	fdeletePermittedNetworkOptions.SetInstanceID(instanceID)
+	fdeletePermittedNetworkOptions.SetDnszoneID(zoneID)
+	fdeletePermittedNetworkOptions.SetPermittedNetworkID("invalid_id")
+	_, _, reqErr = service.DeletePermittedNetwork(fdeletePermittedNetworkOptions)
+	assert.NotNil(t, reqErr)
+}
+
+func TestDnsResourceRecordsOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test List Resource Records
+	listResourceRecordsOptions := service.NewListResourceRecordsOptions(instanceID, zoneID)
+	listResourceRecordsOptions.SetXCorrelationID("abc123")
+	listResourceRecordsOptions.SetHeaders(header)
+	results, response, reqErr := service.ListResourceRecords(listResourceRecordsOptions)
+	assert.NotNil(t, results)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+	firstResource := results.ResourceRecords[0]
+	assert.NotNil(t, *firstResource.ID)
+
+	// Test List Resource Records Fail
+	flistResourceRecordsOptions := new(dnssvcsv1.ListResourceRecordsOptions)
+	flistResourceRecordsOptions.SetInstanceID(instanceID)
+	flistResourceRecordsOptions.SetDnszoneID("invaid_id")
+	flistResourceRecordsOptions.SetOffset("1")
+	flistResourceRecordsOptions.SetLimit("20")
+	_, _, reqErr = service.ListResourceRecords(flistResourceRecordsOptions)
+	assert.NotNil(t, reqErr)
+}
+
+func TestDnsResourceRecordAandPTROperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test Create Resource Record A
+	createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
+	createResourceRecordOptions.SetName("testa")
+	createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_A)
+	createResourceRecordOptions.SetTTL(120)
+	rdataARecord, err := service.NewResourceRecordInputRdataRdataARecord("1.1.1.1")
+	assert.Nil(t, err)
+	createResourceRecordOptions.SetRdata(rdataARecord)
+	createResourceRecordOptions.SetXCorrelationID("abc123")
+	createResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr := service.CreateResourceRecord(createResourceRecordOptions)
+	assert.NotNil(t, result)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "A", *result.Type)
+	assert.Nil(t, reqErr)
+
+	// Test Create Resource Record A PTR
+	createResourceRecordPtrOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
+	createResourceRecordPtrOptions.SetName("1.1.1.1")
+	createResourceRecordPtrOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Ptr)
+	createResourceRecordPtrOptions.SetTTL(120)
+	rdataPtrRecord, err := service.NewResourceRecordInputRdataRdataPtrRecord("testa." + zoneName)
+	assert.Nil(t, err)
+	createResourceRecordPtrOptions.SetRdata(rdataPtrRecord)
+	createResourceRecordPtrOptions.SetXCorrelationID("abc123")
+	createResourceRecordPtrOptions.SetHeaders(header)
+	ptrresult, response, reqErr := service.CreateResourceRecord(createResourceRecordPtrOptions)
+	assert.NotNil(t, ptrresult)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "PTR", *ptrresult.Type)
+	assert.Nil(t, reqErr)
+
+	aRecordID := result.ID
+	ptrRecordID := ptrresult.ID
+	// Test Get Resource Record A
+	getResourceRecordOptions := service.NewGetResourceRecordOptions(instanceID, zoneID, *aRecordID)
+	getResourceRecordOptions.SetXCorrelationID("abc123")
+	getResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr = service.GetResourceRecord(getResourceRecordOptions)
+	assert.NotNil(t, result)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "A", *result.Type)
+	assert.Nil(t, reqErr)
+
+	// Test Get Resource Record PTR
+	getResourceRecordPtrOptions := new(dnssvcsv1.GetResourceRecordOptions)
+	getResourceRecordPtrOptions.SetInstanceID(instanceID)
+	getResourceRecordPtrOptions.SetDnszoneID(zoneID)
+	getResourceRecordPtrOptions.SetRecordID(*ptrRecordID)
+	ptrresult, response, reqErr = service.GetResourceRecord(getResourceRecordPtrOptions)
+	assert.NotNil(t, ptrresult)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "PTR", *ptrresult.Type)
+	assert.Nil(t, reqErr)
+
+	// Test Update Resource Record A
+	updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, *aRecordID)
+	updateResourceRecordOptions.SetName("updatea")
+	updateResourceRecordOptions.SetTTL(300)
+	updateResourceRecordOptions.SetXCorrelationID("abc123")
+	updateResourceRecordOptions.SetHeaders(header)
+	updaterdataARecord, err := service.NewResourceRecordUpdateInputRdataRdataARecord("1.1.1.2")
+	assert.Nil(t, err)
+	updateResourceRecordOptions.SetRdata(updaterdataARecord)
+	result, response, reqErr = service.UpdateResourceRecord(updateResourceRecordOptions)
+	assert.NotNil(t, result)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "A", *result.Type)
+	assert.Nil(t, reqErr)
+
+	// Test Update Resource Record PTR
+	updateResourceRecordPtrOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, *ptrRecordID)
+	updateResourceRecordPtrOptions.SetTTL(300)
+	updateResourceRecordPtrOptions.SetXCorrelationID("abc123")
+	updateResourceRecordPtrOptions.SetHeaders(header)
+	ptrresult, response, reqErr = service.UpdateResourceRecord(updateResourceRecordPtrOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "PTR", *ptrresult.Type)
+	assert.Nil(t, reqErr)
+
+	// Test Delete Resource Record PTR
+	deleteResourceRecordOptions := &dnssvcsv1.DeleteResourceRecordOptions{}
+	deleteResourceRecordOptions.SetInstanceID(instanceID)
+	deleteResourceRecordOptions.SetDnszoneID(zoneID)
+	deleteResourceRecordOptions.SetRecordID(*ptrRecordID)
+	deleteResourceRecordOptions.SetXCorrelationID("abc123")
+	deleteResourceRecordOptions.SetHeaders(header)
+	response, reqErr = service.DeleteResourceRecord(deleteResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+
+	// Test Delete Resource Record A
+	deleteResourceRecordOptions = service.NewDeleteResourceRecordOptions(instanceID, zoneID, *aRecordID)
+	deleteResourceRecordOptions.SetXCorrelationID("abc123")
+	deleteResourceRecordOptions.SetHeaders(header)
+	response, reqErr = service.DeleteResourceRecord(deleteResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+}
+
+func TestDnsResourceRecordAAAAOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test Create Resource Record AAAA
+	createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
+	createResourceRecordOptions.SetName("testaaaa")
+	createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Aaaa)
+	createResourceRecordOptions.SetTTL(120)
+	rdataAaaaRecord, err := service.NewResourceRecordInputRdataRdataAaaaRecord("2001::8888")
+	assert.Nil(t, err)
+	createResourceRecordOptions.SetRdata(rdataAaaaRecord)
+	createResourceRecordOptions.SetXCorrelationID("abc123")
+	createResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr := service.CreateResourceRecord(createResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "AAAA", *result.Type)
+	assert.Equal(t, "testaaaa."+zoneName, *result.Name)
+	assert.Nil(t, reqErr)
+
+	aaaaRecordID := result.ID
+	// Test Update Resource Record AAAA
+	updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, *aaaaRecordID)
+	updateResourceRecordOptions.SetName("updateaaaa")
+	updateResourceRecordOptions.SetTTL(300)
+	updaterdataAaaaRecord, err := service.NewResourceRecordUpdateInputRdataRdataAaaaRecord("2001::8889")
+	assert.Nil(t, err)
+	updateResourceRecordOptions.SetRdata(updaterdataAaaaRecord)
+	updateResourceRecordOptions.SetXCorrelationID("abc123")
+	updateResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr = service.UpdateResourceRecord(updateResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "AAAA", *result.Type)
+	assert.Equal(t, "updateaaaa."+zoneName, *result.Name)
+	assert.Nil(t, reqErr)
+
+	// Test Delete Resource Record AAAA
+	deleteResourceRecordOptions := service.NewDeleteResourceRecordOptions(instanceID, zoneID, *aaaaRecordID)
+	deleteResourceRecordOptions.SetXCorrelationID("abc123")
+	deleteResourceRecordOptions.SetHeaders(header)
+	response, reqErr = service.DeleteResourceRecord(deleteResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+}
+
+func TestDnsResourceRecordCNAMEOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test Create Resource Record CNAME
+	createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
+	createResourceRecordOptions.SetName("testcname")
+	createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Cname)
+	createResourceRecordOptions.SetTTL(120)
+	rdataCnameRecord, err := service.NewResourceRecordInputRdataRdataCnameRecord("testcnamedata.com")
+	assert.Nil(t, err)
+	createResourceRecordOptions.SetRdata(rdataCnameRecord)
+	createResourceRecordOptions.SetXCorrelationID("abc123")
+	createResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr := service.CreateResourceRecord(createResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "CNAME", *result.Type)
+	assert.Equal(t, "testcname."+zoneName, *result.Name)
+	assert.Nil(t, reqErr)
+
+	cnameRecordID := result.ID
+	// Test Update Resource Record CNAME
+	updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, *cnameRecordID)
+	updateResourceRecordOptions.SetName("updatecname")
+	updateResourceRecordOptions.SetTTL(300)
+	updaterdataCnameRecord, err := service.NewResourceRecordUpdateInputRdataRdataCnameRecord("updatecnamedata.com")
+	assert.Nil(t, err)
+	updateResourceRecordOptions.SetRdata(updaterdataCnameRecord)
+	updateResourceRecordOptions.SetXCorrelationID("abc123")
+	updateResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr = service.UpdateResourceRecord(updateResourceRecordOptions)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "CNAME", *result.Type)
+	assert.Equal(t, "updatecname."+zoneName, *result.Name)
+	assert.Nil(t, reqErr)
+
+	// Test Delete Resource Record CNAME
+	deleteResourceRecordOptions := service.NewDeleteResourceRecordOptions(instanceID, zoneID, *cnameRecordID)
+	deleteResourceRecordOptions.SetXCorrelationID("abc123")
+	deleteResourceRecordOptions.SetHeaders(header)
+	response, reqErr = service.DeleteResourceRecord(deleteResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+}
+
+func TestDnsResourceRecordMXOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test Create Resource Record MX
+	createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
+	createResourceRecordOptions.SetName("testmx")
+	createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Mx)
+	createResourceRecordOptions.SetTTL(120)
+	rdataMxRecord, err := service.NewResourceRecordInputRdataRdataMxRecord("mail.testmx.com", 1)
+	assert.Nil(t, err)
+	createResourceRecordOptions.SetRdata(rdataMxRecord)
+	createResourceRecordOptions.SetXCorrelationID("abc123")
+	createResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr := service.CreateResourceRecord(createResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "MX", *result.Type)
+	assert.Equal(t, "testmx."+zoneName, *result.Name)
+	assert.Nil(t, reqErr)
+
+	mxRecordID := result.ID
+	// Test Update Resource Record MX
+	updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, *mxRecordID)
+	updateResourceRecordOptions.SetName("testupdatemx")
+	updateResourceRecordOptions.SetTTL(300)
+	updaterdataMxRecord, err := service.NewResourceRecordUpdateInputRdataRdataMxRecord("mail1.testmx.com", 2)
+	assert.Nil(t, err)
+	updateResourceRecordOptions.SetRdata(updaterdataMxRecord)
+	updateResourceRecordOptions.SetXCorrelationID("abc123")
+	updateResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr = service.UpdateResourceRecord(updateResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "MX", *result.Type)
+	assert.Equal(t, "testupdatemx."+zoneName, *result.Name)
+	assert.Nil(t, reqErr)
+
+	// Test Delete Resource Record MX
+	deleteResourceRecordOptions := service.NewDeleteResourceRecordOptions(instanceID, zoneID, *mxRecordID)
+	deleteResourceRecordOptions.SetXCorrelationID("abc123")
+	deleteResourceRecordOptions.SetHeaders(header)
+	response, reqErr = service.DeleteResourceRecord(deleteResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+}
+
+func TestDnsResourceRecordSRVOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test Create Resource Record SRV
+	createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
+	createResourceRecordOptions.SetName("testsrv")
+	createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Srv)
+	createResourceRecordOptions.SetTTL(120)
+	createResourceRecordOptions.SetService("_sip")
+	createResourceRecordOptions.SetProtocol("udp")
+	rdataSrvRecord, err := service.NewResourceRecordInputRdataRdataSrvRecord(1, 1, "siphost.com", 1)
+	assert.Nil(t, err)
+	createResourceRecordOptions.SetRdata(rdataSrvRecord)
+	createResourceRecordOptions.SetXCorrelationID("abc123")
+	createResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr := service.CreateResourceRecord(createResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "SRV", *result.Type)
+	assert.Equal(t, "udp", *result.Protocol)
+	assert.Nil(t, reqErr)
+
+	srvRecordID := result.ID
+	// Test Update Resource Record SRV
+	updateResourceRecordOptions := service.NewUpdateResourceRecordOptions(instanceID, zoneID, *srvRecordID)
+	updateResourceRecordOptions.SetName("updatesrv")
+	updateResourceRecordOptions.SetTTL(300)
+	updateResourceRecordOptions.SetService("_sip")
+	updateResourceRecordOptions.SetProtocol("udp")
+	updaterdataSrvRecord, err := service.NewResourceRecordUpdateInputRdataRdataSrvRecord(2, 2, "updatesiphost.com", 2)
+	assert.Nil(t, err)
+	updateResourceRecordOptions.SetRdata(updaterdataSrvRecord)
+	updateResourceRecordOptions.SetXCorrelationID("abc123")
+	updateResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr = service.UpdateResourceRecord(updateResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "SRV", *result.Type)
+	assert.Nil(t, reqErr)
+
+	// Test Delete Resource Record SRV
+	deleteResourceRecordOptions := service.NewDeleteResourceRecordOptions(instanceID, zoneID, *srvRecordID)
+	deleteResourceRecordOptions.SetXCorrelationID("abc123")
+	deleteResourceRecordOptions.SetHeaders(header)
+	response, reqErr = service.DeleteResourceRecord(deleteResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+}
+
+func TestDnsResourceRecordTXTOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	header := map[string]string{
+		"test": "teststring",
+	}
+	// Test Create Resource Record TXT
+	createResourceRecordOptions := service.NewCreateResourceRecordOptions(instanceID, zoneID)
+	createResourceRecordOptions.SetName("testtxt")
+	createResourceRecordOptions.SetType(dnssvcsv1.CreateResourceRecordOptions_Type_Txt)
+	createResourceRecordOptions.SetTTL(120)
+	rdataTxtRecord, err := service.NewResourceRecordInputRdataRdataTxtRecord("txtdata string")
+	assert.Nil(t, err)
+	createResourceRecordOptions.SetRdata(rdataTxtRecord)
+	createResourceRecordOptions.SetXCorrelationID("abc123")
+	createResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr := service.CreateResourceRecord(createResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "TXT", *result.Type)
+	assert.Equal(t, "testtxt."+zoneName, *result.Name)
+	assert.Nil(t, reqErr)
+
+	txtRecordID := result.ID
+	// Test Update Resource Record TXT
+	updateResourceRecordOptions := &dnssvcsv1.UpdateResourceRecordOptions{}
+	updateResourceRecordOptions.SetInstanceID(instanceID)
+	updateResourceRecordOptions.SetDnszoneID(zoneID)
+	updateResourceRecordOptions.SetRecordID(*txtRecordID)
+	updateResourceRecordOptions.SetTTL(300)
+	updateResourceRecordOptions.SetName("updatetxt")
+	updaterdataTxtRecord, err := service.NewResourceRecordUpdateInputRdataRdataTxtRecord("update txtdata string")
+	assert.Nil(t, err)
+	updateResourceRecordOptions.SetRdata(updaterdataTxtRecord)
+	updateResourceRecordOptions.SetXCorrelationID("abc123")
+	updateResourceRecordOptions.SetHeaders(header)
+	result, response, reqErr = service.UpdateResourceRecord(updateResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "TXT", *result.Type)
+	assert.Equal(t, "updatetxt."+zoneName, *result.Name)
+	assert.Nil(t, reqErr)
+
+	// Test Delete Resource Record TXT
+	deleteResourceRecordOptions := service.NewDeleteResourceRecordOptions(instanceID, zoneID, *txtRecordID)
+	deleteResourceRecordOptions.SetXCorrelationID("abc123")
+	deleteResourceRecordOptions.SetHeaders(header)
+	response, reqErr = service.DeleteResourceRecord(deleteResourceRecordOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+}
+
+func TestDnsLoadBalancerOperation(t *testing.T) {
+	shouldSkipTest(t)
+
+	headers := map[string]string{
+		"test": "teststring",
+	}
+	// Test Create GLB Monitor
+	createDnsGlbMonitorOptions := service.NewCreateMonitorOptions(instanceID)
+	createDnsGlbMonitorOptions.SetDescription("Load balancer monitor for example.com")
+	createDnsGlbMonitorOptions.SetType("HTTPS")
+	createDnsGlbMonitorOptions.SetPort(int64(8080))
+	createDnsGlbMonitorOptions.SetInterval(int64(60))
+	createDnsGlbMonitorOptions.SetRetries(int64(2))
+	createDnsGlbMonitorOptions.SetTimeout(int64(5))
+	createDnsGlbMonitorOptions.SetMethod("GET")
+	createDnsGlbMonitorOptions.SetPath("/health")
+	header := map[string][]string{"Host": []string{"example.com"}, "X-App-ID": []string{"abc123"}}
+	createDnsGlbMonitorOptions.SetHeader(header)
+	createDnsGlbMonitorOptions.SetAllowInsecure(false)
+	createDnsGlbMonitorOptions.SetExpectedCodes("200")
+	createDnsGlbMonitorOptions.SetExpectedBody("alive")
+	createDnsGlbMonitorOptions.SetFollowRedirects(false)
+	createDnsGlbMonitorOptions.SetXCorrelationID("abc123")
+	createDnsGlbMonitorOptions.SetHeaders(headers)
+	monitorResult, response, reqErr := service.CreateMonitor(createDnsGlbMonitorOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "HTTPS", *monitorResult.Type)
+	assert.Equal(t, "GET", *monitorResult.Method)
+	assert.Nil(t, reqErr)
+
+	monitorID := monitorResult.ID
+	// Test List GLB Monitor
+	listDnsGlbMonitorOptions := service.NewListMonitorsOptions(instanceID)
+	listDnsGlbMonitorOptions.SetXCorrelationID("abc123")
+	listDnsGlbMonitorOptions.SetHeaders(headers)
+	monitorResults, response, reqErr := service.ListMonitors(listDnsGlbMonitorOptions)
+	assert.NotNil(t, monitorResults)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+	firstMonitor := monitorResults.Monitors[0]
+	assert.NotNil(t, *firstMonitor.ID)
+
+	// Test Get GLB Monitor
+	getDnsGlbMonitorOptions := service.NewGetMonitorOptions(instanceID, *monitorID)
+	getDnsGlbMonitorOptions.SetXCorrelationID("abc123")
+	getDnsGlbMonitorOptions.SetHeaders(headers)
+	monitorResult, response, reqErr = service.GetMonitor(getDnsGlbMonitorOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "HTTPS", *monitorResult.Type)
+	assert.Equal(t, "GET", *monitorResult.Method)
+	assert.Nil(t, reqErr)
+
+	// Test Update GLB Monitor
+	updateDnsGlbMonitorOptions := service.NewUpdateMonitorOptions(instanceID, *monitorID)
+	updateDnsGlbMonitorOptions.SetDescription("Update Load balancer monitor for example.com")
+	updateDnsGlbMonitorOptions.SetType("HTTP")
+	updateDnsGlbMonitorOptions.SetPort(int64(8080))
+	updateDnsGlbMonitorOptions.SetInterval(int64(60))
+	updateDnsGlbMonitorOptions.SetRetries(int64(2))
+	updateDnsGlbMonitorOptions.SetTimeout(int64(5))
+	updateDnsGlbMonitorOptions.SetMethod("GET")
+	updateDnsGlbMonitorOptions.SetPath("/health")
+	header = map[string][]string{"Host": []string{"example.com"}, "X-App-ID": []string{"abc456"}}
+	updateDnsGlbMonitorOptions.SetHeader(header)
+	updateDnsGlbMonitorOptions.SetAllowInsecure(false)
+	updateDnsGlbMonitorOptions.SetExpectedCodes("200")
+	updateDnsGlbMonitorOptions.SetExpectedBody("alive")
+	updateDnsGlbMonitorOptions.SetFollowRedirects(false)
+	updateDnsGlbMonitorOptions.SetXCorrelationID("abc123")
+	updateDnsGlbMonitorOptions.SetHeaders(headers)
+	monitorResult, response, reqErr = service.UpdateMonitor(updateDnsGlbMonitorOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "HTTP", *monitorResult.Type)
+	assert.Equal(t, "GET", *monitorResult.Method)
+	assert.Nil(t, reqErr)
+
+	// Test Create GLB Pool
+	createDnsGlbPoolOptions := service.NewCreatePoolOptions(instanceID)
+	createDnsGlbPoolOptions.SetName("dal-pool")
+	createDnsGlbPoolOptions.SetDescription("dallas pool for example.com")
+	createDnsGlbPoolOptions.SetEnabled(true)
+	createDnsGlbPoolOptions.SetMinimumOrigins(int64(1))
+	origin1 := new(dnssvcsv1.Origin)
+	origin1.Name = core.StringPtr("dal-origin01")
+	origin1.Description = core.StringPtr("description of the origin server")
+	origin1.Address = core.StringPtr("10.10.16.8")
+	origin1.Enabled = core.BoolPtr(true)
+	origin1.Weight = core.Int64Ptr(int64(1))
+	createDnsGlbPoolOptions.SetOrigins([]dnssvcsv1.Origin{*origin1})
+	createDnsGlbPoolOptions.SetMonitor(*monitorID)
+	createDnsGlbPoolOptions.SetNotificationType(dnssvcsv1.CreatePoolOptions_NotificationType_Email)
+	createDnsGlbPoolOptions.SetNotificationChannel("xxx@email.example.com")
+	createDnsGlbPoolOptions.SetXCorrelationID("abc123")
+	createDnsGlbPoolOptions.SetHeaders(headers)
+	poolResult, response, reqErr := service.CreatePool(createDnsGlbPoolOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "dal-pool", *poolResult.Name)
+	assert.NotNil(t, *poolResult.ID)
+	assert.Nil(t, reqErr)
+
+	poolID := poolResult.ID
+	// Test List GLB Pool
+	listDnsGlbPoolOptions := service.NewListPoolsOptions(instanceID)
+	listDnsGlbPoolOptions.SetXCorrelationID("abc123")
+	listDnsGlbPoolOptions.SetHeaders(headers)
+	poolResults, response, reqErr := service.ListPools(listDnsGlbPoolOptions)
+	assert.NotNil(t, poolResults)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+	firstPool := poolResults.Pools[0]
+	assert.NotNil(t, *firstPool.ID)
+
+	// Test Get GLB Pool
+	getDnsGlbPoolOptions := service.NewGetPoolOptions(instanceID, *poolID)
+	getDnsGlbPoolOptions.SetXCorrelationID("abc123")
+	getDnsGlbPoolOptions.SetHeaders(headers)
+	poolResult, response, reqErr = service.GetPool(getDnsGlbPoolOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "dal-pool", *poolResult.Name)
+	assert.NotNil(t, *poolResult.ID)
+	assert.Nil(t, reqErr)
+
+	// Test Update GLB Pool
+	updateDnsGlbPoolOptions := service.NewUpdatePoolOptions(instanceID, *poolID)
+	updateDnsGlbPoolOptions.SetName("dal-pool-update")
+	updateDnsGlbPoolOptions.SetDescription("dallas pool update for example.com")
+	updateDnsGlbPoolOptions.SetEnabled(true)
+	updateDnsGlbPoolOptions.SetMinimumOrigins(int64(1))
+	origin2 := new(dnssvcsv1.Origin)
+	origin2.Name = core.StringPtr("dal-origin02")
+	origin2.Description = core.StringPtr("description of the origin server")
+	origin2.Address = core.StringPtr("10.10.16.9")
+	origin2.Enabled = core.BoolPtr(true)
+	origin2.Weight = core.Int64Ptr(int64(1))
+	updateDnsGlbPoolOptions.SetOrigins([]dnssvcsv1.Origin{*origin2})
+	updateDnsGlbPoolOptions.SetMonitor(*monitorID)
+	updateDnsGlbPoolOptions.SetNotificationType(dnssvcsv1.CreatePoolOptions_NotificationType_Email)
+	updateDnsGlbPoolOptions.SetNotificationChannel("xxx@email.example.com")
+	updateDnsGlbPoolOptions.SetXCorrelationID("abc123")
+	updateDnsGlbPoolOptions.SetHeaders(headers)
+	poolResult, response, reqErr = service.UpdatePool(updateDnsGlbPoolOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "dal-pool-update", *poolResult.Name)
+	assert.NotNil(t, *poolResult.ID)
+	assert.Nil(t, reqErr)
+
+	// Test Create GLB
+	createDnsGlbOptions := service.NewCreateLoadBalancerOptions(instanceID, zoneID)
+	createDnsGlbOptions.SetName("glbtest")
+	createDnsGlbOptions.SetDescription("Global load balancer 01")
+	createDnsGlbOptions.SetEnabled(true)
+	createDnsGlbOptions.SetTTL(int64(300))
+	createDnsGlbOptions.SetDefaultPools([]string{*poolID})
+	createDnsGlbOptions.SetFallbackPool(*poolID)
+	azPools := new(dnssvcsv1.AzPools)
+	azPools.UsSouth1 = []string{*poolID}
+	createDnsGlbOptions.SetAzPools(azPools)
+	createDnsGlbOptions.SetXCorrelationID("abc123")
+	createDnsGlbOptions.SetHeaders(headers)
+	glbResult, response, reqErr := service.CreateLoadBalancer(createDnsGlbOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "glbtest."+zoneName, *glbResult.Name)
+	assert.NotNil(t, *glbResult.ID)
+	assert.Nil(t, reqErr)
+
+	glbID := glbResult.ID
+	// Test List GLB
+	listDnsGlbOptions := service.NewListLoadBalancersOptions(instanceID, zoneID)
+	listDnsGlbOptions.SetXCorrelationID("abc123")
+	listDnsGlbOptions.SetHeaders(headers)
+	glbResults, response, reqErr := service.ListLoadBalancers(listDnsGlbOptions)
+	assert.NotNil(t, glbResults)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+	firstGlb := glbResults.LoadBalancers[0]
+	assert.NotNil(t, *firstGlb.ID)
+
+	// Test Get GLB
+	getDnsGlbOptions := service.NewGetLoadBalancerOptions(instanceID, zoneID, *glbID)
+	getDnsGlbOptions.SetXCorrelationID("abc123")
+	getDnsGlbOptions.SetHeaders(headers)
+	glbResult, response, reqErr = service.GetLoadBalancer(getDnsGlbOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "glbtest."+zoneName, *glbResult.Name)
+	assert.NotNil(t, *glbResult.ID)
+	assert.Nil(t, reqErr)
+
+	// Test Update GLB
+	updateDnsGlbOptions := service.NewUpdateLoadBalancerOptions(instanceID, zoneID, *glbID)
+	updateDnsGlbOptions.SetName("updateglbtest")
+	updateDnsGlbOptions.SetDescription("Update Global load balancer 01")
+	updateDnsGlbOptions.SetEnabled(true)
+	updateDnsGlbOptions.SetTTL(int64(300))
+	updateDnsGlbOptions.SetDefaultPools([]string{*poolID})
+	updateDnsGlbOptions.SetFallbackPool(*poolID)
+	updateazPools := new(dnssvcsv1.AzPools)
+	updateazPools.UsSouth1 = []string{*poolID}
+	updateDnsGlbOptions.SetAzPools(updateazPools)
+	updateDnsGlbOptions.SetXCorrelationID("abc123")
+	updateDnsGlbOptions.SetHeaders(headers)
+	glbResult, response, reqErr = service.UpdateLoadBalancer(updateDnsGlbOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 200, response.GetStatusCode())
+	assert.Equal(t, "updateglbtest."+zoneName, *glbResult.Name)
+	assert.NotNil(t, *glbResult.ID)
+	assert.Nil(t, reqErr)
+
+	// Test Delete GLB
+	deleteDnsGlbOptions := service.NewDeleteLoadBalancerOptions(instanceID, zoneID, *glbID)
+	deleteDnsGlbOptions.SetXCorrelationID("abc123")
+	deleteDnsGlbOptions.SetHeaders(headers)
+	response, reqErr = service.DeleteLoadBalancer(deleteDnsGlbOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+
+	// Test Delete GLB Fail
+	fdeleteDnsGlbOptions := new(dnssvcsv1.DeleteLoadBalancerOptions)
+	fdeleteDnsGlbOptions.SetInstanceID(instanceID)
+	fdeleteDnsGlbOptions.SetDnszoneID(zoneID)
+	fdeleteDnsGlbOptions.SetLbID("invalid")
+	_, reqErr = service.DeleteLoadBalancer(fdeleteDnsGlbOptions)
+	assert.NotNil(t, reqErr)
+
+	// Test Delete GLB Pool
+	deleteDnsGlbPoolOptions := service.NewDeletePoolOptions(instanceID, *poolID)
+	deleteDnsGlbPoolOptions.SetXCorrelationID("abc123")
+	deleteDnsGlbPoolOptions.SetHeaders(headers)
+	response, reqErr = service.DeletePool(deleteDnsGlbPoolOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+
+	// Test Delete GLB Monitor
+	deleteDnsGlbMonitorOptions := service.NewDeleteMonitorOptions(instanceID, *monitorID)
+	deleteDnsGlbMonitorOptions.SetXCorrelationID("abc123")
+	deleteDnsGlbMonitorOptions.SetHeaders(headers)
+	response, reqErr = service.DeleteMonitor(deleteDnsGlbMonitorOptions)
+	assert.NotNil(t, response)
+	assert.Equal(t, 204, response.GetStatusCode())
+	assert.Nil(t, reqErr)
+}
+
+func TestDnsRecordRecordUnmarshalUtility(t *testing.T) {
+	testInputData := map[string]interface{}{
+		"ip":         "1.1.1.1",
+		"cname":      "cname",
+		"exchange":   "exchange",
+		"preference": float64(1),
+		"port":       float64(1),
+		"priority":   float64(1),
+		"target":     "target",
+		"weight":     float64(1),
+		"text":       "text",
+		"ptrdname":   "ptrdname",
+	}
+
+	// Test Common Record Unmarshal utility
+	result, err := dnssvcsv1.UnmarshalResourceRecordInputRdata(testInputData)
+	assert.NotNil(t, result)
+	assert.Nil(t, err)
+
+	result1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdata(testInputData)
+	assert.NotNil(t, result1)
+	assert.Nil(t, err)
+
+	// Test Record A Rdata Unmarshal utility
+	aRdata := map[string]interface{}{
+		"ip": "1.1.1.1",
+	}
+	aResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataARecord(aRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, aResult)
+	aResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataARecord(aRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, aResult1)
+
+	// Test Record AAAA Rdata Unmarshal utility
+	aaaaRdata := map[string]interface{}{
+		"ip": "2001::1234",
+	}
+	aaaaResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataAaaaRecord(aaaaRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, aaaaResult)
+	aaaaResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataAaaaRecord(aaaaRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, aaaaResult1)
+
+	// Test Record CNAME Rdata Unmarshal utility
+	cnameRdata := map[string]interface{}{
+		"cname": "example.com",
+	}
+	cnameResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataCnameRecord(cnameRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, cnameResult)
+	cnameResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataCnameRecord(cnameRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, cnameResult1)
+
+	// Test Record MX Rdata Unmarshal utility
+	mxRdata := map[string]interface{}{
+		"preference": float64(2),
+		"exchange":   "mail1.example.com",
+	}
+	mxResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataMxRecord(mxRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, mxResult)
+	mxResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataMxRecord(mxRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, mxResult1)
+
+	// Test Record PTR Rdata Unmarshal utility
+	ptrRdata := map[string]interface{}{
+		"ptrdname": "example.com",
+	}
+	ptrResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataPtrRecord(ptrRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, ptrResult)
+	ptrResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord(ptrRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, ptrResult1)
+
+	// Test Record SVR Rdata Unmarshal utility
+	srvRdata := map[string]interface{}{
+		"priority": float64(2),
+		"weight":   float64(2),
+		"port":     float64(2),
+		"target":   "example.com",
+	}
+	srvResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataSrvRecord(srvRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, srvResult)
+	srvResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataSrvRecord(srvRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, srvResult1)
+
+	// Test Record TXT Rdata Unmarshal utility
+	txtRdata := map[string]interface{}{
+		"text": "text string",
+	}
+	txtResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataTxtRecord(txtRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, txtResult)
+	txtResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataTxtRecord(txtRdata)
+	assert.Nil(t, err)
+	assert.NotNil(t, txtResult1)
+}

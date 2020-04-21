@@ -2382,24 +2382,6 @@ func UnmarshalAzPools(m map[string]interface{}) (result *AzPools, err error) {
 	return
 }
 
-// UnmarshalAzPoolsSlice unmarshals a slice of AzPools instances from the specified list of maps.
-func UnmarshalAzPoolsSlice(s []interface{}) (slice []AzPools, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'AzPools'")
-			return
-		}
-		obj, e := UnmarshalAzPools(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
 // UnmarshalAzPoolsAsProperty unmarshals an instance of AzPools that is stored as a property
 // within the specified map.
 func UnmarshalAzPoolsAsProperty(m map[string]interface{}, propertyName string) (result *AzPools, err error) {
@@ -2411,21 +2393,6 @@ func UnmarshalAzPoolsAsProperty(m map[string]interface{}, propertyName string) (
 			return
 		}
 		result, err = UnmarshalAzPools(objMap)
-	}
-	return
-}
-
-// UnmarshalAzPoolsSliceAsProperty unmarshals a slice of AzPools instances that are stored as a property
-// within the specified map.
-func UnmarshalAzPoolsSliceAsProperty(m map[string]interface{}, propertyName string) (slice []AzPools, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'AzPools'", propertyName)
-			return
-		}
-		slice, err = UnmarshalAzPoolsSlice(vSlice)
 	}
 	return
 }
@@ -2489,54 +2456,6 @@ func UnmarshalListLoadBalancers(m map[string]interface{}) (result *ListLoadBalan
 	return
 }
 
-// UnmarshalListLoadBalancersSlice unmarshals a slice of ListLoadBalancers instances from the specified list of maps.
-func UnmarshalListLoadBalancersSlice(s []interface{}) (slice []ListLoadBalancers, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'ListLoadBalancers'")
-			return
-		}
-		obj, e := UnmarshalListLoadBalancers(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalListLoadBalancersAsProperty unmarshals an instance of ListLoadBalancers that is stored as a property
-// within the specified map.
-func UnmarshalListLoadBalancersAsProperty(m map[string]interface{}, propertyName string) (result *ListLoadBalancers, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'ListLoadBalancers'", propertyName)
-			return
-		}
-		result, err = UnmarshalListLoadBalancers(objMap)
-	}
-	return
-}
-
-// UnmarshalListLoadBalancersSliceAsProperty unmarshals a slice of ListLoadBalancers instances that are stored as a property
-// within the specified map.
-func UnmarshalListLoadBalancersSliceAsProperty(m map[string]interface{}, propertyName string) (slice []ListLoadBalancers, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'ListLoadBalancers'", propertyName)
-			return
-		}
-		slice, err = UnmarshalListLoadBalancersSlice(vSlice)
-	}
-	return
-}
-
 // ListMonitors : List load balancer monitors response.
 type ListMonitors struct {
 	// An array of load balancer monitors.
@@ -2596,54 +2515,6 @@ func UnmarshalListMonitors(m map[string]interface{}) (result *ListMonitors, err 
 	return
 }
 
-// UnmarshalListMonitorsSlice unmarshals a slice of ListMonitors instances from the specified list of maps.
-func UnmarshalListMonitorsSlice(s []interface{}) (slice []ListMonitors, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'ListMonitors'")
-			return
-		}
-		obj, e := UnmarshalListMonitors(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalListMonitorsAsProperty unmarshals an instance of ListMonitors that is stored as a property
-// within the specified map.
-func UnmarshalListMonitorsAsProperty(m map[string]interface{}, propertyName string) (result *ListMonitors, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'ListMonitors'", propertyName)
-			return
-		}
-		result, err = UnmarshalListMonitors(objMap)
-	}
-	return
-}
-
-// UnmarshalListMonitorsSliceAsProperty unmarshals a slice of ListMonitors instances that are stored as a property
-// within the specified map.
-func UnmarshalListMonitorsSliceAsProperty(m map[string]interface{}, propertyName string) (slice []ListMonitors, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'ListMonitors'", propertyName)
-			return
-		}
-		slice, err = UnmarshalListMonitorsSlice(vSlice)
-	}
-	return
-}
-
 // ListPools : List load balancer pools response.
 type ListPools struct {
 	// An array of load balancer pools.
@@ -2700,54 +2571,6 @@ func UnmarshalListPools(m map[string]interface{}) (result *ListPools, err error)
 		return
 	}
 	result = obj
-	return
-}
-
-// UnmarshalListPoolsSlice unmarshals a slice of ListPools instances from the specified list of maps.
-func UnmarshalListPoolsSlice(s []interface{}) (slice []ListPools, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'ListPools'")
-			return
-		}
-		obj, e := UnmarshalListPools(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalListPoolsAsProperty unmarshals an instance of ListPools that is stored as a property
-// within the specified map.
-func UnmarshalListPoolsAsProperty(m map[string]interface{}, propertyName string) (result *ListPools, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'ListPools'", propertyName)
-			return
-		}
-		result, err = UnmarshalListPools(objMap)
-	}
-	return
-}
-
-// UnmarshalListPoolsSliceAsProperty unmarshals a slice of ListPools instances that are stored as a property
-// within the specified map.
-func UnmarshalListPoolsSliceAsProperty(m map[string]interface{}, propertyName string) (slice []ListPools, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'ListPools'", propertyName)
-			return
-		}
-		slice, err = UnmarshalListPoolsSlice(vSlice)
-	}
 	return
 }
 
@@ -2846,21 +2669,6 @@ func UnmarshalLoadBalancerSlice(s []interface{}) (slice []LoadBalancer, err erro
 			return
 		}
 		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalLoadBalancerAsProperty unmarshals an instance of LoadBalancer that is stored as a property
-// within the specified map.
-func UnmarshalLoadBalancerAsProperty(m map[string]interface{}, propertyName string) (result *LoadBalancer, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'LoadBalancer'", propertyName)
-			return
-		}
-		result, err = UnmarshalLoadBalancer(objMap)
 	}
 	return
 }
@@ -3034,21 +2842,6 @@ func UnmarshalMonitorSlice(s []interface{}) (slice []Monitor, err error) {
 	return
 }
 
-// UnmarshalMonitorAsProperty unmarshals an instance of Monitor that is stored as a property
-// within the specified map.
-func UnmarshalMonitorAsProperty(m map[string]interface{}, propertyName string) (result *Monitor, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'Monitor'", propertyName)
-			return
-		}
-		result, err = UnmarshalMonitor(objMap)
-	}
-	return
-}
-
 // UnmarshalMonitorSliceAsProperty unmarshals a slice of Monitor instances that are stored as a property
 // within the specified map.
 func UnmarshalMonitorSliceAsProperty(m map[string]interface{}, propertyName string) (slice []Monitor, err error) {
@@ -3123,21 +2916,6 @@ func UnmarshalOriginSlice(s []interface{}) (slice []Origin, err error) {
 			return
 		}
 		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalOriginAsProperty unmarshals an instance of Origin that is stored as a property
-// within the specified map.
-func UnmarshalOriginAsProperty(m map[string]interface{}, propertyName string) (result *Origin, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'Origin'", propertyName)
-			return
-		}
-		result, err = UnmarshalOrigin(objMap)
 	}
 	return
 }
@@ -3267,21 +3045,6 @@ func UnmarshalPoolSlice(s []interface{}) (slice []Pool, err error) {
 			return
 		}
 		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalPoolAsProperty unmarshals an instance of Pool that is stored as a property
-// within the specified map.
-func UnmarshalPoolAsProperty(m map[string]interface{}, propertyName string) (result *Pool, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'Pool'", propertyName)
-			return
-		}
-		result, err = UnmarshalPool(objMap)
 	}
 	return
 }
