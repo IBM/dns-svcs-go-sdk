@@ -436,6 +436,9 @@ func (dnsSvcs *DnsSvcsV1) CreatePool(createPoolOptions *CreatePoolOptions) (resu
 	if createPoolOptions.MinimumOrigins != nil {
 		body["minimum_origins"] = createPoolOptions.MinimumOrigins
 	}
+	if createPoolOptions.HealthyOriginsThreshold != nil {
+		body["healthy_origins_threshold"] = createPoolOptions.HealthyOriginsThreshold
+	}
 	if createPoolOptions.Origins != nil {
 		body["origins"] = createPoolOptions.Origins
 	}
@@ -616,6 +619,9 @@ func (dnsSvcs *DnsSvcsV1) UpdatePool(updatePoolOptions *UpdatePoolOptions) (resu
 	if updatePoolOptions.MinimumOrigins != nil {
 		body["minimum_origins"] = updatePoolOptions.MinimumOrigins
 	}
+	if updatePoolOptions.HealthyOriginsThreshold != nil {
+		body["healthy_origins_threshold"] = updatePoolOptions.HealthyOriginsThreshold
+	}
 	if updatePoolOptions.Origins != nil {
 		body["origins"] = updatePoolOptions.Origins
 	}
@@ -741,6 +747,9 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 	}
 
 	body := make(map[string]interface{})
+	if createMonitorOptions.Name != nil {
+		body["name"] = createMonitorOptions.Name
+	}
 	if createMonitorOptions.Description != nil {
 		body["description"] = createMonitorOptions.Description
 	}
@@ -764,9 +773,6 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 	}
 	if createMonitorOptions.Path != nil {
 		body["path"] = createMonitorOptions.Path
-	}
-	if createMonitorOptions.Header != nil {
-		body["header"] = createMonitorOptions.Header
 	}
 	if createMonitorOptions.AllowInsecure != nil {
 		body["allow_insecure"] = createMonitorOptions.AllowInsecure
@@ -936,6 +942,9 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 	}
 
 	body := make(map[string]interface{})
+	if updateMonitorOptions.Name != nil {
+		body["name"] = updateMonitorOptions.Name
+	}
 	if updateMonitorOptions.Description != nil {
 		body["description"] = updateMonitorOptions.Description
 	}
@@ -959,9 +968,6 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 	}
 	if updateMonitorOptions.Path != nil {
 		body["path"] = updateMonitorOptions.Path
-	}
-	if updateMonitorOptions.Header != nil {
-		body["header"] = updateMonitorOptions.Header
 	}
 	if updateMonitorOptions.AllowInsecure != nil {
 		body["allow_insecure"] = updateMonitorOptions.AllowInsecure
@@ -1115,6 +1121,9 @@ type CreateMonitorOptions struct {
 	// The unique identifier of a service instance.
 	InstanceID *string `json:"instance_id" validate:"required"`
 
+	// The name of the load balancer monitor.
+	Name *string `json:"name,omitempty"`
+
 	// Descriptive text of the load balancer monitor.
 	Description *string `json:"description,omitempty"`
 
@@ -1142,10 +1151,6 @@ type CreateMonitorOptions struct {
 	// The endpoint path to health check against. This parameter is only valid for HTTP and HTTPS monitors.
 	Path *string `json:"path,omitempty"`
 
-	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
-	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
-	Header interface{} `json:"header,omitempty"`
-
 	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
 	// monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
@@ -1168,6 +1173,14 @@ type CreateMonitorOptions struct {
 	Headers map[string]string
 }
 
+// Constants associated with the CreateMonitorOptions.Type property.
+// The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS' and 'TCP'.
+const (
+	CreateMonitorOptions_Type_Http  = "HTTP"
+	CreateMonitorOptions_Type_Https = "HTTPS"
+	CreateMonitorOptions_Type_Tcp   = "TCP"
+)
+
 // Constants associated with the CreateMonitorOptions.Method property.
 // The method to use for the health check applicable to HTTP/HTTPS based checks, the default value is 'GET'.
 const (
@@ -1185,6 +1198,12 @@ func (*DnsSvcsV1) NewCreateMonitorOptions(instanceID string) *CreateMonitorOptio
 // SetInstanceID : Allow user to set InstanceID
 func (options *CreateMonitorOptions) SetInstanceID(instanceID string) *CreateMonitorOptions {
 	options.InstanceID = core.StringPtr(instanceID)
+	return options
+}
+
+// SetName : Allow user to set Name
+func (options *CreateMonitorOptions) SetName(name string) *CreateMonitorOptions {
+	options.Name = core.StringPtr(name)
 	return options
 }
 
@@ -1233,12 +1252,6 @@ func (options *CreateMonitorOptions) SetMethod(method string) *CreateMonitorOpti
 // SetPath : Allow user to set Path
 func (options *CreateMonitorOptions) SetPath(path string) *CreateMonitorOptions {
 	options.Path = core.StringPtr(path)
-	return options
-}
-
-// SetHeader : Allow user to set Header
-func (options *CreateMonitorOptions) SetHeader(header interface{}) *CreateMonitorOptions {
-	options.Header = header
 	return options
 }
 
@@ -1292,9 +1305,14 @@ type CreatePoolOptions struct {
 	// Whether the load balancer pool is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
 
+	// \[deprecated\] The minimum number of origins that must be healthy for this pool to serve traffic. If the number of
+	// healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next
+	// available pool.
+	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
 
 	// The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy
 	// origins, provided the pool itself is healthy.
@@ -1357,6 +1375,12 @@ func (options *CreatePoolOptions) SetEnabled(enabled bool) *CreatePoolOptions {
 // SetMinimumOrigins : Allow user to set MinimumOrigins
 func (options *CreatePoolOptions) SetMinimumOrigins(minimumOrigins int64) *CreatePoolOptions {
 	options.MinimumOrigins = core.Int64Ptr(minimumOrigins)
+	return options
+}
+
+// SetHealthyOriginsThreshold : Allow user to set HealthyOriginsThreshold
+func (options *CreatePoolOptions) SetHealthyOriginsThreshold(healthyOriginsThreshold int64) *CreatePoolOptions {
+	options.HealthyOriginsThreshold = core.Int64Ptr(healthyOriginsThreshold)
 	return options
 }
 
@@ -1948,6 +1972,9 @@ type UpdateMonitorOptions struct {
 	// The unique identifier of a load balancer monitor.
 	MonitorID *string `json:"monitor_id" validate:"required"`
 
+	// The name of the load balancer monitor.
+	Name *string `json:"name,omitempty"`
+
 	// Descriptive text of the load balancer monitor.
 	Description *string `json:"description,omitempty"`
 
@@ -1975,10 +2002,6 @@ type UpdateMonitorOptions struct {
 	// The endpoint path to health check against. This parameter is only valid for HTTP and HTTPS monitors.
 	Path *string `json:"path,omitempty"`
 
-	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
-	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
-	Header interface{} `json:"header,omitempty"`
-
 	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
 	// monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
@@ -2000,6 +2023,14 @@ type UpdateMonitorOptions struct {
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
+
+// Constants associated with the UpdateMonitorOptions.Type property.
+// The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS' and 'TCP'.
+const (
+	UpdateMonitorOptions_Type_Http  = "HTTP"
+	UpdateMonitorOptions_Type_Https = "HTTPS"
+	UpdateMonitorOptions_Type_Tcp   = "TCP"
+)
 
 // Constants associated with the UpdateMonitorOptions.Method property.
 // The method to use for the health check applicable to HTTP/HTTPS based checks, the default value is 'GET'.
@@ -2025,6 +2056,12 @@ func (options *UpdateMonitorOptions) SetInstanceID(instanceID string) *UpdateMon
 // SetMonitorID : Allow user to set MonitorID
 func (options *UpdateMonitorOptions) SetMonitorID(monitorID string) *UpdateMonitorOptions {
 	options.MonitorID = core.StringPtr(monitorID)
+	return options
+}
+
+// SetName : Allow user to set Name
+func (options *UpdateMonitorOptions) SetName(name string) *UpdateMonitorOptions {
+	options.Name = core.StringPtr(name)
 	return options
 }
 
@@ -2073,12 +2110,6 @@ func (options *UpdateMonitorOptions) SetMethod(method string) *UpdateMonitorOpti
 // SetPath : Allow user to set Path
 func (options *UpdateMonitorOptions) SetPath(path string) *UpdateMonitorOptions {
 	options.Path = core.StringPtr(path)
-	return options
-}
-
-// SetHeader : Allow user to set Header
-func (options *UpdateMonitorOptions) SetHeader(header interface{}) *UpdateMonitorOptions {
-	options.Header = header
 	return options
 }
 
@@ -2135,9 +2166,14 @@ type UpdatePoolOptions struct {
 	// Whether the load balancer pool is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
 
+	// \[deprecated\] The minimum number of origins that must be healthy for this pool to serve traffic. If the number of
+	// healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next
+	// available pool.
+	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
 
 	// The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy
 	// origins, provided the pool itself is healthy.
@@ -2207,6 +2243,12 @@ func (options *UpdatePoolOptions) SetEnabled(enabled bool) *UpdatePoolOptions {
 // SetMinimumOrigins : Allow user to set MinimumOrigins
 func (options *UpdatePoolOptions) SetMinimumOrigins(minimumOrigins int64) *UpdatePoolOptions {
 	options.MinimumOrigins = core.Int64Ptr(minimumOrigins)
+	return options
+}
+
+// SetHealthyOriginsThreshold : Allow user to set HealthyOriginsThreshold
+func (options *UpdatePoolOptions) SetHealthyOriginsThreshold(healthyOriginsThreshold int64) *UpdatePoolOptions {
+	options.HealthyOriginsThreshold = core.Int64Ptr(healthyOriginsThreshold)
 	return options
 }
 
@@ -2579,12 +2621,6 @@ type LoadBalancer struct {
 	// Identifier of the load balancer.
 	ID *string `json:"id,omitempty"`
 
-	// the time when a load balancer is created.
-	CreatedOn *string `json:"created_on,omitempty"`
-
-	// the recent time when a load balancer is modified.
-	ModifiedOn *string `json:"modified_on,omitempty"`
-
 	// Name of the load balancer.
 	Name *string `json:"name,omitempty"`
 
@@ -2595,7 +2631,7 @@ type LoadBalancer struct {
 	TTL *int64 `json:"ttl,omitempty"`
 
 	// Healthy state of the load balancer.
-	Health *bool `json:"health,omitempty"`
+	Health *string `json:"health,omitempty"`
 
 	// The pool ID to use when all other pools are detected as unhealthy.
 	FallbackPool *string `json:"fallback_pool,omitempty"`
@@ -2606,20 +2642,26 @@ type LoadBalancer struct {
 
 	// Map availability zones to pool ID's.
 	AzPools *AzPools `json:"az_pools,omitempty"`
+
+	// the time when a load balancer is created.
+	CreatedOn *string `json:"created_on,omitempty"`
+
+	// the recent time when a load balancer is modified.
+	ModifiedOn *string `json:"modified_on,omitempty"`
 }
+
+// Constants associated with the LoadBalancer.Health property.
+// Healthy state of the load balancer.
+const (
+	LoadBalancer_Health_Degraded = "DEGRADED"
+	LoadBalancer_Health_Down     = "DOWN"
+	LoadBalancer_Health_Up       = "UP"
+)
 
 // UnmarshalLoadBalancer constructs an instance of LoadBalancer from the specified map.
 func UnmarshalLoadBalancer(m map[string]interface{}) (result *LoadBalancer, err error) {
 	obj := new(LoadBalancer)
 	obj.ID, err = core.UnmarshalString(m, "id")
-	if err != nil {
-		return
-	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
-	if err != nil {
-		return
-	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
 	if err != nil {
 		return
 	}
@@ -2635,7 +2677,7 @@ func UnmarshalLoadBalancer(m map[string]interface{}) (result *LoadBalancer, err 
 	if err != nil {
 		return
 	}
-	obj.Health, err = core.UnmarshalBool(m, "health")
+	obj.Health, err = core.UnmarshalString(m, "health")
 	if err != nil {
 		return
 	}
@@ -2648,6 +2690,14 @@ func UnmarshalLoadBalancer(m map[string]interface{}) (result *LoadBalancer, err 
 		return
 	}
 	obj.AzPools, err = UnmarshalAzPoolsAsProperty(m, "az_pools")
+	if err != nil {
+		return
+	}
+	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	if err != nil {
+		return
+	}
+	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
 	if err != nil {
 		return
 	}
@@ -2693,11 +2743,8 @@ type Monitor struct {
 	// Identifier of the load balancer monitor.
 	ID *string `json:"id,omitempty"`
 
-	// the time when a load balancer monitor is created.
-	CreatedOn *string `json:"created_on,omitempty"`
-
-	// the recent time when a load balancer monitor is modified.
-	ModifiedOn *string `json:"modified_on,omitempty"`
+	// The name of the load balancer monitor.
+	Name *string `json:"name,omitempty"`
 
 	// Descriptive text of the load balancer monitor.
 	Description *string `json:"description,omitempty"`
@@ -2726,10 +2773,6 @@ type Monitor struct {
 	// The endpoint path to health check against. This parameter is only valid for HTTP and HTTPS monitors.
 	Path *string `json:"path,omitempty"`
 
-	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
-	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
-	Header interface{} `json:"header,omitempty"`
-
 	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
 	// monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
@@ -2744,6 +2787,12 @@ type Monitor struct {
 
 	// Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
 	FollowRedirects *bool `json:"follow_redirects,omitempty"`
+
+	// the time when a load balancer monitor is created.
+	CreatedOn *string `json:"created_on,omitempty"`
+
+	// the recent time when a load balancer monitor is modified.
+	ModifiedOn *string `json:"modified_on,omitempty"`
 }
 
 // Constants associated with the Monitor.Method property.
@@ -2760,11 +2809,7 @@ func UnmarshalMonitor(m map[string]interface{}) (result *Monitor, err error) {
 	if err != nil {
 		return
 	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
-	if err != nil {
-		return
-	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	obj.Name, err = core.UnmarshalString(m, "name")
 	if err != nil {
 		return
 	}
@@ -2800,10 +2845,6 @@ func UnmarshalMonitor(m map[string]interface{}) (result *Monitor, err error) {
 	if err != nil {
 		return
 	}
-	obj.Header, err = core.UnmarshalAny(m, "header")
-	if err != nil {
-		return
-	}
 	obj.AllowInsecure, err = core.UnmarshalBool(m, "allow_insecure")
 	if err != nil {
 		return
@@ -2817,6 +2858,14 @@ func UnmarshalMonitor(m map[string]interface{}) (result *Monitor, err error) {
 		return
 	}
 	obj.FollowRedirects, err = core.UnmarshalBool(m, "follow_redirects")
+	if err != nil {
+		return
+	}
+	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	if err != nil {
+		return
+	}
+	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
 	if err != nil {
 		return
 	}
@@ -2940,12 +2989,6 @@ type Pool struct {
 	// Identifier of the load balancer pool.
 	ID *string `json:"id,omitempty"`
 
-	// the time when a load balancer pool is created.
-	CreatedOn *string `json:"created_on,omitempty"`
-
-	// the recent time when a load balancer pool is modified.
-	ModifiedOn *string `json:"modified_on,omitempty"`
-
 	// Name of the load balancer pool.
 	Name *string `json:"name,omitempty"`
 
@@ -2955,9 +2998,14 @@ type Pool struct {
 	// Whether the load balancer pool is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
 
+	// \[deprecated\] The minimum number of origins that must be healthy for this pool to serve traffic. If the number of
+	// healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next
+	// available pool.
+	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
 
 	// The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy
 	// origins, provided the pool itself is healthy.
@@ -2971,6 +3019,12 @@ type Pool struct {
 
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
+
+	// the time when a load balancer pool is created.
+	CreatedOn *string `json:"created_on,omitempty"`
+
+	// the recent time when a load balancer pool is modified.
+	ModifiedOn *string `json:"modified_on,omitempty"`
 }
 
 // Constants associated with the Pool.NotificationType property.
@@ -2984,14 +3038,6 @@ const (
 func UnmarshalPool(m map[string]interface{}) (result *Pool, err error) {
 	obj := new(Pool)
 	obj.ID, err = core.UnmarshalString(m, "id")
-	if err != nil {
-		return
-	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
-	if err != nil {
-		return
-	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
 	if err != nil {
 		return
 	}
@@ -3011,6 +3057,10 @@ func UnmarshalPool(m map[string]interface{}) (result *Pool, err error) {
 	if err != nil {
 		return
 	}
+	obj.HealthyOriginsThreshold, err = core.UnmarshalInt64(m, "healthy_origins_threshold")
+	if err != nil {
+		return
+	}
 	obj.Origins, err = UnmarshalOriginSliceAsProperty(m, "origins")
 	if err != nil {
 		return
@@ -3024,6 +3074,14 @@ func UnmarshalPool(m map[string]interface{}) (result *Pool, err error) {
 		return
 	}
 	obj.NotificationChannel, err = core.UnmarshalString(m, "notification_channel")
+	if err != nil {
+		return
+	}
+	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	if err != nil {
+		return
+	}
+	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
 	if err != nil {
 		return
 	}

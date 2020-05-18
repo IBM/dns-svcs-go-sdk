@@ -630,6 +630,7 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	}
 	// Test Create GLB Monitor
 	createDnsGlbMonitorOptions := service.NewCreateMonitorOptions(instanceID)
+	createDnsGlbMonitorOptions.SetName("glbMonitor")
 	createDnsGlbMonitorOptions.SetDescription("Load balancer monitor for example.com")
 	createDnsGlbMonitorOptions.SetType("HTTPS")
 	createDnsGlbMonitorOptions.SetPort(int64(8080))
@@ -638,8 +639,6 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	createDnsGlbMonitorOptions.SetTimeout(int64(5))
 	createDnsGlbMonitorOptions.SetMethod("GET")
 	createDnsGlbMonitorOptions.SetPath("/health")
-	header := map[string][]string{"Host": []string{"example.com"}, "X-App-ID": []string{"abc123"}}
-	createDnsGlbMonitorOptions.SetHeader(header)
 	createDnsGlbMonitorOptions.SetAllowInsecure(false)
 	createDnsGlbMonitorOptions.SetExpectedCodes("200")
 	createDnsGlbMonitorOptions.SetExpectedBody("alive")
@@ -679,6 +678,7 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 
 	// Test Update GLB Monitor
 	updateDnsGlbMonitorOptions := service.NewUpdateMonitorOptions(instanceID, *monitorID)
+	updateDnsGlbMonitorOptions.SetName("glbMonitorUpdate")
 	updateDnsGlbMonitorOptions.SetDescription("Update Load balancer monitor for example.com")
 	updateDnsGlbMonitorOptions.SetType("HTTP")
 	updateDnsGlbMonitorOptions.SetPort(int64(8080))
@@ -687,8 +687,6 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	updateDnsGlbMonitorOptions.SetTimeout(int64(5))
 	updateDnsGlbMonitorOptions.SetMethod("GET")
 	updateDnsGlbMonitorOptions.SetPath("/health")
-	header = map[string][]string{"Host": []string{"example.com"}, "X-App-ID": []string{"abc456"}}
-	updateDnsGlbMonitorOptions.SetHeader(header)
 	updateDnsGlbMonitorOptions.SetAllowInsecure(false)
 	updateDnsGlbMonitorOptions.SetExpectedCodes("200")
 	updateDnsGlbMonitorOptions.SetExpectedBody("alive")
@@ -708,6 +706,7 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	createDnsGlbPoolOptions.SetDescription("dallas pool for example.com")
 	createDnsGlbPoolOptions.SetEnabled(true)
 	createDnsGlbPoolOptions.SetMinimumOrigins(int64(1))
+	createDnsGlbPoolOptions.SetHealthyOriginsThreshold(int64(1))
 	origin1 := new(dnssvcsv1.Origin)
 	origin1.Name = core.StringPtr("dal-origin01")
 	origin1.Description = core.StringPtr("description of the origin server")
@@ -757,6 +756,7 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	updateDnsGlbPoolOptions.SetDescription("dallas pool update for example.com")
 	updateDnsGlbPoolOptions.SetEnabled(true)
 	updateDnsGlbPoolOptions.SetMinimumOrigins(int64(1))
+	updateDnsGlbPoolOptions.SetHealthyOriginsThreshold(int64(1))
 	origin2 := new(dnssvcsv1.Origin)
 	origin2.Name = core.StringPtr("dal-origin02")
 	origin2.Description = core.StringPtr("description of the origin server")
