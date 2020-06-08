@@ -25,7 +25,7 @@ import (
 	"testing"
 
 	"github.com/IBM/dns-svcs-go-sdk/dnssvcsv1"
-	"github.com/IBM/go-sdk-core/v3/core"
+	"github.com/IBM/go-sdk-core/v4/core"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
@@ -84,6 +84,8 @@ func TestDnsZonesOperation(t *testing.T) {
 	listDnszonesOptions := service.NewListDnszonesOptions(instanceID)
 	listDnszonesOptions.SetXCorrelationID("abc123")
 	listDnszonesOptions.SetHeaders(header)
+	listDnszonesOptions.SetOffset(int64(0))
+	listDnszonesOptions.SetLimit(int64(10))
 	results, response, reqErr := service.ListDnszones(listDnszonesOptions)
 	assert.NotNil(t, results)
 	assert.NotNil(t, response)
@@ -247,8 +249,8 @@ func TestDnsResourceRecordsOperation(t *testing.T) {
 	flistResourceRecordsOptions := new(dnssvcsv1.ListResourceRecordsOptions)
 	flistResourceRecordsOptions.SetInstanceID(instanceID)
 	flistResourceRecordsOptions.SetDnszoneID("invaid_id")
-	flistResourceRecordsOptions.SetOffset("1")
-	flistResourceRecordsOptions.SetLimit("20")
+	flistResourceRecordsOptions.SetOffset(int64(1))
+	flistResourceRecordsOptions.SetLimit(int64(20))
 	_, _, reqErr = service.ListResourceRecords(flistResourceRecordsOptions)
 	assert.NotNil(t, reqErr)
 }
@@ -529,7 +531,7 @@ func TestDnsResourceRecordSRVOperation(t *testing.T) {
 	createResourceRecordOptions.SetTTL(120)
 	createResourceRecordOptions.SetService("_sip")
 	createResourceRecordOptions.SetProtocol("udp")
-	rdataSrvRecord, err := service.NewResourceRecordInputRdataRdataSrvRecord(1, 1, "siphost.com", 1)
+	rdataSrvRecord, err := service.NewResourceRecordInputRdataRdataSrvRecord(1, 1, 1, "siphost.com")
 	assert.Nil(t, err)
 	createResourceRecordOptions.SetRdata(rdataSrvRecord)
 	createResourceRecordOptions.SetXCorrelationID("abc123")
@@ -548,7 +550,7 @@ func TestDnsResourceRecordSRVOperation(t *testing.T) {
 	updateResourceRecordOptions.SetTTL(300)
 	updateResourceRecordOptions.SetService("_sip")
 	updateResourceRecordOptions.SetProtocol("udp")
-	updaterdataSrvRecord, err := service.NewResourceRecordUpdateInputRdataRdataSrvRecord(2, 2, "updatesiphost.com", 2)
+	updaterdataSrvRecord, err := service.NewResourceRecordUpdateInputRdataRdataSrvRecord(2, 2, 2, "updatesiphost.com")
 	assert.Nil(t, err)
 	updateResourceRecordOptions.SetRdata(updaterdataSrvRecord)
 	updateResourceRecordOptions.SetXCorrelationID("abc123")
@@ -628,6 +630,16 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	headers := map[string]string{
 		"test": "teststring",
 	}
+	healthcheckHeader1 := dnssvcsv1.HealthcheckHeader{
+		Name:  core.StringPtr("Host"),
+		Value: []string{"testexample.com"},
+	}
+	healthcheckHeader2 := dnssvcsv1.HealthcheckHeader{
+		Name:  core.StringPtr("AppId"),
+		Value: []string{"abc123"},
+	}
+	var healthcheckHeader []dnssvcsv1.HealthcheckHeader
+	healthcheckHeader = append(healthcheckHeader, healthcheckHeader1, healthcheckHeader2)
 	// Test Create GLB Monitor
 	createDnsGlbMonitorOptions := service.NewCreateMonitorOptions(instanceID)
 	createDnsGlbMonitorOptions.SetName("glbMonitor")
@@ -642,6 +654,7 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	createDnsGlbMonitorOptions.SetAllowInsecure(false)
 	createDnsGlbMonitorOptions.SetExpectedCodes("200")
 	createDnsGlbMonitorOptions.SetExpectedBody("alive")
+	createDnsGlbMonitorOptions.SetHeadersVar(healthcheckHeader)
 	createDnsGlbMonitorOptions.SetFollowRedirects(false)
 	createDnsGlbMonitorOptions.SetXCorrelationID("abc123")
 	createDnsGlbMonitorOptions.SetHeaders(headers)
@@ -874,109 +887,4 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	assert.NotNil(t, response)
 	assert.Equal(t, 204, response.GetStatusCode())
 	assert.Nil(t, reqErr)
-}
-
-func TestDnsRecordRecordUnmarshalUtility(t *testing.T) {
-	testInputData := map[string]interface{}{
-		"ip":         "1.1.1.1",
-		"cname":      "cname",
-		"exchange":   "exchange",
-		"preference": float64(1),
-		"port":       float64(1),
-		"priority":   float64(1),
-		"target":     "target",
-		"weight":     float64(1),
-		"text":       "text",
-		"ptrdname":   "ptrdname",
-	}
-
-	// Test Common Record Unmarshal utility
-	result, err := dnssvcsv1.UnmarshalResourceRecordInputRdata(testInputData)
-	assert.NotNil(t, result)
-	assert.Nil(t, err)
-
-	result1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdata(testInputData)
-	assert.NotNil(t, result1)
-	assert.Nil(t, err)
-
-	// Test Record A Rdata Unmarshal utility
-	aRdata := map[string]interface{}{
-		"ip": "1.1.1.1",
-	}
-	aResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataARecord(aRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, aResult)
-	aResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataARecord(aRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, aResult1)
-
-	// Test Record AAAA Rdata Unmarshal utility
-	aaaaRdata := map[string]interface{}{
-		"ip": "2001::1234",
-	}
-	aaaaResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataAaaaRecord(aaaaRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, aaaaResult)
-	aaaaResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataAaaaRecord(aaaaRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, aaaaResult1)
-
-	// Test Record CNAME Rdata Unmarshal utility
-	cnameRdata := map[string]interface{}{
-		"cname": "example.com",
-	}
-	cnameResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataCnameRecord(cnameRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, cnameResult)
-	cnameResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataCnameRecord(cnameRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, cnameResult1)
-
-	// Test Record MX Rdata Unmarshal utility
-	mxRdata := map[string]interface{}{
-		"preference": float64(2),
-		"exchange":   "mail1.example.com",
-	}
-	mxResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataMxRecord(mxRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, mxResult)
-	mxResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataMxRecord(mxRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, mxResult1)
-
-	// Test Record PTR Rdata Unmarshal utility
-	ptrRdata := map[string]interface{}{
-		"ptrdname": "example.com",
-	}
-	ptrResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataPtrRecord(ptrRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, ptrResult)
-	ptrResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord(ptrRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, ptrResult1)
-
-	// Test Record SVR Rdata Unmarshal utility
-	srvRdata := map[string]interface{}{
-		"priority": float64(2),
-		"weight":   float64(2),
-		"port":     float64(2),
-		"target":   "example.com",
-	}
-	srvResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataSrvRecord(srvRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, srvResult)
-	srvResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataSrvRecord(srvRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, srvResult1)
-
-	// Test Record TXT Rdata Unmarshal utility
-	txtRdata := map[string]interface{}{
-		"text": "text string",
-	}
-	txtResult, err := dnssvcsv1.UnmarshalResourceRecordInputRdataRdataTxtRecord(txtRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, txtResult)
-	txtResult1, err := dnssvcsv1.UnmarshalResourceRecordUpdateInputRdataRdataTxtRecord(txtRdata)
-	assert.Nil(t, err)
-	assert.NotNil(t, txtResult1)
 }

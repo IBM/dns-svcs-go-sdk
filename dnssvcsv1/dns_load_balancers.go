@@ -18,10 +18,12 @@
 package dnssvcsv1
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 
 	common "github.com/IBM/dns-svcs-go-sdk/common"
-	"github.com/IBM/go-sdk-core/v3/core"
+	"github.com/IBM/go-sdk-core/v4/core"
 )
 
 // ListLoadBalancers : List load balancers
@@ -63,16 +65,16 @@ func (dnsSvcs *DnsSvcsV1) ListLoadBalancers(listLoadBalancersOptions *ListLoadBa
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListLoadBalancers(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListLoadBalancers)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -144,16 +146,16 @@ func (dnsSvcs *DnsSvcsV1) CreateLoadBalancer(createLoadBalancerOptions *CreateLo
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalLoadBalancer(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalLoadBalancer)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -240,16 +242,16 @@ func (dnsSvcs *DnsSvcsV1) GetLoadBalancer(getLoadBalancerOptions *GetLoadBalance
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalLoadBalancer(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalLoadBalancer)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -321,16 +323,16 @@ func (dnsSvcs *DnsSvcsV1) UpdateLoadBalancer(updateLoadBalancerOptions *UpdateLo
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalLoadBalancer(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalLoadBalancer)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -374,16 +376,16 @@ func (dnsSvcs *DnsSvcsV1) ListPools(listPoolsOptions *ListPoolsOptions) (result 
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListPools(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListPools)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -461,16 +463,16 @@ func (dnsSvcs *DnsSvcsV1) CreatePool(createPoolOptions *CreatePoolOptions) (resu
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPool(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPool)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -557,16 +559,16 @@ func (dnsSvcs *DnsSvcsV1) GetPool(getPoolOptions *GetPoolOptions) (result *Pool,
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPool(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPool)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -644,16 +646,16 @@ func (dnsSvcs *DnsSvcsV1) UpdatePool(updatePoolOptions *UpdatePoolOptions) (resu
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPool(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPool)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -697,16 +699,16 @@ func (dnsSvcs *DnsSvcsV1) ListMonitors(listMonitorsOptions *ListMonitorsOptions)
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListMonitors(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListMonitors)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -774,6 +776,9 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 	if createMonitorOptions.Path != nil {
 		body["path"] = createMonitorOptions.Path
 	}
+	if createMonitorOptions.HeadersVar != nil {
+		body["headers"] = createMonitorOptions.HeadersVar
+	}
 	if createMonitorOptions.AllowInsecure != nil {
 		body["allow_insecure"] = createMonitorOptions.AllowInsecure
 	}
@@ -796,16 +801,16 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalMonitor(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalMonitor)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -892,16 +897,16 @@ func (dnsSvcs *DnsSvcsV1) GetMonitor(getMonitorOptions *GetMonitorOptions) (resu
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalMonitor(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalMonitor)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -969,6 +974,9 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 	if updateMonitorOptions.Path != nil {
 		body["path"] = updateMonitorOptions.Path
 	}
+	if updateMonitorOptions.HeadersVar != nil {
+		body["headers"] = updateMonitorOptions.HeadersVar
+	}
 	if updateMonitorOptions.AllowInsecure != nil {
 		body["allow_insecure"] = updateMonitorOptions.AllowInsecure
 	}
@@ -991,16 +999,16 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalMonitor(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalMonitor)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -1151,8 +1159,11 @@ type CreateMonitorOptions struct {
 	// The endpoint path to health check against. This parameter is only valid for HTTP and HTTPS monitors.
 	Path *string `json:"path,omitempty"`
 
-	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
-	// monitors.
+	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
+	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
+	HeadersVar []HealthcheckHeader `json:"headers,omitempty"`
+
+	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTPS monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
 
 	// The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS
@@ -1252,6 +1263,12 @@ func (options *CreateMonitorOptions) SetMethod(method string) *CreateMonitorOpti
 // SetPath : Allow user to set Path
 func (options *CreateMonitorOptions) SetPath(path string) *CreateMonitorOptions {
 	options.Path = core.StringPtr(path)
+	return options
+}
+
+// SetHeadersVar : Allow user to set HeadersVar
+func (options *CreateMonitorOptions) SetHeadersVar(headersVar []HealthcheckHeader) *CreateMonitorOptions {
+	options.HeadersVar = headersVar
 	return options
 }
 
@@ -2002,6 +2019,10 @@ type UpdateMonitorOptions struct {
 	// The endpoint path to health check against. This parameter is only valid for HTTP and HTTPS monitors.
 	Path *string `json:"path,omitempty"`
 
+	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
+	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
+	HeadersVar []HealthcheckHeader `json:"headers,omitempty"`
+
 	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
 	// monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
@@ -2110,6 +2131,12 @@ func (options *UpdateMonitorOptions) SetMethod(method string) *UpdateMonitorOpti
 // SetPath : Allow user to set Path
 func (options *UpdateMonitorOptions) SetPath(path string) *UpdateMonitorOptions {
 	options.Path = core.StringPtr(path)
+	return options
+}
+
+// SetHeadersVar : Allow user to set HeadersVar
+func (options *UpdateMonitorOptions) SetHeadersVar(headersVar []HealthcheckHeader) *UpdateMonitorOptions {
+	options.HeadersVar = headersVar
 	return options
 }
 
@@ -2345,97 +2372,116 @@ type AzPools struct {
 	JpTok3 []string `json:"jp-tok-3,omitempty"`
 }
 
-// UnmarshalAzPools constructs an instance of AzPools from the specified map.
-func UnmarshalAzPools(m map[string]interface{}) (result *AzPools, err error) {
+// UnmarshalAzPools unmarshals an instance of AzPools from the specified map of raw messages.
+func UnmarshalAzPools(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(AzPools)
-	obj.UsSouth1, err = core.UnmarshalStringSlice(m, "us-south-1")
+	err = core.UnmarshalPrimitive(m, "us-south-1", &obj.UsSouth1)
 	if err != nil {
 		return
 	}
-	obj.UsSouth2, err = core.UnmarshalStringSlice(m, "us-south-2")
+	err = core.UnmarshalPrimitive(m, "us-south-2", &obj.UsSouth2)
 	if err != nil {
 		return
 	}
-	obj.UsSouth3, err = core.UnmarshalStringSlice(m, "us-south-3")
+	err = core.UnmarshalPrimitive(m, "us-south-3", &obj.UsSouth3)
 	if err != nil {
 		return
 	}
-	obj.UsEast1, err = core.UnmarshalStringSlice(m, "us-east-1")
+	err = core.UnmarshalPrimitive(m, "us-east-1", &obj.UsEast1)
 	if err != nil {
 		return
 	}
-	obj.UsEast2, err = core.UnmarshalStringSlice(m, "us-east-2")
+	err = core.UnmarshalPrimitive(m, "us-east-2", &obj.UsEast2)
 	if err != nil {
 		return
 	}
-	obj.UsEast3, err = core.UnmarshalStringSlice(m, "us-east-3")
+	err = core.UnmarshalPrimitive(m, "us-east-3", &obj.UsEast3)
 	if err != nil {
 		return
 	}
-	obj.EuGb1, err = core.UnmarshalStringSlice(m, "eu-gb-1")
+	err = core.UnmarshalPrimitive(m, "eu-gb-1", &obj.EuGb1)
 	if err != nil {
 		return
 	}
-	obj.EuGb2, err = core.UnmarshalStringSlice(m, "eu-gb-2")
+	err = core.UnmarshalPrimitive(m, "eu-gb-2", &obj.EuGb2)
 	if err != nil {
 		return
 	}
-	obj.EuGb3, err = core.UnmarshalStringSlice(m, "eu-gb-3")
+	err = core.UnmarshalPrimitive(m, "eu-gb-3", &obj.EuGb3)
 	if err != nil {
 		return
 	}
-	obj.EuDe1, err = core.UnmarshalStringSlice(m, "eu-de-1")
+	err = core.UnmarshalPrimitive(m, "eu-de-1", &obj.EuDe1)
 	if err != nil {
 		return
 	}
-	obj.EuDe2, err = core.UnmarshalStringSlice(m, "eu-de-2")
+	err = core.UnmarshalPrimitive(m, "eu-de-2", &obj.EuDe2)
 	if err != nil {
 		return
 	}
-	obj.EuDe3, err = core.UnmarshalStringSlice(m, "eu-de-3")
+	err = core.UnmarshalPrimitive(m, "eu-de-3", &obj.EuDe3)
 	if err != nil {
 		return
 	}
-	obj.AuSyd1, err = core.UnmarshalStringSlice(m, "au-syd-1")
+	err = core.UnmarshalPrimitive(m, "au-syd-1", &obj.AuSyd1)
 	if err != nil {
 		return
 	}
-	obj.AuSyd2, err = core.UnmarshalStringSlice(m, "au-syd-2")
+	err = core.UnmarshalPrimitive(m, "au-syd-2", &obj.AuSyd2)
 	if err != nil {
 		return
 	}
-	obj.AuSyd3, err = core.UnmarshalStringSlice(m, "au-syd-3")
+	err = core.UnmarshalPrimitive(m, "au-syd-3", &obj.AuSyd3)
 	if err != nil {
 		return
 	}
-	obj.JpTok1, err = core.UnmarshalStringSlice(m, "jp-tok-1")
+	err = core.UnmarshalPrimitive(m, "jp-tok-1", &obj.JpTok1)
 	if err != nil {
 		return
 	}
-	obj.JpTok2, err = core.UnmarshalStringSlice(m, "jp-tok-2")
+	err = core.UnmarshalPrimitive(m, "jp-tok-2", &obj.JpTok2)
 	if err != nil {
 		return
 	}
-	obj.JpTok3, err = core.UnmarshalStringSlice(m, "jp-tok-3")
+	err = core.UnmarshalPrimitive(m, "jp-tok-3", &obj.JpTok3)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
-// UnmarshalAzPoolsAsProperty unmarshals an instance of AzPools that is stored as a property
-// within the specified map.
-func UnmarshalAzPoolsAsProperty(m map[string]interface{}, propertyName string) (result *AzPools, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'AzPools'", propertyName)
-			return
-		}
-		result, err = UnmarshalAzPools(objMap)
+// HealthcheckHeader : The HTTP header of health check request.
+type HealthcheckHeader struct {
+	// The name of HTTP request header.
+	Name *string `json:"name" validate:"required"`
+
+	// The value of HTTP request header.
+	Value []string `json:"value" validate:"required"`
+}
+
+// NewHealthcheckHeader : Instantiate HealthcheckHeader (Generic Model Constructor)
+func (*DnsSvcsV1) NewHealthcheckHeader(name string, value []string) (model *HealthcheckHeader, err error) {
+	model = &HealthcheckHeader{
+		Name:  core.StringPtr(name),
+		Value: value,
 	}
+	err = core.ValidateStruct(model, "required parameters")
+	return
+}
+
+// UnmarshalHealthcheckHeader unmarshals an instance of HealthcheckHeader from the specified map of raw messages.
+func UnmarshalHealthcheckHeader(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(HealthcheckHeader)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "value", &obj.Value)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2463,38 +2509,38 @@ type ListLoadBalancers struct {
 	Next *NextHref `json:"next" validate:"required"`
 }
 
-// UnmarshalListLoadBalancers constructs an instance of ListLoadBalancers from the specified map.
-func UnmarshalListLoadBalancers(m map[string]interface{}) (result *ListLoadBalancers, err error) {
+// UnmarshalListLoadBalancers unmarshals an instance of ListLoadBalancers from the specified map of raw messages.
+func UnmarshalListLoadBalancers(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListLoadBalancers)
-	obj.LoadBalancers, err = UnmarshalLoadBalancerSliceAsProperty(m, "load_balancers")
+	err = core.UnmarshalModel(m, "load_balancers", &obj.LoadBalancers, UnmarshalLoadBalancer)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Count, err = core.UnmarshalInt64(m, "count")
+	err = core.UnmarshalPrimitive(m, "count", &obj.Count)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2522,38 +2568,38 @@ type ListMonitors struct {
 	Next *NextHref `json:"next" validate:"required"`
 }
 
-// UnmarshalListMonitors constructs an instance of ListMonitors from the specified map.
-func UnmarshalListMonitors(m map[string]interface{}) (result *ListMonitors, err error) {
+// UnmarshalListMonitors unmarshals an instance of ListMonitors from the specified map of raw messages.
+func UnmarshalListMonitors(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListMonitors)
-	obj.Monitors, err = UnmarshalMonitorSliceAsProperty(m, "monitors")
+	err = core.UnmarshalModel(m, "monitors", &obj.Monitors, UnmarshalMonitor)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Count, err = core.UnmarshalInt64(m, "count")
+	err = core.UnmarshalPrimitive(m, "count", &obj.Count)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2581,38 +2627,38 @@ type ListPools struct {
 	Next *NextHref `json:"next" validate:"required"`
 }
 
-// UnmarshalListPools constructs an instance of ListPools from the specified map.
-func UnmarshalListPools(m map[string]interface{}) (result *ListPools, err error) {
+// UnmarshalListPools unmarshals an instance of ListPools from the specified map of raw messages.
+func UnmarshalListPools(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListPools)
-	obj.Pools, err = UnmarshalPoolSliceAsProperty(m, "pools")
+	err = core.UnmarshalModel(m, "pools", &obj.Pools, UnmarshalPool)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Count, err = core.UnmarshalInt64(m, "count")
+	err = core.UnmarshalPrimitive(m, "count", &obj.Count)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2658,83 +2704,50 @@ const (
 	LoadBalancer_Health_Up       = "UP"
 )
 
-// UnmarshalLoadBalancer constructs an instance of LoadBalancer from the specified map.
-func UnmarshalLoadBalancer(m map[string]interface{}) (result *LoadBalancer, err error) {
+// UnmarshalLoadBalancer unmarshals an instance of LoadBalancer from the specified map of raw messages.
+func UnmarshalLoadBalancer(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(LoadBalancer)
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.Enabled, err = core.UnmarshalBool(m, "enabled")
+	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
 	if err != nil {
 		return
 	}
-	obj.TTL, err = core.UnmarshalInt64(m, "ttl")
+	err = core.UnmarshalPrimitive(m, "ttl", &obj.TTL)
 	if err != nil {
 		return
 	}
-	obj.Health, err = core.UnmarshalString(m, "health")
+	err = core.UnmarshalPrimitive(m, "health", &obj.Health)
 	if err != nil {
 		return
 	}
-	obj.FallbackPool, err = core.UnmarshalString(m, "fallback_pool")
+	err = core.UnmarshalPrimitive(m, "fallback_pool", &obj.FallbackPool)
 	if err != nil {
 		return
 	}
-	obj.DefaultPools, err = core.UnmarshalStringSlice(m, "default_pools")
+	err = core.UnmarshalPrimitive(m, "default_pools", &obj.DefaultPools)
 	if err != nil {
 		return
 	}
-	obj.AzPools, err = UnmarshalAzPoolsAsProperty(m, "az_pools")
+	err = core.UnmarshalModel(m, "az_pools", &obj.AzPools, UnmarshalAzPools)
 	if err != nil {
 		return
 	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalLoadBalancerSlice unmarshals a slice of LoadBalancer instances from the specified list of maps.
-func UnmarshalLoadBalancerSlice(s []interface{}) (slice []LoadBalancer, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'LoadBalancer'")
-			return
-		}
-		obj, e := UnmarshalLoadBalancer(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalLoadBalancerSliceAsProperty unmarshals a slice of LoadBalancer instances that are stored as a property
-// within the specified map.
-func UnmarshalLoadBalancerSliceAsProperty(m map[string]interface{}, propertyName string) (slice []LoadBalancer, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'LoadBalancer'", propertyName)
-			return
-		}
-		slice, err = UnmarshalLoadBalancerSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2773,6 +2786,10 @@ type Monitor struct {
 	// The endpoint path to health check against. This parameter is only valid for HTTP and HTTPS monitors.
 	Path *string `json:"path,omitempty"`
 
+	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
+	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
+	HeadersVar []HealthcheckHeader `json:"headers,omitempty"`
+
 	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
 	// monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
@@ -2802,107 +2819,78 @@ const (
 	Monitor_Method_Head = "HEAD"
 )
 
-// UnmarshalMonitor constructs an instance of Monitor from the specified map.
-func UnmarshalMonitor(m map[string]interface{}) (result *Monitor, err error) {
+// UnmarshalMonitor unmarshals an instance of Monitor from the specified map of raw messages.
+func UnmarshalMonitor(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Monitor)
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.Description, err = core.UnmarshalString(m, "description")
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
-	obj.Type, err = core.UnmarshalString(m, "type")
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
 	if err != nil {
 		return
 	}
-	obj.Port, err = core.UnmarshalInt64(m, "port")
+	err = core.UnmarshalPrimitive(m, "port", &obj.Port)
 	if err != nil {
 		return
 	}
-	obj.Interval, err = core.UnmarshalInt64(m, "interval")
+	err = core.UnmarshalPrimitive(m, "interval", &obj.Interval)
 	if err != nil {
 		return
 	}
-	obj.Retries, err = core.UnmarshalInt64(m, "retries")
+	err = core.UnmarshalPrimitive(m, "retries", &obj.Retries)
 	if err != nil {
 		return
 	}
-	obj.Timeout, err = core.UnmarshalInt64(m, "timeout")
+	err = core.UnmarshalPrimitive(m, "timeout", &obj.Timeout)
 	if err != nil {
 		return
 	}
-	obj.Method, err = core.UnmarshalString(m, "method")
+	err = core.UnmarshalPrimitive(m, "method", &obj.Method)
 	if err != nil {
 		return
 	}
-	obj.Path, err = core.UnmarshalString(m, "path")
+	err = core.UnmarshalPrimitive(m, "path", &obj.Path)
 	if err != nil {
 		return
 	}
-	obj.AllowInsecure, err = core.UnmarshalBool(m, "allow_insecure")
+	err = core.UnmarshalModel(m, "headers", &obj.HeadersVar, UnmarshalHealthcheckHeader)
 	if err != nil {
 		return
 	}
-	obj.ExpectedCodes, err = core.UnmarshalString(m, "expected_codes")
+	err = core.UnmarshalPrimitive(m, "allow_insecure", &obj.AllowInsecure)
 	if err != nil {
 		return
 	}
-	obj.ExpectedBody, err = core.UnmarshalString(m, "expected_body")
+	err = core.UnmarshalPrimitive(m, "expected_codes", &obj.ExpectedCodes)
 	if err != nil {
 		return
 	}
-	obj.FollowRedirects, err = core.UnmarshalBool(m, "follow_redirects")
+	err = core.UnmarshalPrimitive(m, "expected_body", &obj.ExpectedBody)
 	if err != nil {
 		return
 	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "follow_redirects", &obj.FollowRedirects)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalMonitorSlice unmarshals a slice of Monitor instances from the specified list of maps.
-func UnmarshalMonitorSlice(s []interface{}) (slice []Monitor, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'Monitor'")
-			return
-		}
-		obj, e := UnmarshalMonitor(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
+	if err != nil {
+		return
 	}
-	return
-}
-
-// UnmarshalMonitorSliceAsProperty unmarshals a slice of Monitor instances that are stored as a property
-// within the specified map.
-func UnmarshalMonitorSliceAsProperty(m map[string]interface{}, propertyName string) (slice []Monitor, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'Monitor'", propertyName)
-			return
-		}
-		slice, err = UnmarshalMonitorSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2924,63 +2912,30 @@ type Origin struct {
 	Weight *int64 `json:"weight,omitempty"`
 }
 
-// UnmarshalOrigin constructs an instance of Origin from the specified map.
-func UnmarshalOrigin(m map[string]interface{}) (result *Origin, err error) {
+// UnmarshalOrigin unmarshals an instance of Origin from the specified map of raw messages.
+func UnmarshalOrigin(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Origin)
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.Description, err = core.UnmarshalString(m, "description")
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
-	obj.Address, err = core.UnmarshalString(m, "address")
+	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
 	if err != nil {
 		return
 	}
-	obj.Enabled, err = core.UnmarshalBool(m, "enabled")
+	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
 	if err != nil {
 		return
 	}
-	obj.Weight, err = core.UnmarshalInt64(m, "weight")
+	err = core.UnmarshalPrimitive(m, "weight", &obj.Weight)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalOriginSlice unmarshals a slice of Origin instances from the specified list of maps.
-func UnmarshalOriginSlice(s []interface{}) (slice []Origin, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'Origin'")
-			return
-		}
-		obj, e := UnmarshalOrigin(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalOriginSliceAsProperty unmarshals a slice of Origin instances that are stored as a property
-// within the specified map.
-func UnmarshalOriginSliceAsProperty(m map[string]interface{}, propertyName string) (slice []Origin, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'Origin'", propertyName)
-			return
-		}
-		slice, err = UnmarshalOriginSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -3034,90 +2989,57 @@ const (
 	Pool_NotificationType_Webhook = "webhook"
 )
 
-// UnmarshalPool constructs an instance of Pool from the specified map.
-func UnmarshalPool(m map[string]interface{}) (result *Pool, err error) {
+// UnmarshalPool unmarshals an instance of Pool from the specified map of raw messages.
+func UnmarshalPool(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Pool)
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.Description, err = core.UnmarshalString(m, "description")
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
-	obj.Enabled, err = core.UnmarshalBool(m, "enabled")
+	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
 	if err != nil {
 		return
 	}
-	obj.MinimumOrigins, err = core.UnmarshalInt64(m, "minimum_origins")
+	err = core.UnmarshalPrimitive(m, "minimum_origins", &obj.MinimumOrigins)
 	if err != nil {
 		return
 	}
-	obj.HealthyOriginsThreshold, err = core.UnmarshalInt64(m, "healthy_origins_threshold")
+	err = core.UnmarshalPrimitive(m, "healthy_origins_threshold", &obj.HealthyOriginsThreshold)
 	if err != nil {
 		return
 	}
-	obj.Origins, err = UnmarshalOriginSliceAsProperty(m, "origins")
+	err = core.UnmarshalModel(m, "origins", &obj.Origins, UnmarshalOrigin)
 	if err != nil {
 		return
 	}
-	obj.Monitor, err = core.UnmarshalString(m, "monitor")
+	err = core.UnmarshalPrimitive(m, "monitor", &obj.Monitor)
 	if err != nil {
 		return
 	}
-	obj.NotificationType, err = core.UnmarshalString(m, "notification_type")
+	err = core.UnmarshalPrimitive(m, "notification_type", &obj.NotificationType)
 	if err != nil {
 		return
 	}
-	obj.NotificationChannel, err = core.UnmarshalString(m, "notification_channel")
+	err = core.UnmarshalPrimitive(m, "notification_channel", &obj.NotificationChannel)
 	if err != nil {
 		return
 	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalPoolSlice unmarshals a slice of Pool instances from the specified list of maps.
-func UnmarshalPoolSlice(s []interface{}) (slice []Pool, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'Pool'")
-			return
-		}
-		obj, e := UnmarshalPool(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalPoolSliceAsProperty unmarshals a slice of Pool instances that are stored as a property
-// within the specified map.
-func UnmarshalPoolSliceAsProperty(m map[string]interface{}, propertyName string) (slice []Pool, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'Pool'", propertyName)
-			return
-		}
-		slice, err = UnmarshalPoolSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }

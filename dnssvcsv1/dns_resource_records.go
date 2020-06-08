@@ -18,14 +18,13 @@
 package dnssvcsv1
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 
-	common "github.com/IBM/dns-svcs-go-sdk/common"
-	"github.com/IBM/go-sdk-core/v3/core"
+	"github.com/IBM/go-sdk-core/v4/core"
+	common "github.com/watson-developer-cloud/go-sdk/common"
 )
-
-// DnsSvcsV1 : Manage DNS Resource Records
-//
 
 // ListResourceRecords : List Resource Records
 // List the Resource Records for a given DNS zone.
@@ -56,7 +55,6 @@ func (dnsSvcs *DnsSvcsV1) ListResourceRecords(listResourceRecordsOptions *ListRe
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	if listResourceRecordsOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*listResourceRecordsOptions.XCorrelationID))
@@ -74,16 +72,16 @@ func (dnsSvcs *DnsSvcsV1) ListResourceRecords(listResourceRecordsOptions *ListRe
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListResourceRecords(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListResourceRecords)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -117,7 +115,6 @@ func (dnsSvcs *DnsSvcsV1) CreateResourceRecord(createResourceRecordOptions *Crea
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 	if createResourceRecordOptions.XCorrelationID != nil {
@@ -128,20 +125,20 @@ func (dnsSvcs *DnsSvcsV1) CreateResourceRecord(createResourceRecordOptions *Crea
 	if createResourceRecordOptions.Name != nil {
 		body["name"] = createResourceRecordOptions.Name
 	}
-	if createResourceRecordOptions.Protocol != nil {
-		body["protocol"] = createResourceRecordOptions.Protocol
+	if createResourceRecordOptions.Type != nil {
+		body["type"] = createResourceRecordOptions.Type
 	}
 	if createResourceRecordOptions.Rdata != nil {
 		body["rdata"] = createResourceRecordOptions.Rdata
 	}
-	if createResourceRecordOptions.Service != nil {
-		body["service"] = createResourceRecordOptions.Service
-	}
 	if createResourceRecordOptions.TTL != nil {
 		body["ttl"] = createResourceRecordOptions.TTL
 	}
-	if createResourceRecordOptions.Type != nil {
-		body["type"] = createResourceRecordOptions.Type
+	if createResourceRecordOptions.Service != nil {
+		body["service"] = createResourceRecordOptions.Service
+	}
+	if createResourceRecordOptions.Protocol != nil {
+		body["protocol"] = createResourceRecordOptions.Protocol
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -153,16 +150,16 @@ func (dnsSvcs *DnsSvcsV1) CreateResourceRecord(createResourceRecordOptions *Crea
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalResourceRecord(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalResourceRecord)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -196,7 +193,6 @@ func (dnsSvcs *DnsSvcsV1) DeleteResourceRecord(deleteResourceRecordOptions *Dele
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	if deleteResourceRecordOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*deleteResourceRecordOptions.XCorrelationID))
 	}
@@ -240,7 +236,6 @@ func (dnsSvcs *DnsSvcsV1) GetResourceRecord(getResourceRecordOptions *GetResourc
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	if getResourceRecordOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*getResourceRecordOptions.XCorrelationID))
@@ -251,16 +246,16 @@ func (dnsSvcs *DnsSvcsV1) GetResourceRecord(getResourceRecordOptions *GetResourc
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalResourceRecord(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalResourceRecord)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -294,7 +289,6 @@ func (dnsSvcs *DnsSvcsV1) UpdateResourceRecord(updateResourceRecordOptions *Upda
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 	if updateResourceRecordOptions.XCorrelationID != nil {
@@ -327,16 +321,16 @@ func (dnsSvcs *DnsSvcsV1) UpdateResourceRecord(updateResourceRecordOptions *Upda
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalResourceRecord(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalResourceRecord)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -352,20 +346,20 @@ type CreateResourceRecordOptions struct {
 	// Name of the resource record.
 	Name *string `json:"name,omitempty"`
 
-	// Only used for SRV record.
-	Protocol *string `json:"protocol,omitempty"`
+	// Type of the resource record.
+	Type *string `json:"type,omitempty"`
 
 	// Content of the resource record.
 	Rdata ResourceRecordInputRdataIntf `json:"rdata,omitempty"`
 
-	// Only used for SRV record.
-	Service *string `json:"service,omitempty"`
-
 	// Time to live in second.
 	TTL *int64 `json:"ttl,omitempty"`
 
-	// Type of the resource record.
-	Type *string `json:"type,omitempty"`
+	// Only used for SRV record.
+	Service *string `json:"service,omitempty"`
+
+	// Only used for SRV record.
+	Protocol *string `json:"protocol,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -412,9 +406,9 @@ func (options *CreateResourceRecordOptions) SetName(name string) *CreateResource
 	return options
 }
 
-// SetProtocol : Allow user to set Protocol
-func (options *CreateResourceRecordOptions) SetProtocol(protocol string) *CreateResourceRecordOptions {
-	options.Protocol = core.StringPtr(protocol)
+// SetType : Allow user to set Type
+func (options *CreateResourceRecordOptions) SetType(typeVar string) *CreateResourceRecordOptions {
+	options.Type = core.StringPtr(typeVar)
 	return options
 }
 
@@ -424,21 +418,21 @@ func (options *CreateResourceRecordOptions) SetRdata(rdata ResourceRecordInputRd
 	return options
 }
 
-// SetService : Allow user to set Service
-func (options *CreateResourceRecordOptions) SetService(service string) *CreateResourceRecordOptions {
-	options.Service = core.StringPtr(service)
-	return options
-}
-
 // SetTTL : Allow user to set TTL
 func (options *CreateResourceRecordOptions) SetTTL(ttl int64) *CreateResourceRecordOptions {
 	options.TTL = core.Int64Ptr(ttl)
 	return options
 }
 
-// SetType : Allow user to set Type
-func (options *CreateResourceRecordOptions) SetType(typeVar string) *CreateResourceRecordOptions {
-	options.Type = core.StringPtr(typeVar)
+// SetService : Allow user to set Service
+func (options *CreateResourceRecordOptions) SetService(service string) *CreateResourceRecordOptions {
+	options.Service = core.StringPtr(service)
+	return options
+}
+
+// SetProtocol : Allow user to set Protocol
+func (options *CreateResourceRecordOptions) SetProtocol(protocol string) *CreateResourceRecordOptions {
+	options.Protocol = core.StringPtr(protocol)
 	return options
 }
 
@@ -580,10 +574,10 @@ type ListResourceRecordsOptions struct {
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
 
 	// Specify how many resource records to skip over, the default value is 0.
-	Offset *string `json:"offset,omitempty"`
+	Offset *int64 `json:"offset,omitempty"`
 
-	// Specify how many resource records are returned, the default value is 20.
-	Limit *string `json:"limit,omitempty"`
+	// Specify how many resource records are returned, the default value is 200.
+	Limit *int64 `json:"limit,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -616,14 +610,14 @@ func (options *ListResourceRecordsOptions) SetXCorrelationID(xCorrelationID stri
 }
 
 // SetOffset : Allow user to set Offset
-func (options *ListResourceRecordsOptions) SetOffset(offset string) *ListResourceRecordsOptions {
-	options.Offset = core.StringPtr(offset)
+func (options *ListResourceRecordsOptions) SetOffset(offset int64) *ListResourceRecordsOptions {
+	options.Offset = core.Int64Ptr(offset)
 	return options
 }
 
 // SetLimit : Allow user to set Limit
-func (options *ListResourceRecordsOptions) SetLimit(limit string) *ListResourceRecordsOptions {
-	options.Limit = core.StringPtr(limit)
+func (options *ListResourceRecordsOptions) SetLimit(limit int64) *ListResourceRecordsOptions {
+	options.Limit = core.Int64Ptr(limit)
 	return options
 }
 
@@ -655,17 +649,17 @@ type ResourceRecordInputRdata struct {
 	// Preference of the MX record.
 	Preference *int64 `json:"preference,omitempty"`
 
-	// Port number of the target server.
-	Port *int64 `json:"port,omitempty"`
-
 	// Priority of the SRV record.
 	Priority *int64 `json:"priority,omitempty"`
 
-	// Hostname of the target server.
-	Target *string `json:"target,omitempty"`
-
 	// Weight of distributing queries among multiple target servers.
 	Weight *int64 `json:"weight,omitempty"`
+
+	// Port number of the target server.
+	Port *int64 `json:"port,omitempty"`
+
+	// Hostname of the target server.
+	Target *string `json:"target,omitempty"`
 
 	// Human readable text.
 	Txtdata *string `json:"text,omitempty"`
@@ -682,50 +676,50 @@ type ResourceRecordInputRdataIntf interface {
 	isaResourceRecordInputRdata() bool
 }
 
-// UnmarshalResourceRecordInputRdata constructs an instance of ResourceRecordInputRdata from the specified map.
-func UnmarshalResourceRecordInputRdata(m map[string]interface{}) (result ResourceRecordInputRdataIntf, err error) {
+// UnmarshalResourceRecordInputRdata unmarshals an instance of ResourceRecordInputRdata from the specified map of raw messages.
+func UnmarshalResourceRecordInputRdata(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordInputRdata)
-	obj.Ip, err = core.UnmarshalString(m, "ip")
+	err = core.UnmarshalPrimitive(m, "ip", &obj.Ip)
 	if err != nil {
 		return
 	}
-	obj.Cname, err = core.UnmarshalString(m, "cname")
+	err = core.UnmarshalPrimitive(m, "cname", &obj.Cname)
 	if err != nil {
 		return
 	}
-	obj.Exchange, err = core.UnmarshalString(m, "exchange")
+	err = core.UnmarshalPrimitive(m, "exchange", &obj.Exchange)
 	if err != nil {
 		return
 	}
-	obj.Preference, err = core.UnmarshalInt64(m, "preference")
+	err = core.UnmarshalPrimitive(m, "preference", &obj.Preference)
 	if err != nil {
 		return
 	}
-	obj.Port, err = core.UnmarshalInt64(m, "port")
+	err = core.UnmarshalPrimitive(m, "priority", &obj.Priority)
 	if err != nil {
 		return
 	}
-	obj.Priority, err = core.UnmarshalInt64(m, "priority")
+	err = core.UnmarshalPrimitive(m, "weight", &obj.Weight)
 	if err != nil {
 		return
 	}
-	obj.Target, err = core.UnmarshalString(m, "target")
+	err = core.UnmarshalPrimitive(m, "port", &obj.Port)
 	if err != nil {
 		return
 	}
-	obj.Weight, err = core.UnmarshalInt64(m, "weight")
+	err = core.UnmarshalPrimitive(m, "target", &obj.Target)
 	if err != nil {
 		return
 	}
-	obj.Txtdata, err = core.UnmarshalString(m, "text")
+	err = core.UnmarshalPrimitive(m, "txtdata", &obj.Txtdata)
 	if err != nil {
 		return
 	}
-	obj.Ptrdname, err = core.UnmarshalString(m, "ptrdname")
+	err = core.UnmarshalPrimitive(m, "ptrdname", &obj.Ptrdname)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -751,17 +745,17 @@ type ResourceRecordUpdateInputRdata struct {
 	// Preference of the MX record.
 	Preference *int64 `json:"preference,omitempty"`
 
-	// Port number of the target server.
-	Port *int64 `json:"port,omitempty"`
-
 	// Priority of the SRV record.
 	Priority *int64 `json:"priority,omitempty"`
 
-	// Hostname of the target server.
-	Target *string `json:"target,omitempty"`
-
 	// Weight of distributing queries among multiple target servers.
 	Weight *int64 `json:"weight,omitempty"`
+
+	// Port number of the target server.
+	Port *int64 `json:"port,omitempty"`
+
+	// Hostname of the target server.
+	Target *string `json:"target,omitempty"`
 
 	// Human readable text.
 	Txtdata *string `json:"text,omitempty"`
@@ -778,50 +772,50 @@ type ResourceRecordUpdateInputRdataIntf interface {
 	isaResourceRecordUpdateInputRdata() bool
 }
 
-// UnmarshalResourceRecordUpdateInputRdata constructs an instance of ResourceRecordUpdateInputRdata from the specified map.
-func UnmarshalResourceRecordUpdateInputRdata(m map[string]interface{}) (result ResourceRecordUpdateInputRdataIntf, err error) {
+// UnmarshalResourceRecordUpdateInputRdata unmarshals an instance of ResourceRecordUpdateInputRdata from the specified map of raw messages.
+func UnmarshalResourceRecordUpdateInputRdata(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordUpdateInputRdata)
-	obj.Ip, err = core.UnmarshalString(m, "ip")
+	err = core.UnmarshalPrimitive(m, "ip", &obj.Ip)
 	if err != nil {
 		return
 	}
-	obj.Cname, err = core.UnmarshalString(m, "cname")
+	err = core.UnmarshalPrimitive(m, "cname", &obj.Cname)
 	if err != nil {
 		return
 	}
-	obj.Exchange, err = core.UnmarshalString(m, "exchange")
+	err = core.UnmarshalPrimitive(m, "exchange", &obj.Exchange)
 	if err != nil {
 		return
 	}
-	obj.Preference, err = core.UnmarshalInt64(m, "preference")
+	err = core.UnmarshalPrimitive(m, "preference", &obj.Preference)
 	if err != nil {
 		return
 	}
-	obj.Port, err = core.UnmarshalInt64(m, "port")
+	err = core.UnmarshalPrimitive(m, "priority", &obj.Priority)
 	if err != nil {
 		return
 	}
-	obj.Priority, err = core.UnmarshalInt64(m, "priority")
+	err = core.UnmarshalPrimitive(m, "weight", &obj.Weight)
 	if err != nil {
 		return
 	}
-	obj.Target, err = core.UnmarshalString(m, "target")
+	err = core.UnmarshalPrimitive(m, "port", &obj.Port)
 	if err != nil {
 		return
 	}
-	obj.Weight, err = core.UnmarshalInt64(m, "weight")
+	err = core.UnmarshalPrimitive(m, "target", &obj.Target)
 	if err != nil {
 		return
 	}
-	obj.Txtdata, err = core.UnmarshalString(m, "text")
+	err = core.UnmarshalPrimitive(m, "text", &obj.Txtdata)
 	if err != nil {
 		return
 	}
-	obj.Ptrdname, err = core.UnmarshalString(m, "ptrdname")
+	err = core.UnmarshalPrimitive(m, "ptrdname", &obj.Ptrdname)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -846,10 +840,10 @@ type UpdateResourceRecordOptions struct {
 	TTL *int64 `json:"ttl,omitempty"`
 
 	// Only used for SRV record.
-	Protocol *string `json:"protocol,omitempty"`
+	Service *string `json:"service,omitempty"`
 
 	// Only used for SRV record.
-	Service *string `json:"service,omitempty"`
+	Protocol *string `json:"protocol,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -903,15 +897,15 @@ func (options *UpdateResourceRecordOptions) SetTTL(ttl int64) *UpdateResourceRec
 	return options
 }
 
-// SetProtocol : Allow user to set Protocol
-func (options *UpdateResourceRecordOptions) SetProtocol(protocol string) *UpdateResourceRecordOptions {
-	options.Protocol = core.StringPtr(protocol)
-	return options
-}
-
 // SetService : Allow user to set Service
 func (options *UpdateResourceRecordOptions) SetService(service string) *UpdateResourceRecordOptions {
 	options.Service = core.StringPtr(service)
+	return options
+}
+
+// SetProtocol : Allow user to set Protocol
+func (options *UpdateResourceRecordOptions) SetProtocol(protocol string) *UpdateResourceRecordOptions {
+	options.Protocol = core.StringPtr(protocol)
 	return options
 }
 
@@ -932,7 +926,7 @@ type ListResourceRecords struct {
 	// An array of resource records.
 	ResourceRecords []ResourceRecord `json:"resource_records" validate:"required"`
 
-	// Specify how many resource records to skip over.
+	// Specify how many resource records to skip over, the default value is 0.
 	Offset *int64 `json:"offset" validate:"required"`
 
 	// Specify how many resource records are returned, the default value is 20.
@@ -948,76 +942,44 @@ type ListResourceRecords struct {
 	Next *NextHref `json:"next,omitempty"`
 }
 
-// UnmarshalListResourceRecords constructs an instance of ListResourceRecords from the specified map.
-func UnmarshalListResourceRecords(m map[string]interface{}) (result *ListResourceRecords, err error) {
+// UnmarshalListResourceRecords unmarshals an instance of ListResourceRecords from the specified map of raw messages.
+func UnmarshalListResourceRecords(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListResourceRecords)
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalModel(m, "resource_records", &obj.ResourceRecords, UnmarshalResourceRecord)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.ResourceRecords, err = UnmarshalResourceRecordSliceAsProperty(m, "resource_records")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// NextHref : href.
-type NextHref struct {
-	// href.
-	Href *string `json:"href,omitempty"`
-}
-
-// UnmarshalNextHref constructs an instance of NextHref from the specified map.
-func UnmarshalNextHref(m map[string]interface{}) (result *NextHref, err error) {
-	obj := new(NextHref)
-	obj.Href, err = core.UnmarshalString(m, "href")
-	if err != nil {
-		return
-	}
-	result = obj
-	return
-}
-
-// UnmarshalNextHrefAsProperty unmarshals an instance of NextHref that is stored as a property
-// within the specified map.
-func UnmarshalNextHrefAsProperty(m map[string]interface{}, propertyName string) (result *NextHref, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'NextHref'", propertyName)
-			return
-		}
-		result, err = UnmarshalNextHref(objMap)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
 // ResourceRecord : Resource record details.
 type ResourceRecord struct {
-	// the time when a resource record is created.
-	CreatedOn *string `json:"created_on,omitempty"`
-
 	// Identifier of the resource record.
 	ID *string `json:"id,omitempty"`
+
+	// the time when a resource record is created.
+	CreatedOn *string `json:"created_on,omitempty"`
 
 	// the recent time when a resource record is modified.
 	ModifiedOn *string `json:"modified_on,omitempty"`
@@ -1025,8 +987,11 @@ type ResourceRecord struct {
 	// Name of the resource record.
 	Name *string `json:"name,omitempty"`
 
-	// Only used for SRV record.
-	Protocol *string `json:"protocol,omitempty"`
+	// Type of the resource record.
+	Type *string `json:"type,omitempty"`
+
+	// Time to live in second.
+	TTL *int64 `json:"ttl,omitempty"`
 
 	// Content of the resource record.
 	Rdata interface{} `json:"rdata,omitempty"`
@@ -1034,14 +999,8 @@ type ResourceRecord struct {
 	// Only used for SRV record.
 	Service *string `json:"service,omitempty"`
 
-	// Time to live in second.
-	TTL *int64 `json:"ttl,omitempty"`
-
-	// Type of the resource record.
-	Type *string `json:"type,omitempty"`
-
-	// Linked PTR record in A/AAAA record
-	LinkedPTR interface{} `json:"linked_ptr_record,omitempty"`
+	// Only used for SRV record.
+	Protocol *string `json:"protocol,omitempty"`
 }
 
 // Constants associated with the ResourceRecord.Type property.
@@ -1056,85 +1015,46 @@ const (
 	ResourceRecord_Type_Txt   = "TXT"
 )
 
-// UnmarshalResourceRecord constructs an instance of ResourceRecord from the specified map.
-func UnmarshalResourceRecord(m map[string]interface{}) (result *ResourceRecord, err error) {
+// UnmarshalResourceRecord unmarshals an instance of ResourceRecord from the specified map of raw messages.
+func UnmarshalResourceRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecord)
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
 	if err != nil {
 		return
 	}
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.Protocol, err = core.UnmarshalString(m, "protocol")
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
 	if err != nil {
 		return
 	}
-	obj.Rdata, err = core.UnmarshalObject(m, "rdata")
+	err = core.UnmarshalPrimitive(m, "ttl", &obj.TTL)
 	if err != nil {
 		return
 	}
-	obj.Service, err = core.UnmarshalString(m, "service")
+	err = core.UnmarshalPrimitive(m, "rdata", &obj.Rdata)
 	if err != nil {
 		return
 	}
-	obj.TTL, err = core.UnmarshalInt64(m, "ttl")
+	err = core.UnmarshalPrimitive(m, "service", &obj.Service)
 	if err != nil {
 		return
 	}
-	obj.Type, err = core.UnmarshalString(m, "type")
+	err = core.UnmarshalPrimitive(m, "protocol", &obj.Protocol)
 	if err != nil {
 		return
 	}
-	if m["linked_ptr_record"] != nil {
-		obj.LinkedPTR, err = core.UnmarshalObject(m, "linked_ptr_record")
-	}
-	if err != nil {
-		return
-	}
-	result = obj
-	return
-}
-
-// UnmarshalResourceRecordSlice unmarshals a slice of ResourceRecord instances from the specified list of maps.
-func UnmarshalResourceRecordSlice(s []interface{}) (slice []ResourceRecord, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'ResourceRecord'")
-			return
-		}
-		obj, e := UnmarshalResourceRecord(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalResourceRecordSliceAsProperty unmarshals a slice of ResourceRecord instances that are stored as a property
-// within the specified map.
-func UnmarshalResourceRecordSliceAsProperty(m map[string]interface{}, propertyName string) (slice []ResourceRecord, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'ResourceRecord'", propertyName)
-			return
-		}
-		slice, err = UnmarshalResourceRecordSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1158,14 +1078,14 @@ func (*ResourceRecordInputRdataRdataARecord) isaResourceRecordInputRdata() bool 
 	return true
 }
 
-// UnmarshalResourceRecordInputRdataRdataARecord constructs an instance of ResourceRecordInputRdataRdataARecord from the specified map.
-func UnmarshalResourceRecordInputRdataRdataARecord(m map[string]interface{}) (result *ResourceRecordInputRdataRdataARecord, err error) {
+// UnmarshalResourceRecordInputRdataRdataARecord unmarshals an instance of ResourceRecordInputRdataRdataARecord from the specified map of raw messages.
+func UnmarshalResourceRecordInputRdataRdataARecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordInputRdataRdataARecord)
-	obj.Ip, err = core.UnmarshalString(m, "ip")
+	err = core.UnmarshalPrimitive(m, "ip", &obj.Ip)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1189,14 +1109,14 @@ func (*ResourceRecordInputRdataRdataAaaaRecord) isaResourceRecordInputRdata() bo
 	return true
 }
 
-// UnmarshalResourceRecordInputRdataRdataAaaaRecord constructs an instance of ResourceRecordInputRdataRdataAaaaRecord from the specified map.
-func UnmarshalResourceRecordInputRdataRdataAaaaRecord(m map[string]interface{}) (result *ResourceRecordInputRdataRdataAaaaRecord, err error) {
+// UnmarshalResourceRecordInputRdataRdataAaaaRecord unmarshals an instance of ResourceRecordInputRdataRdataAaaaRecord from the specified map of raw messages.
+func UnmarshalResourceRecordInputRdataRdataAaaaRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordInputRdataRdataAaaaRecord)
-	obj.Ip, err = core.UnmarshalString(m, "ip")
+	err = core.UnmarshalPrimitive(m, "ip", &obj.Ip)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1220,14 +1140,14 @@ func (*ResourceRecordInputRdataRdataCnameRecord) isaResourceRecordInputRdata() b
 	return true
 }
 
-// UnmarshalResourceRecordInputRdataRdataCnameRecord constructs an instance of ResourceRecordInputRdataRdataCnameRecord from the specified map.
-func UnmarshalResourceRecordInputRdataRdataCnameRecord(m map[string]interface{}) (result *ResourceRecordInputRdataRdataCnameRecord, err error) {
+// UnmarshalResourceRecordInputRdataRdataCnameRecord unmarshals an instance of ResourceRecordInputRdataRdataCnameRecord from the specified map of raw messages.
+func UnmarshalResourceRecordInputRdataRdataCnameRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordInputRdataRdataCnameRecord)
-	obj.Cname, err = core.UnmarshalString(m, "cname")
+	err = core.UnmarshalPrimitive(m, "cname", &obj.Cname)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1255,18 +1175,18 @@ func (*ResourceRecordInputRdataRdataMxRecord) isaResourceRecordInputRdata() bool
 	return true
 }
 
-// UnmarshalResourceRecordInputRdataRdataMxRecord constructs an instance of ResourceRecordInputRdataRdataMxRecord from the specified map.
-func UnmarshalResourceRecordInputRdataRdataMxRecord(m map[string]interface{}) (result *ResourceRecordInputRdataRdataMxRecord, err error) {
+// UnmarshalResourceRecordInputRdataRdataMxRecord unmarshals an instance of ResourceRecordInputRdataRdataMxRecord from the specified map of raw messages.
+func UnmarshalResourceRecordInputRdataRdataMxRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordInputRdataRdataMxRecord)
-	obj.Exchange, err = core.UnmarshalString(m, "exchange")
+	err = core.UnmarshalPrimitive(m, "exchange", &obj.Exchange)
 	if err != nil {
 		return
 	}
-	obj.Preference, err = core.UnmarshalInt64(m, "preference")
+	err = core.UnmarshalPrimitive(m, "preference", &obj.Preference)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1290,40 +1210,40 @@ func (*ResourceRecordInputRdataRdataPtrRecord) isaResourceRecordInputRdata() boo
 	return true
 }
 
-// UnmarshalResourceRecordInputRdataRdataPtrRecord constructs an instance of ResourceRecordInputRdataRdataPtrRecord from the specified map.
-func UnmarshalResourceRecordInputRdataRdataPtrRecord(m map[string]interface{}) (result *ResourceRecordInputRdataRdataPtrRecord, err error) {
+// UnmarshalResourceRecordInputRdataRdataPtrRecord unmarshals an instance of ResourceRecordInputRdataRdataPtrRecord from the specified map of raw messages.
+func UnmarshalResourceRecordInputRdataRdataPtrRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordInputRdataRdataPtrRecord)
-	obj.Ptrdname, err = core.UnmarshalString(m, "ptrdname")
+	err = core.UnmarshalPrimitive(m, "ptrdname", &obj.Ptrdname)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
 // ResourceRecordInputRdataRdataSrvRecord : The content of type-SRV resource record.
 // This model "extends" ResourceRecordInputRdata
 type ResourceRecordInputRdataRdataSrvRecord struct {
-	// Port number of the target server.
-	Port *int64 `json:"port" validate:"required"`
-
 	// Priority of the SRV record.
 	Priority *int64 `json:"priority" validate:"required"`
 
-	// Hostname of the target server.
-	Target *string `json:"target" validate:"required"`
-
 	// Weight of distributing queries among multiple target servers.
 	Weight *int64 `json:"weight" validate:"required"`
+
+	// Port number of the target server.
+	Port *int64 `json:"port" validate:"required"`
+
+	// Hostname of the target server.
+	Target *string `json:"target" validate:"required"`
 }
 
 // NewResourceRecordInputRdataRdataSrvRecord : Instantiate ResourceRecordInputRdataRdataSrvRecord (Generic Model Constructor)
-func (*DnsSvcsV1) NewResourceRecordInputRdataRdataSrvRecord(port int64, priority int64, target string, weight int64) (model *ResourceRecordInputRdataRdataSrvRecord, err error) {
+func (*DnsSvcsV1) NewResourceRecordInputRdataRdataSrvRecord(priority int64, weight int64, port int64, target string) (model *ResourceRecordInputRdataRdataSrvRecord, err error) {
 	model = &ResourceRecordInputRdataRdataSrvRecord{
-		Port:     core.Int64Ptr(port),
 		Priority: core.Int64Ptr(priority),
-		Target:   core.StringPtr(target),
 		Weight:   core.Int64Ptr(weight),
+		Port:     core.Int64Ptr(port),
+		Target:   core.StringPtr(target),
 	}
 	err = core.ValidateStruct(model, "required parameters")
 	return
@@ -1333,26 +1253,26 @@ func (*ResourceRecordInputRdataRdataSrvRecord) isaResourceRecordInputRdata() boo
 	return true
 }
 
-// UnmarshalResourceRecordInputRdataRdataSrvRecord constructs an instance of ResourceRecordInputRdataRdataSrvRecord from the specified map.
-func UnmarshalResourceRecordInputRdataRdataSrvRecord(m map[string]interface{}) (result *ResourceRecordInputRdataRdataSrvRecord, err error) {
+// UnmarshalResourceRecordInputRdataRdataSrvRecord unmarshals an instance of ResourceRecordInputRdataRdataSrvRecord from the specified map of raw messages.
+func UnmarshalResourceRecordInputRdataRdataSrvRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordInputRdataRdataSrvRecord)
-	obj.Port, err = core.UnmarshalInt64(m, "port")
+	err = core.UnmarshalPrimitive(m, "priority", &obj.Priority)
 	if err != nil {
 		return
 	}
-	obj.Priority, err = core.UnmarshalInt64(m, "priority")
+	err = core.UnmarshalPrimitive(m, "weight", &obj.Weight)
 	if err != nil {
 		return
 	}
-	obj.Target, err = core.UnmarshalString(m, "target")
+	err = core.UnmarshalPrimitive(m, "port", &obj.Port)
 	if err != nil {
 		return
 	}
-	obj.Weight, err = core.UnmarshalInt64(m, "weight")
+	err = core.UnmarshalPrimitive(m, "target", &obj.Target)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1376,14 +1296,14 @@ func (*ResourceRecordInputRdataRdataTxtRecord) isaResourceRecordInputRdata() boo
 	return true
 }
 
-// UnmarshalResourceRecordInputRdataRdataTxtRecord constructs an instance of ResourceRecordInputRdataRdataTxtRecord from the specified map.
-func UnmarshalResourceRecordInputRdataRdataTxtRecord(m map[string]interface{}) (result *ResourceRecordInputRdataRdataTxtRecord, err error) {
+// UnmarshalResourceRecordInputRdataRdataTxtRecord unmarshals an instance of ResourceRecordInputRdataRdataTxtRecord from the specified map of raw messages.
+func UnmarshalResourceRecordInputRdataRdataTxtRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordInputRdataRdataTxtRecord)
-	obj.Txtdata, err = core.UnmarshalString(m, "text")
+	err = core.UnmarshalPrimitive(m, "txtdata", &obj.Txtdata)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1407,14 +1327,14 @@ func (*ResourceRecordUpdateInputRdataRdataARecord) isaResourceRecordUpdateInputR
 	return true
 }
 
-// UnmarshalResourceRecordUpdateInputRdataRdataARecord constructs an instance of ResourceRecordUpdateInputRdataRdataARecord from the specified map.
-func UnmarshalResourceRecordUpdateInputRdataRdataARecord(m map[string]interface{}) (result *ResourceRecordUpdateInputRdataRdataARecord, err error) {
+// UnmarshalResourceRecordUpdateInputRdataRdataARecord unmarshals an instance of ResourceRecordUpdateInputRdataRdataARecord from the specified map of raw messages.
+func UnmarshalResourceRecordUpdateInputRdataRdataARecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordUpdateInputRdataRdataARecord)
-	obj.Ip, err = core.UnmarshalString(m, "ip")
+	err = core.UnmarshalPrimitive(m, "ip", &obj.Ip)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1438,14 +1358,14 @@ func (*ResourceRecordUpdateInputRdataRdataAaaaRecord) isaResourceRecordUpdateInp
 	return true
 }
 
-// UnmarshalResourceRecordUpdateInputRdataRdataAaaaRecord constructs an instance of ResourceRecordUpdateInputRdataRdataAaaaRecord from the specified map.
-func UnmarshalResourceRecordUpdateInputRdataRdataAaaaRecord(m map[string]interface{}) (result *ResourceRecordUpdateInputRdataRdataAaaaRecord, err error) {
+// UnmarshalResourceRecordUpdateInputRdataRdataAaaaRecord unmarshals an instance of ResourceRecordUpdateInputRdataRdataAaaaRecord from the specified map of raw messages.
+func UnmarshalResourceRecordUpdateInputRdataRdataAaaaRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordUpdateInputRdataRdataAaaaRecord)
-	obj.Ip, err = core.UnmarshalString(m, "ip")
+	err = core.UnmarshalPrimitive(m, "ip", &obj.Ip)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1469,14 +1389,14 @@ func (*ResourceRecordUpdateInputRdataRdataCnameRecord) isaResourceRecordUpdateIn
 	return true
 }
 
-// UnmarshalResourceRecordUpdateInputRdataRdataCnameRecord constructs an instance of ResourceRecordUpdateInputRdataRdataCnameRecord from the specified map.
-func UnmarshalResourceRecordUpdateInputRdataRdataCnameRecord(m map[string]interface{}) (result *ResourceRecordUpdateInputRdataRdataCnameRecord, err error) {
+// UnmarshalResourceRecordUpdateInputRdataRdataCnameRecord unmarshals an instance of ResourceRecordUpdateInputRdataRdataCnameRecord from the specified map of raw messages.
+func UnmarshalResourceRecordUpdateInputRdataRdataCnameRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordUpdateInputRdataRdataCnameRecord)
-	obj.Cname, err = core.UnmarshalString(m, "cname")
+	err = core.UnmarshalPrimitive(m, "cname", &obj.Cname)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1504,18 +1424,18 @@ func (*ResourceRecordUpdateInputRdataRdataMxRecord) isaResourceRecordUpdateInput
 	return true
 }
 
-// UnmarshalResourceRecordUpdateInputRdataRdataMxRecord constructs an instance of ResourceRecordUpdateInputRdataRdataMxRecord from the specified map.
-func UnmarshalResourceRecordUpdateInputRdataRdataMxRecord(m map[string]interface{}) (result *ResourceRecordUpdateInputRdataRdataMxRecord, err error) {
+// UnmarshalResourceRecordUpdateInputRdataRdataMxRecord unmarshals an instance of ResourceRecordUpdateInputRdataRdataMxRecord from the specified map of raw messages.
+func UnmarshalResourceRecordUpdateInputRdataRdataMxRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordUpdateInputRdataRdataMxRecord)
-	obj.Exchange, err = core.UnmarshalString(m, "exchange")
+	err = core.UnmarshalPrimitive(m, "exchange", &obj.Exchange)
 	if err != nil {
 		return
 	}
-	obj.Preference, err = core.UnmarshalInt64(m, "preference")
+	err = core.UnmarshalPrimitive(m, "preference", &obj.Preference)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1539,40 +1459,40 @@ func (*ResourceRecordUpdateInputRdataRdataPtrRecord) isaResourceRecordUpdateInpu
 	return true
 }
 
-// UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord constructs an instance of ResourceRecordUpdateInputRdataRdataPtrRecord from the specified map.
-func UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord(m map[string]interface{}) (result *ResourceRecordUpdateInputRdataRdataPtrRecord, err error) {
+// UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord unmarshals an instance of ResourceRecordUpdateInputRdataRdataPtrRecord from the specified map of raw messages.
+func UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordUpdateInputRdataRdataPtrRecord)
-	obj.Ptrdname, err = core.UnmarshalString(m, "ptrdname")
+	err = core.UnmarshalPrimitive(m, "ptrdname", &obj.Ptrdname)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
 // ResourceRecordUpdateInputRdataRdataSrvRecord : The content of type-SRV resource record.
 // This model "extends" ResourceRecordUpdateInputRdata
 type ResourceRecordUpdateInputRdataRdataSrvRecord struct {
-	// Port number of the target server.
-	Port *int64 `json:"port" validate:"required"`
-
 	// Priority of the SRV record.
 	Priority *int64 `json:"priority" validate:"required"`
 
-	// Hostname of the target server.
-	Target *string `json:"target" validate:"required"`
-
 	// Weight of distributing queries among multiple target servers.
 	Weight *int64 `json:"weight" validate:"required"`
+
+	// Port number of the target server.
+	Port *int64 `json:"port" validate:"required"`
+
+	// Hostname of the target server.
+	Target *string `json:"target" validate:"required"`
 }
 
 // NewResourceRecordUpdateInputRdataRdataSrvRecord : Instantiate ResourceRecordUpdateInputRdataRdataSrvRecord (Generic Model Constructor)
-func (*DnsSvcsV1) NewResourceRecordUpdateInputRdataRdataSrvRecord(port int64, priority int64, target string, weight int64) (model *ResourceRecordUpdateInputRdataRdataSrvRecord, err error) {
+func (*DnsSvcsV1) NewResourceRecordUpdateInputRdataRdataSrvRecord(priority int64, weight int64, port int64, target string) (model *ResourceRecordUpdateInputRdataRdataSrvRecord, err error) {
 	model = &ResourceRecordUpdateInputRdataRdataSrvRecord{
-		Port:     core.Int64Ptr(port),
 		Priority: core.Int64Ptr(priority),
-		Target:   core.StringPtr(target),
 		Weight:   core.Int64Ptr(weight),
+		Port:     core.Int64Ptr(port),
+		Target:   core.StringPtr(target),
 	}
 	err = core.ValidateStruct(model, "required parameters")
 	return
@@ -1582,26 +1502,26 @@ func (*ResourceRecordUpdateInputRdataRdataSrvRecord) isaResourceRecordUpdateInpu
 	return true
 }
 
-// UnmarshalResourceRecordUpdateInputRdataRdataSrvRecord constructs an instance of ResourceRecordUpdateInputRdataRdataSrvRecord from the specified map.
-func UnmarshalResourceRecordUpdateInputRdataRdataSrvRecord(m map[string]interface{}) (result *ResourceRecordUpdateInputRdataRdataSrvRecord, err error) {
+// UnmarshalResourceRecordUpdateInputRdataRdataSrvRecord unmarshals an instance of ResourceRecordUpdateInputRdataRdataSrvRecord from the specified map of raw messages.
+func UnmarshalResourceRecordUpdateInputRdataRdataSrvRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordUpdateInputRdataRdataSrvRecord)
-	obj.Port, err = core.UnmarshalInt64(m, "port")
+	err = core.UnmarshalPrimitive(m, "priority", &obj.Priority)
 	if err != nil {
 		return
 	}
-	obj.Priority, err = core.UnmarshalInt64(m, "priority")
+	err = core.UnmarshalPrimitive(m, "weight", &obj.Weight)
 	if err != nil {
 		return
 	}
-	obj.Target, err = core.UnmarshalString(m, "target")
+	err = core.UnmarshalPrimitive(m, "port", &obj.Port)
 	if err != nil {
 		return
 	}
-	obj.Weight, err = core.UnmarshalInt64(m, "weight")
+	err = core.UnmarshalPrimitive(m, "target", &obj.Target)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -1625,13 +1545,13 @@ func (*ResourceRecordUpdateInputRdataRdataTxtRecord) isaResourceRecordUpdateInpu
 	return true
 }
 
-// UnmarshalResourceRecordUpdateInputRdataRdataTxtRecord constructs an instance of ResourceRecordUpdateInputRdataRdataTxtRecord from the specified map.
-func UnmarshalResourceRecordUpdateInputRdataRdataTxtRecord(m map[string]interface{}) (result *ResourceRecordUpdateInputRdataRdataTxtRecord, err error) {
+// UnmarshalResourceRecordUpdateInputRdataRdataTxtRecord unmarshals an instance of ResourceRecordUpdateInputRdataRdataTxtRecord from the specified map of raw messages.
+func UnmarshalResourceRecordUpdateInputRdataRdataTxtRecord(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ResourceRecordUpdateInputRdataRdataTxtRecord)
-	obj.Txtdata, err = core.UnmarshalString(m, "text")
+	err = core.UnmarshalPrimitive(m, "txtdata", &obj.Txtdata)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
