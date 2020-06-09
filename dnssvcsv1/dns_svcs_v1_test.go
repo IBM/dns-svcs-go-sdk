@@ -4486,7 +4486,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				weight := int64(10)
 				port := int64(80)
 				target := "www.example.com"
-				model, err := testService.NewResourceRecordInputRdataRdataSrvRecord(priority, weight, target, port)
+				model, err := testService.NewResourceRecordInputRdataRdataSrvRecord(port, priority, target, weight)
 				Expect(model).ToNot(BeNil())
 				Expect(err).To(BeNil())
 			})
@@ -4532,7 +4532,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				weight := int64(10)
 				port := int64(80)
 				target := "www.example.com"
-				model, err := testService.NewResourceRecordUpdateInputRdataRdataSrvRecord(priority, weight, target, port)
+				model, err := testService.NewResourceRecordUpdateInputRdataRdataSrvRecord(port, priority, target, weight)
 				Expect(model).ToNot(BeNil())
 				Expect(err).To(BeNil())
 			})

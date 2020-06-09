@@ -1224,26 +1224,26 @@ func UnmarshalResourceRecordInputRdataRdataPtrRecord(m map[string]json.RawMessag
 // ResourceRecordInputRdataRdataSrvRecord : The content of type-SRV resource record.
 // This model "extends" ResourceRecordInputRdata
 type ResourceRecordInputRdataRdataSrvRecord struct {
-	// Priority of the SRV record.
-	Priority *int64 `json:"priority" validate:"required"`
-
-	// Weight of distributing queries among multiple target servers.
-	Weight *int64 `json:"weight" validate:"required"`
-
 	// Port number of the target server.
 	Port *int64 `json:"port" validate:"required"`
 
+	// Priority of the SRV record.
+	Priority *int64 `json:"priority" validate:"required"`
+
 	// Hostname of the target server.
 	Target *string `json:"target" validate:"required"`
+
+	// Weight of distributing queries among multiple target servers.
+	Weight *int64 `json:"weight" validate:"required"`
 }
 
 // NewResourceRecordInputRdataRdataSrvRecord : Instantiate ResourceRecordInputRdataRdataSrvRecord (Generic Model Constructor)
-func (*DnsSvcsV1) NewResourceRecordInputRdataRdataSrvRecord(priority int64, weight int64, target string, port int64) (model *ResourceRecordInputRdataRdataSrvRecord, err error) {
+func (*DnsSvcsV1) NewResourceRecordInputRdataRdataSrvRecord(port int64, priority int64, target string, weight int64) (model *ResourceRecordInputRdataRdataSrvRecord, err error) {
 	model = &ResourceRecordInputRdataRdataSrvRecord{
-		Priority: core.Int64Ptr(priority),
-		Weight:   core.Int64Ptr(weight),
 		Port:     core.Int64Ptr(port),
+		Priority: core.Int64Ptr(priority),
 		Target:   core.StringPtr(target),
+		Weight:   core.Int64Ptr(weight),
 	}
 	err = core.ValidateStruct(model, "required parameters")
 	return
@@ -1473,26 +1473,26 @@ func UnmarshalResourceRecordUpdateInputRdataRdataPtrRecord(m map[string]json.Raw
 // ResourceRecordUpdateInputRdataRdataSrvRecord : The content of type-SRV resource record.
 // This model "extends" ResourceRecordUpdateInputRdata
 type ResourceRecordUpdateInputRdataRdataSrvRecord struct {
-	// Priority of the SRV record.
-	Priority *int64 `json:"priority" validate:"required"`
-
-	// Weight of distributing queries among multiple target servers.
-	Weight *int64 `json:"weight" validate:"required"`
-
 	// Port number of the target server.
 	Port *int64 `json:"port" validate:"required"`
 
+	// Priority of the SRV record.
+	Priority *int64 `json:"priority" validate:"required"`
+
 	// Hostname of the target server.
 	Target *string `json:"target" validate:"required"`
+
+	// Weight of distributing queries among multiple target servers.
+	Weight *int64 `json:"weight" validate:"required"`
 }
 
 // NewResourceRecordUpdateInputRdataRdataSrvRecord : Instantiate ResourceRecordUpdateInputRdataRdataSrvRecord (Generic Model Constructor)
-func (*DnsSvcsV1) NewResourceRecordUpdateInputRdataRdataSrvRecord(priority int64, weight int64, target string, port int64) (model *ResourceRecordUpdateInputRdataRdataSrvRecord, err error) {
+func (*DnsSvcsV1) NewResourceRecordUpdateInputRdataRdataSrvRecord(port int64, priority int64, target string, weight int64) (model *ResourceRecordUpdateInputRdataRdataSrvRecord, err error) {
 	model = &ResourceRecordUpdateInputRdataRdataSrvRecord{
-		Priority: core.Int64Ptr(priority),
-		Weight:   core.Int64Ptr(weight),
 		Port:     core.Int64Ptr(port),
+		Priority: core.Int64Ptr(priority),
 		Target:   core.StringPtr(target),
+		Weight:   core.Int64Ptr(weight),
 	}
 	err = core.ValidateStruct(model, "required parameters")
 	return
