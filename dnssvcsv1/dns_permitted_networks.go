@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"reflect"
 
+	common "github.com/IBM/dns-svcs-go-sdk/common"
 	"github.com/IBM/go-sdk-core/v4/core"
-	common "github.com/watson-developer-cloud/go-sdk/common"
 )
 
 // ListPermittedNetworks : List permitted networks
