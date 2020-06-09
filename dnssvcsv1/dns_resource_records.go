@@ -1238,7 +1238,7 @@ type ResourceRecordInputRdataRdataSrvRecord struct {
 }
 
 // NewResourceRecordInputRdataRdataSrvRecord : Instantiate ResourceRecordInputRdataRdataSrvRecord (Generic Model Constructor)
-func (*DnsSvcsV1) NewResourceRecordInputRdataRdataSrvRecord(priority int64, weight int64, port int64, target string) (model *ResourceRecordInputRdataRdataSrvRecord, err error) {
+func (*DnsSvcsV1) NewResourceRecordInputRdataRdataSrvRecord(priority int64, weight int64, target string, port int64) (model *ResourceRecordInputRdataRdataSrvRecord, err error) {
 	model = &ResourceRecordInputRdataRdataSrvRecord{
 		Priority: core.Int64Ptr(priority),
 		Weight:   core.Int64Ptr(weight),
@@ -1487,7 +1487,7 @@ type ResourceRecordUpdateInputRdataRdataSrvRecord struct {
 }
 
 // NewResourceRecordUpdateInputRdataRdataSrvRecord : Instantiate ResourceRecordUpdateInputRdataRdataSrvRecord (Generic Model Constructor)
-func (*DnsSvcsV1) NewResourceRecordUpdateInputRdataRdataSrvRecord(priority int64, weight int64, port int64, target string) (model *ResourceRecordUpdateInputRdataRdataSrvRecord, err error) {
+func (*DnsSvcsV1) NewResourceRecordUpdateInputRdataRdataSrvRecord(priority int64, weight int64, target string, port int64) (model *ResourceRecordUpdateInputRdataRdataSrvRecord, err error) {
 	model = &ResourceRecordUpdateInputRdataRdataSrvRecord{
 		Priority: core.Int64Ptr(priority),
 		Weight:   core.Int64Ptr(weight),
