@@ -18,14 +18,13 @@
 package dnssvcsv1
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 
-	common "github.com/IBM/dns-svcs-go-sdk/common"
-	"github.com/IBM/go-sdk-core/v3/core"
+	"github.com/IBM/go-sdk-core/v4/core"
+	common "github.com/watson-developer-cloud/go-sdk/common"
 )
-
-// DnsSvcsV1 : Manage DNS Permitted Network
-//
 
 // ListPermittedNetworks : List permitted networks
 // List the permitted networks for a given DNS zone.
@@ -56,10 +55,16 @@ func (dnsSvcs *DnsSvcsV1) ListPermittedNetworks(listPermittedNetworksOptions *Li
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	if listPermittedNetworksOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*listPermittedNetworksOptions.XCorrelationID))
+	}
+
+	if listPermittedNetworksOptions.Offset != nil {
+		builder.AddQuery("offset", fmt.Sprint(*listPermittedNetworksOptions.Offset))
+	}
+	if listPermittedNetworksOptions.Limit != nil {
+		builder.AddQuery("limit", fmt.Sprint(*listPermittedNetworksOptions.Limit))
 	}
 
 	request, err := builder.Build()
@@ -67,16 +72,16 @@ func (dnsSvcs *DnsSvcsV1) ListPermittedNetworks(listPermittedNetworksOptions *Li
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListPermittedNetworks(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListPermittedNetworks)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -110,7 +115,6 @@ func (dnsSvcs *DnsSvcsV1) CreatePermittedNetwork(createPermittedNetworkOptions *
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 	if createPermittedNetworkOptions.XCorrelationID != nil {
@@ -118,11 +122,11 @@ func (dnsSvcs *DnsSvcsV1) CreatePermittedNetwork(createPermittedNetworkOptions *
 	}
 
 	body := make(map[string]interface{})
-	if createPermittedNetworkOptions.PermittedNetwork != nil {
-		body["permitted_network"] = createPermittedNetworkOptions.PermittedNetwork
-	}
 	if createPermittedNetworkOptions.Type != nil {
 		body["type"] = createPermittedNetworkOptions.Type
+	}
+	if createPermittedNetworkOptions.PermittedNetwork != nil {
+		body["permitted_network"] = createPermittedNetworkOptions.PermittedNetwork
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -134,22 +138,22 @@ func (dnsSvcs *DnsSvcsV1) CreatePermittedNetwork(createPermittedNetworkOptions *
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPermittedNetwork(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPermittedNetwork)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
 
-// DeletePermittedNetwork : Delete a permitted network
-// Delete a permitted network.
+// DeletePermittedNetwork : Remove a permitted network
+// Remove a permitted network.
 func (dnsSvcs *DnsSvcsV1) DeletePermittedNetwork(deletePermittedNetworkOptions *DeletePermittedNetworkOptions) (result *PermittedNetwork, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(deletePermittedNetworkOptions, "deletePermittedNetworkOptions cannot be nil")
 	if err != nil {
@@ -177,7 +181,7 @@ func (dnsSvcs *DnsSvcsV1) DeletePermittedNetwork(deletePermittedNetworkOptions *
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
+	builder.AddHeader("Accept", "application/json")
 	if deletePermittedNetworkOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*deletePermittedNetworkOptions.XCorrelationID))
 	}
@@ -187,16 +191,16 @@ func (dnsSvcs *DnsSvcsV1) DeletePermittedNetwork(deletePermittedNetworkOptions *
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPermittedNetwork(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPermittedNetwork)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -230,7 +234,6 @@ func (dnsSvcs *DnsSvcsV1) GetPermittedNetwork(getPermittedNetworkOptions *GetPer
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	if getPermittedNetworkOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*getPermittedNetworkOptions.XCorrelationID))
@@ -241,16 +244,16 @@ func (dnsSvcs *DnsSvcsV1) GetPermittedNetwork(getPermittedNetworkOptions *GetPer
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPermittedNetwork(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPermittedNetwork)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -263,11 +266,11 @@ type CreatePermittedNetworkOptions struct {
 	// The unique identifier of a DNS zone.
 	DnszoneID *string `json:"dnszone_id" validate:"required"`
 
-	// Permitted network data.
-	PermittedNetwork *PermittedNetworkVpc `json:"permitted_network" validate:"required"`
-
 	// The type of a permitted network.
 	Type *string `json:"type,omitempty"`
+
+	// Permitted network data for VPC.
+	PermittedNetwork *PermittedNetworkVpc `json:"permitted_network,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -451,6 +454,12 @@ type ListPermittedNetworksOptions struct {
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
 
+	// Specify how many permitted networks to skip over, the default value is 0.
+	Offset *int64 `json:"offset,omitempty"`
+
+	// Specify how many permitted networks are returned, the default value is 10.
+	Limit *int64 `json:"limit,omitempty"`
+
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
@@ -481,6 +490,18 @@ func (options *ListPermittedNetworksOptions) SetXCorrelationID(xCorrelationID st
 	return options
 }
 
+// SetOffset : Allow user to set Offset
+func (options *ListPermittedNetworksOptions) SetOffset(offset int64) *ListPermittedNetworksOptions {
+	options.Offset = core.Int64Ptr(offset)
+	return options
+}
+
+// SetLimit : Allow user to set Limit
+func (options *ListPermittedNetworksOptions) SetLimit(limit int64) *ListPermittedNetworksOptions {
+	options.Limit = core.Int64Ptr(limit)
+	return options
+}
+
 // SetHeaders : Allow user to set Headers
 func (options *ListPermittedNetworksOptions) SetHeaders(param map[string]string) *ListPermittedNetworksOptions {
 	options.Headers = param
@@ -492,73 +513,66 @@ type ListPermittedNetworks struct {
 	// An array of permitted networks.
 	PermittedNetworks []PermittedNetwork `json:"permitted_networks" validate:"required"`
 
-	// Number of permitted networks.
-	Count *int64 `json:"count" validate:"required"`
+	// Specify how many permitted networks to skip over, the default value is 0.
+	Offset *int64 `json:"offset" validate:"required"`
+
+	// Specify how many permitted networks are returned, the default value is 10.
+	Limit *int64 `json:"limit" validate:"required"`
+
+	// Total number of permitted networks.
+	TotalCount *int64 `json:"total_count" validate:"required"`
 
 	// href.
 	First *FirstHref `json:"first" validate:"required"`
 
-	// Number of permitted networks per page.
-	Limit *int64 `json:"limit" validate:"required"`
-
 	// href.
-	Next *NextHref `json:"next" validate:"required"`
-
-	// Page number.
-	Offset *int64 `json:"offset" validate:"required"`
-
-	// Total number of permitted networks.
-	TotalCount *int64 `json:"total_count" validate:"required"`
+	Next *NextHref `json:"next,omitempty"`
 }
 
-// UnmarshalListPermittedNetworks constructs an instance of ListPermittedNetworks from the specified map.
-func UnmarshalListPermittedNetworks(m map[string]interface{}) (result *ListPermittedNetworks, err error) {
+// UnmarshalListPermittedNetworks unmarshals an instance of ListPermittedNetworks from the specified map of raw messages.
+func UnmarshalListPermittedNetworks(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListPermittedNetworks)
-	obj.PermittedNetworks, err = UnmarshalPermittedNetworkSliceAsProperty(m, "permitted_networks")
+	err = core.UnmarshalModel(m, "permitted_networks", &obj.PermittedNetworks, UnmarshalPermittedNetwork)
 	if err != nil {
 		return
 	}
-	obj.Count, err = core.UnmarshalInt64(m, "count")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
-	if err != nil {
-		return
-	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
 // PermittedNetwork : Permitted network details.
 type PermittedNetwork struct {
-	// Permitted network data.
-	PermittedNetwork *PermittedNetworkVpc `json:"permitted_network,omitempty"`
+	// Unique identifier of a permitted network.
+	ID *string `json:"id,omitempty"`
 
 	// The time when a permitted network is created.
 	CreatedOn *string `json:"created_on,omitempty"`
 
-	// Unique identifier of a permitted network.
-	ID *string `json:"id,omitempty"`
-
 	// The recent time when a permitted network is modified.
 	ModifiedOn *string `json:"modified_on,omitempty"`
+
+	// Permitted network data for VPC.
+	PermittedNetwork *PermittedNetworkVpc `json:"permitted_network,omitempty"`
 
 	// The type of a permitted network.
 	Type *string `json:"type,omitempty"`
@@ -576,71 +590,38 @@ const (
 // Constants associated with the PermittedNetwork.State property.
 // The state of a permitted network.
 const (
-	PermittedNetwork_State_Active        = "ACTIVE"
-	PermittedNetwork_State_PendingRemove = "REMOVAL_IN_PROGRESS"
+	PermittedNetwork_State_Active            = "ACTIVE"
+	PermittedNetwork_State_RemovalInProgress = "REMOVAL_IN_PROGRESS"
 )
 
-// UnmarshalPermittedNetwork constructs an instance of PermittedNetwork from the specified map.
-func UnmarshalPermittedNetwork(m map[string]interface{}) (result *PermittedNetwork, err error) {
+// UnmarshalPermittedNetwork unmarshals an instance of PermittedNetwork from the specified map of raw messages.
+func UnmarshalPermittedNetwork(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(PermittedNetwork)
-	obj.PermittedNetwork, err = UnmarshalPermittedNetworkVpcAsProperty(m, "permitted_network")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
 	}
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalModel(m, "permitted_network", &obj.PermittedNetwork, UnmarshalPermittedNetworkVpc)
 	if err != nil {
 		return
 	}
-	obj.Type, err = core.UnmarshalString(m, "type")
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
 	if err != nil {
 		return
 	}
-	obj.State, err = core.UnmarshalString(m, "state")
+	err = core.UnmarshalPrimitive(m, "state", &obj.State)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalPermittedNetworkSlice unmarshals a slice of PermittedNetwork instances from the specified list of maps.
-func UnmarshalPermittedNetworkSlice(s []interface{}) (slice []PermittedNetwork, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'PermittedNetwork'")
-			return
-		}
-		obj, e := UnmarshalPermittedNetwork(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalPermittedNetworkSliceAsProperty unmarshals a slice of PermittedNetwork instances that are stored as a property
-// within the specified map.
-func UnmarshalPermittedNetworkSliceAsProperty(m map[string]interface{}, propertyName string) (slice []PermittedNetwork, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'PermittedNetwork'", propertyName)
-			return
-		}
-		slice, err = UnmarshalPermittedNetworkSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -659,28 +640,13 @@ func (*DnsSvcsV1) NewPermittedNetworkVpc(vpcCrn string) (model *PermittedNetwork
 	return
 }
 
-// UnmarshalPermittedNetworkVpc constructs an instance of PermittedNetworkVpc from the specified map.
-func UnmarshalPermittedNetworkVpc(m map[string]interface{}) (result *PermittedNetworkVpc, err error) {
+// UnmarshalPermittedNetworkVpc unmarshals an instance of PermittedNetworkVpc from the specified map of raw messages.
+func UnmarshalPermittedNetworkVpc(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(PermittedNetworkVpc)
-	obj.VpcCrn, err = core.UnmarshalString(m, "vpc_crn")
+	err = core.UnmarshalPrimitive(m, "vpc_crn", &obj.VpcCrn)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalPermittedNetworkVpcAsProperty unmarshals an instance of PermittedNetworkVpc that is stored as a property
-// within the specified map.
-func UnmarshalPermittedNetworkVpcAsProperty(m map[string]interface{}, propertyName string) (result *PermittedNetworkVpc, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'PermittedNetworkVpc'", propertyName)
-			return
-		}
-		result, err = UnmarshalPermittedNetworkVpc(objMap)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }

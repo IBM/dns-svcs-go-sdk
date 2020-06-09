@@ -18,10 +18,10 @@
 package dnssvcsv1
 
 import (
-	"github.com/IBM/go-sdk-core/v3/core"
+	"github.com/IBM/go-sdk-core/v4/core"
 )
 
-// DnsSvcsV1 : DNS svcs
+// DnsSvcsV1 : DNS Svcs
 //
 // Version: 1.0.0
 type DnsSvcsV1 struct {
@@ -32,7 +32,7 @@ type DnsSvcsV1 struct {
 const DefaultServiceURL = "https://api.dns-svcs.cloud.ibm.com/v1"
 
 // DefaultServiceName is the default key used to find external configuration information.
-const DefaultServiceName = "dns-svcs"
+const DefaultServiceName = "dns_svcs"
 
 // DnsSvcsV1Options : Service options
 type DnsSvcsV1Options struct {

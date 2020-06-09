@@ -18,14 +18,13 @@
 package dnssvcsv1
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 
-	common "github.com/IBM/dns-svcs-go-sdk/common"
-	"github.com/IBM/go-sdk-core/v3/core"
+	"github.com/IBM/go-sdk-core/v4/core"
+	common "github.com/watson-developer-cloud/go-sdk/common"
 )
-
-// DnsSvcsV1 : Manage DNS Zones
-//
 
 // ListDnszones : List DNS zones
 // List the DNS zones for a given service instance.
@@ -56,10 +55,19 @@ func (dnsSvcs *DnsSvcsV1) ListDnszones(listDnszonesOptions *ListDnszonesOptions)
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	if listDnszonesOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*listDnszonesOptions.XCorrelationID))
+	}
+
+	if listDnszonesOptions.Offset != nil {
+		builder.AddQuery("offset", fmt.Sprint(*listDnszonesOptions.Offset))
+	}
+	if listDnszonesOptions.Limit != nil {
+		builder.AddQuery("limit", fmt.Sprint(*listDnszonesOptions.Limit))
+	}
+	if listDnszonesOptions.VpcID != nil {
+		builder.AddQuery("vpc_id", fmt.Sprint(*listDnszonesOptions.VpcID))
 	}
 
 	request, err := builder.Build()
@@ -67,16 +75,16 @@ func (dnsSvcs *DnsSvcsV1) ListDnszones(listDnszonesOptions *ListDnszonesOptions)
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListDnszones(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListDnszones)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -110,7 +118,6 @@ func (dnsSvcs *DnsSvcsV1) CreateDnszone(createDnszoneOptions *CreateDnszoneOptio
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 	if createDnszoneOptions.XCorrelationID != nil {
@@ -118,14 +125,14 @@ func (dnsSvcs *DnsSvcsV1) CreateDnszone(createDnszoneOptions *CreateDnszoneOptio
 	}
 
 	body := make(map[string]interface{})
+	if createDnszoneOptions.Name != nil {
+		body["name"] = createDnszoneOptions.Name
+	}
 	if createDnszoneOptions.Description != nil {
 		body["description"] = createDnszoneOptions.Description
 	}
 	if createDnszoneOptions.Label != nil {
 		body["label"] = createDnszoneOptions.Label
-	}
-	if createDnszoneOptions.Name != nil {
-		body["name"] = createDnszoneOptions.Name
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -137,16 +144,16 @@ func (dnsSvcs *DnsSvcsV1) CreateDnszone(createDnszoneOptions *CreateDnszoneOptio
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalDnszone(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalDnszone)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -180,7 +187,6 @@ func (dnsSvcs *DnsSvcsV1) DeleteDnszone(deleteDnszoneOptions *DeleteDnszoneOptio
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	if deleteDnszoneOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*deleteDnszoneOptions.XCorrelationID))
 	}
@@ -224,7 +230,6 @@ func (dnsSvcs *DnsSvcsV1) GetDnszone(getDnszoneOptions *GetDnszoneOptions) (resu
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	if getDnszoneOptions.XCorrelationID != nil {
 		builder.AddHeader("X-Correlation-ID", fmt.Sprint(*getDnszoneOptions.XCorrelationID))
@@ -235,16 +240,16 @@ func (dnsSvcs *DnsSvcsV1) GetDnszone(getDnszoneOptions *GetDnszoneOptions) (resu
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalDnszone(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalDnszone)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -278,7 +283,6 @@ func (dnsSvcs *DnsSvcsV1) UpdateDnszone(updateDnszoneOptions *UpdateDnszoneOptio
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/json")
 	if updateDnszoneOptions.XCorrelationID != nil {
@@ -302,16 +306,16 @@ func (dnsSvcs *DnsSvcsV1) UpdateDnszone(updateDnszoneOptions *UpdateDnszoneOptio
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalDnszone(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalDnszone)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -321,14 +325,14 @@ type CreateDnszoneOptions struct {
 	// The unique identifier of a service instance.
 	InstanceID *string `json:"instance_id" validate:"required"`
 
+	// Name of DNS zone.
+	Name *string `json:"name" validate:"required"`
+
 	// The text describing the purpose of a DNS zone.
 	Description *string `json:"description,omitempty"`
 
 	// The label of a DNS zone.
 	Label *string `json:"label,omitempty"`
-
-	// Name of DNS zone.
-	Name *string `json:"name" validate:"required"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -351,6 +355,12 @@ func (options *CreateDnszoneOptions) SetInstanceID(instanceID string) *CreateDns
 	return options
 }
 
+// SetName : Allow user to set Name
+func (options *CreateDnszoneOptions) SetName(name string) *CreateDnszoneOptions {
+	options.Name = core.StringPtr(name)
+	return options
+}
+
 // SetDescription : Allow user to set Description
 func (options *CreateDnszoneOptions) SetDescription(description string) *CreateDnszoneOptions {
 	options.Description = core.StringPtr(description)
@@ -360,12 +370,6 @@ func (options *CreateDnszoneOptions) SetDescription(description string) *CreateD
 // SetLabel : Allow user to set Label
 func (options *CreateDnszoneOptions) SetLabel(label string) *CreateDnszoneOptions {
 	options.Label = core.StringPtr(label)
-	return options
-}
-
-// SetName : Allow user to set Name
-func (options *CreateDnszoneOptions) SetName(name string) *CreateDnszoneOptions {
-	options.Name = core.StringPtr(name)
 	return options
 }
 
@@ -475,6 +479,70 @@ func (options *GetDnszoneOptions) SetHeaders(param map[string]string) *GetDnszon
 	return options
 }
 
+// ListDnszonesOptions : The ListDnszones options.
+type ListDnszonesOptions struct {
+	// The unique identifier of a service instance.
+	InstanceID *string `json:"instance_id" validate:"required"`
+
+	// Uniquely identifying a request.
+	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
+
+	// Specify how many DNS zones to skip over, the default value is 0.
+	Offset *int64 `json:"offset,omitempty"`
+
+	// Specify how many DNS zones are returned, the default value is 10.
+	Limit *int64 `json:"limit,omitempty"`
+
+	// Specify the VPC instance id.
+	VpcID *string `json:"vpc_id,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewListDnszonesOptions : Instantiate ListDnszonesOptions
+func (*DnsSvcsV1) NewListDnszonesOptions(instanceID string) *ListDnszonesOptions {
+	return &ListDnszonesOptions{
+		InstanceID: core.StringPtr(instanceID),
+	}
+}
+
+// SetInstanceID : Allow user to set InstanceID
+func (options *ListDnszonesOptions) SetInstanceID(instanceID string) *ListDnszonesOptions {
+	options.InstanceID = core.StringPtr(instanceID)
+	return options
+}
+
+// SetXCorrelationID : Allow user to set XCorrelationID
+func (options *ListDnszonesOptions) SetXCorrelationID(xCorrelationID string) *ListDnszonesOptions {
+	options.XCorrelationID = core.StringPtr(xCorrelationID)
+	return options
+}
+
+// SetOffset : Allow user to set Offset
+func (options *ListDnszonesOptions) SetOffset(offset int64) *ListDnszonesOptions {
+	options.Offset = core.Int64Ptr(offset)
+	return options
+}
+
+// SetLimit : Allow user to set Limit
+func (options *ListDnszonesOptions) SetLimit(limit int64) *ListDnszonesOptions {
+	options.Limit = core.Int64Ptr(limit)
+	return options
+}
+
+// SetVpcID : Allow user to set VpcID
+func (options *ListDnszonesOptions) SetVpcID(vpcID string) *ListDnszonesOptions {
+	options.VpcID = core.StringPtr(vpcID)
+	return options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *ListDnszonesOptions) SetHeaders(param map[string]string) *ListDnszonesOptions {
+	options.Headers = param
+	return options
+}
+
 // UpdateDnszoneOptions : The UpdateDnszone options.
 type UpdateDnszoneOptions struct {
 	// The unique identifier of a service instance.
@@ -540,68 +608,31 @@ func (options *UpdateDnszoneOptions) SetHeaders(param map[string]string) *Update
 	return options
 }
 
-// ListDnszonesOptions : The ListDnszones options.
-type ListDnszonesOptions struct {
-	// The unique identifier of a service instance.
-	InstanceID *string `json:"instance_id" validate:"required"`
-
-	// Uniquely identifying a request.
-	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
-
-	// Allows users to set headers on API requests
-	Headers map[string]string
-}
-
-// NewListDnszonesOptions : Instantiate ListDnszonesOptions
-func (*DnsSvcsV1) NewListDnszonesOptions(instanceID string) *ListDnszonesOptions {
-	return &ListDnszonesOptions{
-		InstanceID: core.StringPtr(instanceID),
-	}
-}
-
-// SetInstanceID : Allow user to set InstanceID
-func (options *ListDnszonesOptions) SetInstanceID(instanceID string) *ListDnszonesOptions {
-	options.InstanceID = core.StringPtr(instanceID)
-	return options
-}
-
-// SetXCorrelationID : Allow user to set XCorrelationID
-func (options *ListDnszonesOptions) SetXCorrelationID(xCorrelationID string) *ListDnszonesOptions {
-	options.XCorrelationID = core.StringPtr(xCorrelationID)
-	return options
-}
-
-// SetHeaders : Allow user to set Headers
-func (options *ListDnszonesOptions) SetHeaders(param map[string]string) *ListDnszonesOptions {
-	options.Headers = param
-	return options
-}
-
 // Dnszone : DNS zone details.
 type Dnszone struct {
-	// the time when a DNS zone is created.
-	CreatedOn *string `json:"created_on,omitempty"`
-
-	// The text describing the purpose of a DNS zone.
-	Description *string `json:"description,omitempty"`
-
 	// Unique identifier of a DNS zone.
 	ID *string `json:"id,omitempty"`
 
-	// Unique identifier of a service instance.
-	InstanceID *string `json:"instance_id,omitempty"`
-
-	// The label of a DNS zone.
-	Label *string `json:"label,omitempty"`
+	// the time when a DNS zone is created.
+	CreatedOn *string `json:"created_on,omitempty"`
 
 	// the recent time when a DNS zone is modified.
 	ModifiedOn *string `json:"modified_on,omitempty"`
 
+	// Unique identifier of a service instance.
+	InstanceID *string `json:"instance_id,omitempty"`
+
 	// Name of DNS zone.
 	Name *string `json:"name,omitempty"`
 
+	// The text describing the purpose of a DNS zone.
+	Description *string `json:"description,omitempty"`
+
 	// State of DNS zone.
 	State *string `json:"state,omitempty"`
+
+	// The label of a DNS zone.
+	Label *string `json:"label,omitempty"`
 }
 
 // Constants associated with the Dnszone.State property.
@@ -614,75 +645,42 @@ const (
 	Dnszone_State_PendingNetworkAdd = "pending_network_add"
 )
 
-// UnmarshalDnszone constructs an instance of Dnszone from the specified map.
-func UnmarshalDnszone(m map[string]interface{}) (result *Dnszone, err error) {
+// UnmarshalDnszone unmarshals an instance of Dnszone from the specified map of raw messages.
+func UnmarshalDnszone(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Dnszone)
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.Description, err = core.UnmarshalString(m, "description")
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
 	}
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
 	if err != nil {
 		return
 	}
-	obj.InstanceID, err = core.UnmarshalString(m, "instance_id")
+	err = core.UnmarshalPrimitive(m, "instance_id", &obj.InstanceID)
 	if err != nil {
 		return
 	}
-	obj.Label, err = core.UnmarshalString(m, "label")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "state", &obj.State)
 	if err != nil {
 		return
 	}
-	obj.State, err = core.UnmarshalString(m, "state")
+	err = core.UnmarshalPrimitive(m, "label", &obj.Label)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalDnszoneSlice unmarshals a slice of Dnszone instances from the specified list of maps.
-func UnmarshalDnszoneSlice(s []interface{}) (slice []Dnszone, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'Dnszone'")
-			return
-		}
-		obj, e := UnmarshalDnszone(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalDnszoneSliceAsProperty unmarshals a slice of Dnszone instances that are stored as a property
-// within the specified map.
-func UnmarshalDnszoneSliceAsProperty(m map[string]interface{}, propertyName string) (slice []Dnszone, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'Dnszone'", propertyName)
-			return
-		}
-		slice, err = UnmarshalDnszoneSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -692,87 +690,82 @@ type FirstHref struct {
 	Href *string `json:"href,omitempty"`
 }
 
-// UnmarshalFirstHref constructs an instance of FirstHref from the specified map.
-func UnmarshalFirstHref(m map[string]interface{}) (result *FirstHref, err error) {
+// UnmarshalFirstHref unmarshals an instance of FirstHref from the specified map of raw messages.
+func UnmarshalFirstHref(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(FirstHref)
-	obj.Href, err = core.UnmarshalString(m, "href")
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalFirstHrefAsProperty unmarshals an instance of FirstHref that is stored as a property
-// within the specified map.
-func UnmarshalFirstHrefAsProperty(m map[string]interface{}, propertyName string) (result *FirstHref, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'FirstHref'", propertyName)
-			return
-		}
-		result, err = UnmarshalFirstHref(objMap)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
 // ListDnszones : List DNS zones response.
 type ListDnszones struct {
-	// Number of DNS zones.
-	Count *int64 `json:"count" validate:"required"`
-
 	// An array of DNS zones.
 	Dnszones []Dnszone `json:"dnszones" validate:"required"`
+
+	// Specify how many DNS zones to skip over, the default value is 0.
+	Offset *int64 `json:"offset" validate:"required"`
+
+	// Specify how many DNS zones are returned, the default value is 10.
+	Limit *int64 `json:"limit" validate:"required"`
+
+	// Total number of DNS zones.
+	TotalCount *int64 `json:"total_count" validate:"required"`
 
 	// href.
 	First *FirstHref `json:"first" validate:"required"`
 
-	// Number of DNS zones per page.
-	Limit *int64 `json:"limit" validate:"required"`
-
 	// href.
-	Next *NextHref `json:"next" validate:"required"`
-
-	// Page number.
-	Offset *int64 `json:"offset" validate:"required"`
-
-	// Total number of DNS zones.
-	TotalCount *int64 `json:"total_count" validate:"required"`
+	Next *NextHref `json:"next,omitempty"`
 }
 
-// UnmarshalListDnszones constructs an instance of ListDnszones from the specified map.
-func UnmarshalListDnszones(m map[string]interface{}) (result *ListDnszones, err error) {
+// UnmarshalListDnszones unmarshals an instance of ListDnszones from the specified map of raw messages.
+func UnmarshalListDnszones(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListDnszones)
-	obj.Count, err = core.UnmarshalInt64(m, "count")
+	err = core.UnmarshalModel(m, "dnszones", &obj.Dnszones, UnmarshalDnszone)
 	if err != nil {
 		return
 	}
-	obj.Dnszones, err = UnmarshalDnszoneSliceAsProperty(m, "dnszones")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// NextHref : href.
+type NextHref struct {
+	// href.
+	Href *string `json:"href,omitempty"`
+}
+
+// UnmarshalNextHref unmarshals an instance of NextHref from the specified map of raw messages.
+func UnmarshalNextHref(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(NextHref)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
