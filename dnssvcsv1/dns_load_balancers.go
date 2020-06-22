@@ -435,9 +435,6 @@ func (dnsSvcs *DnsSvcsV1) CreatePool(createPoolOptions *CreatePoolOptions) (resu
 	if createPoolOptions.Enabled != nil {
 		body["enabled"] = createPoolOptions.Enabled
 	}
-	if createPoolOptions.MinimumOrigins != nil {
-		body["minimum_origins"] = createPoolOptions.MinimumOrigins
-	}
 	if createPoolOptions.HealthyOriginsThreshold != nil {
 		body["healthy_origins_threshold"] = createPoolOptions.HealthyOriginsThreshold
 	}
@@ -617,9 +614,6 @@ func (dnsSvcs *DnsSvcsV1) UpdatePool(updatePoolOptions *UpdatePoolOptions) (resu
 	}
 	if updatePoolOptions.Enabled != nil {
 		body["enabled"] = updatePoolOptions.Enabled
-	}
-	if updatePoolOptions.MinimumOrigins != nil {
-		body["minimum_origins"] = updatePoolOptions.MinimumOrigins
 	}
 	if updatePoolOptions.HealthyOriginsThreshold != nil {
 		body["healthy_origins_threshold"] = updatePoolOptions.HealthyOriginsThreshold
@@ -1041,7 +1035,7 @@ type CreateLoadBalancerOptions struct {
 	DefaultPools []string `json:"default_pools,omitempty"`
 
 	// Map availability zones to pool ID's.
-	AzPools *AzPools `json:"az_pools,omitempty"`
+	AzPools []LoadBalancerAzPoolsItem `json:"az_pools,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -1107,7 +1101,7 @@ func (options *CreateLoadBalancerOptions) SetDefaultPools(defaultPools []string)
 }
 
 // SetAzPools : Allow user to set AzPools
-func (options *CreateLoadBalancerOptions) SetAzPools(azPools *AzPools) *CreateLoadBalancerOptions {
+func (options *CreateLoadBalancerOptions) SetAzPools(azPools []LoadBalancerAzPoolsItem) *CreateLoadBalancerOptions {
 	options.AzPools = azPools
 	return options
 }
@@ -1322,11 +1316,6 @@ type CreatePoolOptions struct {
 	// Whether the load balancer pool is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
 
-	// \[deprecated\] The minimum number of origins that must be healthy for this pool to serve traffic. If the number of
-	// healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next
-	// available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
-
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
 	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
@@ -1354,7 +1343,6 @@ type CreatePoolOptions struct {
 // Constants associated with the CreatePoolOptions.NotificationType property.
 // The type of the notification channel.
 const (
-	CreatePoolOptions_NotificationType_Email   = "email"
 	CreatePoolOptions_NotificationType_Webhook = "webhook"
 )
 
@@ -1386,12 +1374,6 @@ func (options *CreatePoolOptions) SetDescription(description string) *CreatePool
 // SetEnabled : Allow user to set Enabled
 func (options *CreatePoolOptions) SetEnabled(enabled bool) *CreatePoolOptions {
 	options.Enabled = core.BoolPtr(enabled)
-	return options
-}
-
-// SetMinimumOrigins : Allow user to set MinimumOrigins
-func (options *CreatePoolOptions) SetMinimumOrigins(minimumOrigins int64) *CreatePoolOptions {
-	options.MinimumOrigins = core.Int64Ptr(minimumOrigins)
 	return options
 }
 
@@ -1860,6 +1842,30 @@ func (options *ListPoolsOptions) SetHeaders(param map[string]string) *ListPoolsO
 	return options
 }
 
+// LoadBalancerAzPoolsItem : LoadBalancerAzPoolsItem struct
+type LoadBalancerAzPoolsItem struct {
+	// Availability zone.
+	AvailabilityZone *string `json:"availability_zone,omitempty"`
+
+	// List of load balancer pools.
+	Pools []string `json:"pools,omitempty"`
+}
+
+// UnmarshalLoadBalancerAzPoolsItem unmarshals an instance of LoadBalancerAzPoolsItem from the specified map of raw messages.
+func UnmarshalLoadBalancerAzPoolsItem(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(LoadBalancerAzPoolsItem)
+	err = core.UnmarshalPrimitive(m, "availability_zone", &obj.AvailabilityZone)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "pools", &obj.Pools)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // UpdateLoadBalancerOptions : The UpdateLoadBalancer options.
 type UpdateLoadBalancerOptions struct {
 	// The unique identifier of a service instance.
@@ -1891,7 +1897,7 @@ type UpdateLoadBalancerOptions struct {
 	DefaultPools []string `json:"default_pools,omitempty"`
 
 	// Map availability zones to pool ID's.
-	AzPools *AzPools `json:"az_pools,omitempty"`
+	AzPools []LoadBalancerAzPoolsItem `json:"az_pools,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -1964,7 +1970,7 @@ func (options *UpdateLoadBalancerOptions) SetDefaultPools(defaultPools []string)
 }
 
 // SetAzPools : Allow user to set AzPools
-func (options *UpdateLoadBalancerOptions) SetAzPools(azPools *AzPools) *UpdateLoadBalancerOptions {
+func (options *UpdateLoadBalancerOptions) SetAzPools(azPools []LoadBalancerAzPoolsItem) *UpdateLoadBalancerOptions {
 	options.AzPools = azPools
 	return options
 }
@@ -2193,11 +2199,6 @@ type UpdatePoolOptions struct {
 	// Whether the load balancer pool is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
 
-	// \[deprecated\] The minimum number of origins that must be healthy for this pool to serve traffic. If the number of
-	// healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next
-	// available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
-
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
 	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
@@ -2225,7 +2226,6 @@ type UpdatePoolOptions struct {
 // Constants associated with the UpdatePoolOptions.NotificationType property.
 // The type of the notification channel.
 const (
-	UpdatePoolOptions_NotificationType_Email   = "email"
 	UpdatePoolOptions_NotificationType_Webhook = "webhook"
 )
 
@@ -2264,12 +2264,6 @@ func (options *UpdatePoolOptions) SetDescription(description string) *UpdatePool
 // SetEnabled : Allow user to set Enabled
 func (options *UpdatePoolOptions) SetEnabled(enabled bool) *UpdatePoolOptions {
 	options.Enabled = core.BoolPtr(enabled)
-	return options
-}
-
-// SetMinimumOrigins : Allow user to set MinimumOrigins
-func (options *UpdatePoolOptions) SetMinimumOrigins(minimumOrigins int64) *UpdatePoolOptions {
-	options.MinimumOrigins = core.Int64Ptr(minimumOrigins)
 	return options
 }
 
@@ -2313,142 +2307,6 @@ func (options *UpdatePoolOptions) SetXCorrelationID(xCorrelationID string) *Upda
 func (options *UpdatePoolOptions) SetHeaders(param map[string]string) *UpdatePoolOptions {
 	options.Headers = param
 	return options
-}
-
-// AzPools : Map availability zones to pool ID's.
-type AzPools struct {
-	// us-south-1.
-	UsSouth1 []string `json:"us-south-1,omitempty"`
-
-	// us-south-2.
-	UsSouth2 []string `json:"us-south-2,omitempty"`
-
-	// us-south-3.
-	UsSouth3 []string `json:"us-south-3,omitempty"`
-
-	// us-east-1.
-	UsEast1 []string `json:"us-east-1,omitempty"`
-
-	// us-east-2.
-	UsEast2 []string `json:"us-east-2,omitempty"`
-
-	// us-east-3.
-	UsEast3 []string `json:"us-east-3,omitempty"`
-
-	// eu-gb-1.
-	EuGb1 []string `json:"eu-gb-1,omitempty"`
-
-	// eu-gb-2.
-	EuGb2 []string `json:"eu-gb-2,omitempty"`
-
-	// eu-gb-3.
-	EuGb3 []string `json:"eu-gb-3,omitempty"`
-
-	// eu-de-1.
-	EuDe1 []string `json:"eu-de-1,omitempty"`
-
-	// eu-de-2.
-	EuDe2 []string `json:"eu-de-2,omitempty"`
-
-	// eu-de-3.
-	EuDe3 []string `json:"eu-de-3,omitempty"`
-
-	// au-syd-1.
-	AuSyd1 []string `json:"au-syd-1,omitempty"`
-
-	// au-syd-2.
-	AuSyd2 []string `json:"au-syd-2,omitempty"`
-
-	// au-syd-3.
-	AuSyd3 []string `json:"au-syd-3,omitempty"`
-
-	// jp-tok-1.
-	JpTok1 []string `json:"jp-tok-1,omitempty"`
-
-	// jp-tok-2.
-	JpTok2 []string `json:"jp-tok-2,omitempty"`
-
-	// jp-tok-3.
-	JpTok3 []string `json:"jp-tok-3,omitempty"`
-}
-
-// UnmarshalAzPools unmarshals an instance of AzPools from the specified map of raw messages.
-func UnmarshalAzPools(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(AzPools)
-	err = core.UnmarshalPrimitive(m, "us-south-1", &obj.UsSouth1)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "us-south-2", &obj.UsSouth2)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "us-south-3", &obj.UsSouth3)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "us-east-1", &obj.UsEast1)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "us-east-2", &obj.UsEast2)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "us-east-3", &obj.UsEast3)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "eu-gb-1", &obj.EuGb1)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "eu-gb-2", &obj.EuGb2)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "eu-gb-3", &obj.EuGb3)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "eu-de-1", &obj.EuDe1)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "eu-de-2", &obj.EuDe2)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "eu-de-3", &obj.EuDe3)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "au-syd-1", &obj.AuSyd1)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "au-syd-2", &obj.AuSyd2)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "au-syd-3", &obj.AuSyd3)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "jp-tok-1", &obj.JpTok1)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "jp-tok-2", &obj.JpTok2)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "jp-tok-3", &obj.JpTok3)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
 }
 
 // HealthcheckHeader : The HTTP header of health check request.
@@ -2687,7 +2545,7 @@ type LoadBalancer struct {
 	DefaultPools []string `json:"default_pools,omitempty"`
 
 	// Map availability zones to pool ID's.
-	AzPools *AzPools `json:"az_pools,omitempty"`
+	AzPools []LoadBalancerAzPoolsItem `json:"az_pools,omitempty"`
 
 	// the time when a load balancer is created.
 	CreatedOn *string `json:"created_on,omitempty"`
@@ -2735,7 +2593,7 @@ func UnmarshalLoadBalancer(m map[string]json.RawMessage, result interface{}) (er
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "az_pools", &obj.AzPools, UnmarshalAzPools)
+	err = core.UnmarshalModel(m, "az_pools", &obj.AzPools, UnmarshalLoadBalancerAzPoolsItem)
 	if err != nil {
 		return
 	}
@@ -2790,8 +2648,7 @@ type Monitor struct {
 	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
 	HeadersVar []HealthcheckHeader `json:"headers,omitempty"`
 
-	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
-	// monitors.
+	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTPS monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
 
 	// The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS
@@ -2953,11 +2810,6 @@ type Pool struct {
 	// Whether the load balancer pool is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
 
-	// \[deprecated\] The minimum number of origins that must be healthy for this pool to serve traffic. If the number of
-	// healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next
-	// available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
-
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
 	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
@@ -2985,7 +2837,6 @@ type Pool struct {
 // Constants associated with the Pool.NotificationType property.
 // The type of the notification channel.
 const (
-	Pool_NotificationType_Email   = "email"
 	Pool_NotificationType_Webhook = "webhook"
 )
 
@@ -3005,10 +2856,6 @@ func UnmarshalPool(m map[string]json.RawMessage, result interface{}) (err error)
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "minimum_origins", &obj.MinimumOrigins)
 	if err != nil {
 		return
 	}
