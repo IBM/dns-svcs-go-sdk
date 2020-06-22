@@ -2827,6 +2827,9 @@ type Pool struct {
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
 
+	// Healthy state of the load balancer pool.
+	Health *string `json:"health,omitempty"`
+
 	// the time when a load balancer pool is created.
 	CreatedOn *string `json:"created_on,omitempty"`
 
@@ -2838,6 +2841,14 @@ type Pool struct {
 // The type of the notification channel.
 const (
 	Pool_NotificationType_Webhook = "webhook"
+)
+
+// Constants associated with the Pool.Health property.
+// Healthy state of the load balancer pool.
+const (
+	Pool_Health_Degraded = "DEGRADED"
+	Pool_Health_Down     = "DOWN"
+	Pool_Health_Up       = "UP"
 )
 
 // UnmarshalPool unmarshals an instance of Pool from the specified map of raw messages.
@@ -2876,6 +2887,10 @@ func UnmarshalPool(m map[string]json.RawMessage, result interface{}) (err error)
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "notification_channel", &obj.NotificationChannel)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health", &obj.Health)
 	if err != nil {
 		return
 	}
