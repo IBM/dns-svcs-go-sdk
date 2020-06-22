@@ -1948,7 +1948,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"load_balancers": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "glb.example.com", "enabled": true, "ttl": 120, "health": "DEGRADED", "fallback_pool": "24ccf79a-4ae0-4769-b4c8-17f8f230072e", "default_pools": ["DefaultPools"], "az_pools": {"us-south-1": ["UsSouth1"], "us-south-2": ["UsSouth2"], "us-south-3": ["UsSouth3"], "us-east-1": ["UsEast1"], "us-east-2": ["UsEast2"], "us-east-3": ["UsEast3"], "eu-gb-1": ["EuGb1"], "eu-gb-2": ["EuGb2"], "eu-gb-3": ["EuGb3"], "eu-de-1": ["EuDe1"], "eu-de-2": ["EuDe2"], "eu-de-3": ["EuDe3"], "au-syd-1": ["AuSyd1"], "au-syd-2": ["AuSyd2"], "au-syd-3": ["AuSyd3"], "jp-tok-1": ["JpTok1"], "jp-tok-2": ["JpTok2"], "jp-tok-3": ["JpTok3"]}, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/zones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/load_balancers?page=1&per_page=20"}, "next": {"href": "https://api.pdns.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/zones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/load_balancers?page=2&per_page=20"}}`)
+					fmt.Fprintf(res, `{"load_balancers": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "glb.example.com", "enabled": true, "ttl": 120, "health": "DEGRADED", "fallback_pool": "24ccf79a-4ae0-4769-b4c8-17f8f230072e", "default_pools": ["DefaultPools"], "az_pools": [{"availability_zone": "us-south-1", "pools": ["0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"]}], "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
 				}))
 			})
 			It(`Invoke ListLoadBalancers successfully`, func() {
@@ -2038,26 +2038,10 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(testServiceErr).To(BeNil())
 				Expect(testService).ToNot(BeNil())
 
-				// Construct an instance of the AzPools model
-				azPoolsModel := new(dnssvcsv1.AzPools)
-				azPoolsModel.UsSouth1 = []string{"testString"}
-				azPoolsModel.UsSouth2 = []string{"testString"}
-				azPoolsModel.UsSouth3 = []string{"testString"}
-				azPoolsModel.UsEast1 = []string{"testString"}
-				azPoolsModel.UsEast2 = []string{"testString"}
-				azPoolsModel.UsEast3 = []string{"testString"}
-				azPoolsModel.EuGb1 = []string{"testString"}
-				azPoolsModel.EuGb2 = []string{"testString"}
-				azPoolsModel.EuGb3 = []string{"testString"}
-				azPoolsModel.EuDe1 = []string{"testString"}
-				azPoolsModel.EuDe2 = []string{"testString"}
-				azPoolsModel.EuDe3 = []string{"testString"}
-				azPoolsModel.AuSyd1 = []string{"testString"}
-				azPoolsModel.AuSyd2 = []string{"testString"}
-				azPoolsModel.AuSyd3 = []string{"testString"}
-				azPoolsModel.JpTok1 = []string{"testString"}
-				azPoolsModel.JpTok2 = []string{"testString"}
-				azPoolsModel.JpTok3 = []string{"testString"}
+				// Construct an instance of the LoadBalancerAzPoolsItem model
+				loadBalancerAzPoolsItemModel := new(dnssvcsv1.LoadBalancerAzPoolsItem)
+				loadBalancerAzPoolsItemModel.AvailabilityZone = core.StringPtr("us-south-1")
+				loadBalancerAzPoolsItemModel.Pools = []string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}
 
 				// Construct an instance of the CreateLoadBalancerOptions model
 				createLoadBalancerOptionsModel := new(dnssvcsv1.CreateLoadBalancerOptions)
@@ -2069,7 +2053,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createLoadBalancerOptionsModel.TTL = core.Int64Ptr(int64(120))
 				createLoadBalancerOptionsModel.FallbackPool = core.StringPtr("24ccf79a-4ae0-4769-b4c8-17f8f230072e")
 				createLoadBalancerOptionsModel.DefaultPools = []string{"testString"}
-				createLoadBalancerOptionsModel.AzPools = azPoolsModel
+				createLoadBalancerOptionsModel.AzPools = []dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel}
 				createLoadBalancerOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createLoadBalancerOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
@@ -2098,7 +2082,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "glb.example.com", "enabled": true, "ttl": 120, "health": "DEGRADED", "fallback_pool": "24ccf79a-4ae0-4769-b4c8-17f8f230072e", "default_pools": ["DefaultPools"], "az_pools": {"us-south-1": ["UsSouth1"], "us-south-2": ["UsSouth2"], "us-south-3": ["UsSouth3"], "us-east-1": ["UsEast1"], "us-east-2": ["UsEast2"], "us-east-3": ["UsEast3"], "eu-gb-1": ["EuGb1"], "eu-gb-2": ["EuGb2"], "eu-gb-3": ["EuGb3"], "eu-de-1": ["EuDe1"], "eu-de-2": ["EuDe2"], "eu-de-3": ["EuDe3"], "au-syd-1": ["AuSyd1"], "au-syd-2": ["AuSyd2"], "au-syd-3": ["AuSyd3"], "jp-tok-1": ["JpTok1"], "jp-tok-2": ["JpTok2"], "jp-tok-3": ["JpTok3"]}, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "glb.example.com", "enabled": true, "ttl": 120, "health": "DEGRADED", "fallback_pool": "24ccf79a-4ae0-4769-b4c8-17f8f230072e", "default_pools": ["DefaultPools"], "az_pools": [{"availability_zone": "us-south-1", "pools": ["0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"]}], "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke CreateLoadBalancer successfully`, func() {
@@ -2115,26 +2099,10 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
 
-				// Construct an instance of the AzPools model
-				azPoolsModel := new(dnssvcsv1.AzPools)
-				azPoolsModel.UsSouth1 = []string{"testString"}
-				azPoolsModel.UsSouth2 = []string{"testString"}
-				azPoolsModel.UsSouth3 = []string{"testString"}
-				azPoolsModel.UsEast1 = []string{"testString"}
-				azPoolsModel.UsEast2 = []string{"testString"}
-				azPoolsModel.UsEast3 = []string{"testString"}
-				azPoolsModel.EuGb1 = []string{"testString"}
-				azPoolsModel.EuGb2 = []string{"testString"}
-				azPoolsModel.EuGb3 = []string{"testString"}
-				azPoolsModel.EuDe1 = []string{"testString"}
-				azPoolsModel.EuDe2 = []string{"testString"}
-				azPoolsModel.EuDe3 = []string{"testString"}
-				azPoolsModel.AuSyd1 = []string{"testString"}
-				azPoolsModel.AuSyd2 = []string{"testString"}
-				azPoolsModel.AuSyd3 = []string{"testString"}
-				azPoolsModel.JpTok1 = []string{"testString"}
-				azPoolsModel.JpTok2 = []string{"testString"}
-				azPoolsModel.JpTok3 = []string{"testString"}
+				// Construct an instance of the LoadBalancerAzPoolsItem model
+				loadBalancerAzPoolsItemModel := new(dnssvcsv1.LoadBalancerAzPoolsItem)
+				loadBalancerAzPoolsItemModel.AvailabilityZone = core.StringPtr("us-south-1")
+				loadBalancerAzPoolsItemModel.Pools = []string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}
 
 				// Construct an instance of the CreateLoadBalancerOptions model
 				createLoadBalancerOptionsModel := new(dnssvcsv1.CreateLoadBalancerOptions)
@@ -2146,7 +2114,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createLoadBalancerOptionsModel.TTL = core.Int64Ptr(int64(120))
 				createLoadBalancerOptionsModel.FallbackPool = core.StringPtr("24ccf79a-4ae0-4769-b4c8-17f8f230072e")
 				createLoadBalancerOptionsModel.DefaultPools = []string{"testString"}
-				createLoadBalancerOptionsModel.AzPools = azPoolsModel
+				createLoadBalancerOptionsModel.AzPools = []dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel}
 				createLoadBalancerOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createLoadBalancerOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
@@ -2164,26 +2132,10 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(testServiceErr).To(BeNil())
 				Expect(testService).ToNot(BeNil())
 
-				// Construct an instance of the AzPools model
-				azPoolsModel := new(dnssvcsv1.AzPools)
-				azPoolsModel.UsSouth1 = []string{"testString"}
-				azPoolsModel.UsSouth2 = []string{"testString"}
-				azPoolsModel.UsSouth3 = []string{"testString"}
-				azPoolsModel.UsEast1 = []string{"testString"}
-				azPoolsModel.UsEast2 = []string{"testString"}
-				azPoolsModel.UsEast3 = []string{"testString"}
-				azPoolsModel.EuGb1 = []string{"testString"}
-				azPoolsModel.EuGb2 = []string{"testString"}
-				azPoolsModel.EuGb3 = []string{"testString"}
-				azPoolsModel.EuDe1 = []string{"testString"}
-				azPoolsModel.EuDe2 = []string{"testString"}
-				azPoolsModel.EuDe3 = []string{"testString"}
-				azPoolsModel.AuSyd1 = []string{"testString"}
-				azPoolsModel.AuSyd2 = []string{"testString"}
-				azPoolsModel.AuSyd3 = []string{"testString"}
-				azPoolsModel.JpTok1 = []string{"testString"}
-				azPoolsModel.JpTok2 = []string{"testString"}
-				azPoolsModel.JpTok3 = []string{"testString"}
+				// Construct an instance of the LoadBalancerAzPoolsItem model
+				loadBalancerAzPoolsItemModel := new(dnssvcsv1.LoadBalancerAzPoolsItem)
+				loadBalancerAzPoolsItemModel.AvailabilityZone = core.StringPtr("us-south-1")
+				loadBalancerAzPoolsItemModel.Pools = []string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}
 
 				// Construct an instance of the CreateLoadBalancerOptions model
 				createLoadBalancerOptionsModel := new(dnssvcsv1.CreateLoadBalancerOptions)
@@ -2195,7 +2147,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createLoadBalancerOptionsModel.TTL = core.Int64Ptr(int64(120))
 				createLoadBalancerOptionsModel.FallbackPool = core.StringPtr("24ccf79a-4ae0-4769-b4c8-17f8f230072e")
 				createLoadBalancerOptionsModel.DefaultPools = []string{"testString"}
-				createLoadBalancerOptionsModel.AzPools = azPoolsModel
+				createLoadBalancerOptionsModel.AzPools = []dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel}
 				createLoadBalancerOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createLoadBalancerOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
@@ -2353,7 +2305,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "glb.example.com", "enabled": true, "ttl": 120, "health": "DEGRADED", "fallback_pool": "24ccf79a-4ae0-4769-b4c8-17f8f230072e", "default_pools": ["DefaultPools"], "az_pools": {"us-south-1": ["UsSouth1"], "us-south-2": ["UsSouth2"], "us-south-3": ["UsSouth3"], "us-east-1": ["UsEast1"], "us-east-2": ["UsEast2"], "us-east-3": ["UsEast3"], "eu-gb-1": ["EuGb1"], "eu-gb-2": ["EuGb2"], "eu-gb-3": ["EuGb3"], "eu-de-1": ["EuDe1"], "eu-de-2": ["EuDe2"], "eu-de-3": ["EuDe3"], "au-syd-1": ["AuSyd1"], "au-syd-2": ["AuSyd2"], "au-syd-3": ["AuSyd3"], "jp-tok-1": ["JpTok1"], "jp-tok-2": ["JpTok2"], "jp-tok-3": ["JpTok3"]}, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "glb.example.com", "enabled": true, "ttl": 120, "health": "DEGRADED", "fallback_pool": "24ccf79a-4ae0-4769-b4c8-17f8f230072e", "default_pools": ["DefaultPools"], "az_pools": [{"availability_zone": "us-south-1", "pools": ["0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"]}], "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke GetLoadBalancer successfully`, func() {
@@ -2445,26 +2397,10 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(testServiceErr).To(BeNil())
 				Expect(testService).ToNot(BeNil())
 
-				// Construct an instance of the AzPools model
-				azPoolsModel := new(dnssvcsv1.AzPools)
-				azPoolsModel.UsSouth1 = []string{"testString"}
-				azPoolsModel.UsSouth2 = []string{"testString"}
-				azPoolsModel.UsSouth3 = []string{"testString"}
-				azPoolsModel.UsEast1 = []string{"testString"}
-				azPoolsModel.UsEast2 = []string{"testString"}
-				azPoolsModel.UsEast3 = []string{"testString"}
-				azPoolsModel.EuGb1 = []string{"testString"}
-				azPoolsModel.EuGb2 = []string{"testString"}
-				azPoolsModel.EuGb3 = []string{"testString"}
-				azPoolsModel.EuDe1 = []string{"testString"}
-				azPoolsModel.EuDe2 = []string{"testString"}
-				azPoolsModel.EuDe3 = []string{"testString"}
-				azPoolsModel.AuSyd1 = []string{"testString"}
-				azPoolsModel.AuSyd2 = []string{"testString"}
-				azPoolsModel.AuSyd3 = []string{"testString"}
-				azPoolsModel.JpTok1 = []string{"testString"}
-				azPoolsModel.JpTok2 = []string{"testString"}
-				azPoolsModel.JpTok3 = []string{"testString"}
+				// Construct an instance of the LoadBalancerAzPoolsItem model
+				loadBalancerAzPoolsItemModel := new(dnssvcsv1.LoadBalancerAzPoolsItem)
+				loadBalancerAzPoolsItemModel.AvailabilityZone = core.StringPtr("us-south-1")
+				loadBalancerAzPoolsItemModel.Pools = []string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}
 
 				// Construct an instance of the UpdateLoadBalancerOptions model
 				updateLoadBalancerOptionsModel := new(dnssvcsv1.UpdateLoadBalancerOptions)
@@ -2477,7 +2413,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateLoadBalancerOptionsModel.TTL = core.Int64Ptr(int64(120))
 				updateLoadBalancerOptionsModel.FallbackPool = core.StringPtr("24ccf79a-4ae0-4769-b4c8-17f8f230072e")
 				updateLoadBalancerOptionsModel.DefaultPools = []string{"testString"}
-				updateLoadBalancerOptionsModel.AzPools = azPoolsModel
+				updateLoadBalancerOptionsModel.AzPools = []dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel}
 				updateLoadBalancerOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updateLoadBalancerOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
@@ -2506,7 +2442,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "glb.example.com", "enabled": true, "ttl": 120, "health": "DEGRADED", "fallback_pool": "24ccf79a-4ae0-4769-b4c8-17f8f230072e", "default_pools": ["DefaultPools"], "az_pools": {"us-south-1": ["UsSouth1"], "us-south-2": ["UsSouth2"], "us-south-3": ["UsSouth3"], "us-east-1": ["UsEast1"], "us-east-2": ["UsEast2"], "us-east-3": ["UsEast3"], "eu-gb-1": ["EuGb1"], "eu-gb-2": ["EuGb2"], "eu-gb-3": ["EuGb3"], "eu-de-1": ["EuDe1"], "eu-de-2": ["EuDe2"], "eu-de-3": ["EuDe3"], "au-syd-1": ["AuSyd1"], "au-syd-2": ["AuSyd2"], "au-syd-3": ["AuSyd3"], "jp-tok-1": ["JpTok1"], "jp-tok-2": ["JpTok2"], "jp-tok-3": ["JpTok3"]}, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "glb.example.com", "enabled": true, "ttl": 120, "health": "DEGRADED", "fallback_pool": "24ccf79a-4ae0-4769-b4c8-17f8f230072e", "default_pools": ["DefaultPools"], "az_pools": [{"availability_zone": "us-south-1", "pools": ["0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"]}], "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke UpdateLoadBalancer successfully`, func() {
@@ -2523,26 +2459,10 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
 
-				// Construct an instance of the AzPools model
-				azPoolsModel := new(dnssvcsv1.AzPools)
-				azPoolsModel.UsSouth1 = []string{"testString"}
-				azPoolsModel.UsSouth2 = []string{"testString"}
-				azPoolsModel.UsSouth3 = []string{"testString"}
-				azPoolsModel.UsEast1 = []string{"testString"}
-				azPoolsModel.UsEast2 = []string{"testString"}
-				azPoolsModel.UsEast3 = []string{"testString"}
-				azPoolsModel.EuGb1 = []string{"testString"}
-				azPoolsModel.EuGb2 = []string{"testString"}
-				azPoolsModel.EuGb3 = []string{"testString"}
-				azPoolsModel.EuDe1 = []string{"testString"}
-				azPoolsModel.EuDe2 = []string{"testString"}
-				azPoolsModel.EuDe3 = []string{"testString"}
-				azPoolsModel.AuSyd1 = []string{"testString"}
-				azPoolsModel.AuSyd2 = []string{"testString"}
-				azPoolsModel.AuSyd3 = []string{"testString"}
-				azPoolsModel.JpTok1 = []string{"testString"}
-				azPoolsModel.JpTok2 = []string{"testString"}
-				azPoolsModel.JpTok3 = []string{"testString"}
+				// Construct an instance of the LoadBalancerAzPoolsItem model
+				loadBalancerAzPoolsItemModel := new(dnssvcsv1.LoadBalancerAzPoolsItem)
+				loadBalancerAzPoolsItemModel.AvailabilityZone = core.StringPtr("us-south-1")
+				loadBalancerAzPoolsItemModel.Pools = []string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}
 
 				// Construct an instance of the UpdateLoadBalancerOptions model
 				updateLoadBalancerOptionsModel := new(dnssvcsv1.UpdateLoadBalancerOptions)
@@ -2555,7 +2475,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateLoadBalancerOptionsModel.TTL = core.Int64Ptr(int64(120))
 				updateLoadBalancerOptionsModel.FallbackPool = core.StringPtr("24ccf79a-4ae0-4769-b4c8-17f8f230072e")
 				updateLoadBalancerOptionsModel.DefaultPools = []string{"testString"}
-				updateLoadBalancerOptionsModel.AzPools = azPoolsModel
+				updateLoadBalancerOptionsModel.AzPools = []dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel}
 				updateLoadBalancerOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updateLoadBalancerOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
@@ -2573,26 +2493,10 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(testServiceErr).To(BeNil())
 				Expect(testService).ToNot(BeNil())
 
-				// Construct an instance of the AzPools model
-				azPoolsModel := new(dnssvcsv1.AzPools)
-				azPoolsModel.UsSouth1 = []string{"testString"}
-				azPoolsModel.UsSouth2 = []string{"testString"}
-				azPoolsModel.UsSouth3 = []string{"testString"}
-				azPoolsModel.UsEast1 = []string{"testString"}
-				azPoolsModel.UsEast2 = []string{"testString"}
-				azPoolsModel.UsEast3 = []string{"testString"}
-				azPoolsModel.EuGb1 = []string{"testString"}
-				azPoolsModel.EuGb2 = []string{"testString"}
-				azPoolsModel.EuGb3 = []string{"testString"}
-				azPoolsModel.EuDe1 = []string{"testString"}
-				azPoolsModel.EuDe2 = []string{"testString"}
-				azPoolsModel.EuDe3 = []string{"testString"}
-				azPoolsModel.AuSyd1 = []string{"testString"}
-				azPoolsModel.AuSyd2 = []string{"testString"}
-				azPoolsModel.AuSyd3 = []string{"testString"}
-				azPoolsModel.JpTok1 = []string{"testString"}
-				azPoolsModel.JpTok2 = []string{"testString"}
-				azPoolsModel.JpTok3 = []string{"testString"}
+				// Construct an instance of the LoadBalancerAzPoolsItem model
+				loadBalancerAzPoolsItemModel := new(dnssvcsv1.LoadBalancerAzPoolsItem)
+				loadBalancerAzPoolsItemModel.AvailabilityZone = core.StringPtr("us-south-1")
+				loadBalancerAzPoolsItemModel.Pools = []string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}
 
 				// Construct an instance of the UpdateLoadBalancerOptions model
 				updateLoadBalancerOptionsModel := new(dnssvcsv1.UpdateLoadBalancerOptions)
@@ -2605,7 +2509,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateLoadBalancerOptionsModel.TTL = core.Int64Ptr(int64(120))
 				updateLoadBalancerOptionsModel.FallbackPool = core.StringPtr("24ccf79a-4ae0-4769-b4c8-17f8f230072e")
 				updateLoadBalancerOptionsModel.DefaultPools = []string{"testString"}
-				updateLoadBalancerOptionsModel.AzPools = azPoolsModel
+				updateLoadBalancerOptionsModel.AzPools = []dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel}
 				updateLoadBalancerOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updateLoadBalancerOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
@@ -2782,7 +2686,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"pools": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "minimum_origins": 1, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "email", "notification_channel": "xxx@mail.example.com", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/zones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/load_balancers?page=1&per_page=20"}, "next": {"href": "https://api.pdns.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/zones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/load_balancers?page=2&per_page=20"}}`)
+					fmt.Fprintf(res, `{"pools": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
 				}))
 			})
 			It(`Invoke ListPools successfully`, func() {
@@ -2884,12 +2788,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Name = core.StringPtr("dal10-az-pool")
 				createPoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				createPoolOptionsModel.Enabled = core.BoolPtr(true)
-				createPoolOptionsModel.MinimumOrigins = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				createPoolOptionsModel.NotificationType = core.StringPtr("email")
-				createPoolOptionsModel.NotificationChannel = core.StringPtr("xxx@mail.example.com")
+				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
+				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createPoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
@@ -2918,7 +2821,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "minimum_origins": 1, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "email", "notification_channel": "xxx@mail.example.com", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke CreatePool successfully`, func() {
@@ -2949,12 +2852,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Name = core.StringPtr("dal10-az-pool")
 				createPoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				createPoolOptionsModel.Enabled = core.BoolPtr(true)
-				createPoolOptionsModel.MinimumOrigins = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				createPoolOptionsModel.NotificationType = core.StringPtr("email")
-				createPoolOptionsModel.NotificationChannel = core.StringPtr("xxx@mail.example.com")
+				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
+				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createPoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
@@ -2986,12 +2888,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Name = core.StringPtr("dal10-az-pool")
 				createPoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				createPoolOptionsModel.Enabled = core.BoolPtr(true)
-				createPoolOptionsModel.MinimumOrigins = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				createPoolOptionsModel.NotificationType = core.StringPtr("email")
-				createPoolOptionsModel.NotificationChannel = core.StringPtr("xxx@mail.example.com")
+				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
+				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createPoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
@@ -3146,7 +3047,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "minimum_origins": 1, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "email", "notification_channel": "xxx@mail.example.com", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke GetPool successfully`, func() {
@@ -3251,12 +3152,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Name = core.StringPtr("dal10-az-pool")
 				updatePoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				updatePoolOptionsModel.Enabled = core.BoolPtr(true)
-				updatePoolOptionsModel.MinimumOrigins = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				updatePoolOptionsModel.NotificationType = core.StringPtr("email")
-				updatePoolOptionsModel.NotificationChannel = core.StringPtr("xxx@mail.example.com")
+				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
+				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updatePoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
@@ -3285,7 +3185,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "minimum_origins": 1, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "email", "notification_channel": "xxx@mail.example.com", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke UpdatePool successfully`, func() {
@@ -3317,12 +3217,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Name = core.StringPtr("dal10-az-pool")
 				updatePoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				updatePoolOptionsModel.Enabled = core.BoolPtr(true)
-				updatePoolOptionsModel.MinimumOrigins = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				updatePoolOptionsModel.NotificationType = core.StringPtr("email")
-				updatePoolOptionsModel.NotificationChannel = core.StringPtr("xxx@mail.example.com")
+				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
+				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updatePoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
@@ -3355,12 +3254,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Name = core.StringPtr("dal10-az-pool")
 				updatePoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				updatePoolOptionsModel.Enabled = core.BoolPtr(true)
-				updatePoolOptionsModel.MinimumOrigins = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				updatePoolOptionsModel.NotificationType = core.StringPtr("email")
-				updatePoolOptionsModel.NotificationChannel = core.StringPtr("xxx@mail.example.com")
+				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
+				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updatePoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
@@ -3537,7 +3435,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"monitors": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Health check monitor", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/zones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/load_balancers?page=1&per_page=20"}, "next": {"href": "https://api.pdns.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/zones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/load_balancers?page=2&per_page=20"}}`)
+					fmt.Fprintf(res, `{"monitors": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
 				}))
 			})
 			It(`Invoke ListMonitors successfully`, func() {
@@ -3634,7 +3532,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createMonitorOptionsModel := new(dnssvcsv1.CreateMonitorOptions)
 				createMonitorOptionsModel.InstanceID = core.StringPtr("testString")
 				createMonitorOptionsModel.Name = core.StringPtr("healthcheck-monitor")
-				createMonitorOptionsModel.Description = core.StringPtr("Health check monitor")
+				createMonitorOptionsModel.Description = core.StringPtr("Load balancer monitor for glb.example.com.")
 				createMonitorOptionsModel.Type = core.StringPtr("HTTPS")
 				createMonitorOptionsModel.Port = core.Int64Ptr(int64(8080))
 				createMonitorOptionsModel.Interval = core.Int64Ptr(int64(60))
@@ -3675,7 +3573,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Health check monitor", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke CreateMonitor successfully`, func() {
@@ -3701,7 +3599,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createMonitorOptionsModel := new(dnssvcsv1.CreateMonitorOptions)
 				createMonitorOptionsModel.InstanceID = core.StringPtr("testString")
 				createMonitorOptionsModel.Name = core.StringPtr("healthcheck-monitor")
-				createMonitorOptionsModel.Description = core.StringPtr("Health check monitor")
+				createMonitorOptionsModel.Description = core.StringPtr("Load balancer monitor for glb.example.com.")
 				createMonitorOptionsModel.Type = core.StringPtr("HTTPS")
 				createMonitorOptionsModel.Port = core.Int64Ptr(int64(8080))
 				createMonitorOptionsModel.Interval = core.Int64Ptr(int64(60))
@@ -3740,7 +3638,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createMonitorOptionsModel := new(dnssvcsv1.CreateMonitorOptions)
 				createMonitorOptionsModel.InstanceID = core.StringPtr("testString")
 				createMonitorOptionsModel.Name = core.StringPtr("healthcheck-monitor")
-				createMonitorOptionsModel.Description = core.StringPtr("Health check monitor")
+				createMonitorOptionsModel.Description = core.StringPtr("Load balancer monitor for glb.example.com.")
 				createMonitorOptionsModel.Type = core.StringPtr("HTTPS")
 				createMonitorOptionsModel.Port = core.Int64Ptr(int64(8080))
 				createMonitorOptionsModel.Interval = core.Int64Ptr(int64(60))
@@ -3907,7 +3805,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Health check monitor", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke GetMonitor successfully`, func() {
@@ -4007,7 +3905,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateMonitorOptionsModel.InstanceID = core.StringPtr("testString")
 				updateMonitorOptionsModel.MonitorID = core.StringPtr("testString")
 				updateMonitorOptionsModel.Name = core.StringPtr("healthcheck-monitor")
-				updateMonitorOptionsModel.Description = core.StringPtr("Health check monitor")
+				updateMonitorOptionsModel.Description = core.StringPtr("Load balancer monitor for glb.example.com.")
 				updateMonitorOptionsModel.Type = core.StringPtr("HTTPS")
 				updateMonitorOptionsModel.Port = core.Int64Ptr(int64(8080))
 				updateMonitorOptionsModel.Interval = core.Int64Ptr(int64(60))
@@ -4048,7 +3946,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Health check monitor", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T05:20:00.12345Z", "modified_on": "2019-01-01T05:20:00.12345Z"}`)
 				}))
 			})
 			It(`Invoke UpdateMonitor successfully`, func() {
@@ -4075,7 +3973,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateMonitorOptionsModel.InstanceID = core.StringPtr("testString")
 				updateMonitorOptionsModel.MonitorID = core.StringPtr("testString")
 				updateMonitorOptionsModel.Name = core.StringPtr("healthcheck-monitor")
-				updateMonitorOptionsModel.Description = core.StringPtr("Health check monitor")
+				updateMonitorOptionsModel.Description = core.StringPtr("Load balancer monitor for glb.example.com.")
 				updateMonitorOptionsModel.Type = core.StringPtr("HTTPS")
 				updateMonitorOptionsModel.Port = core.Int64Ptr(int64(8080))
 				updateMonitorOptionsModel.Interval = core.Int64Ptr(int64(60))
@@ -4115,7 +4013,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateMonitorOptionsModel.InstanceID = core.StringPtr("testString")
 				updateMonitorOptionsModel.MonitorID = core.StringPtr("testString")
 				updateMonitorOptionsModel.Name = core.StringPtr("healthcheck-monitor")
-				updateMonitorOptionsModel.Description = core.StringPtr("Health check monitor")
+				updateMonitorOptionsModel.Description = core.StringPtr("Load balancer monitor for glb.example.com.")
 				updateMonitorOptionsModel.Type = core.StringPtr("HTTPS")
 				updateMonitorOptionsModel.Port = core.Int64Ptr(int64(8080))
 				updateMonitorOptionsModel.Interval = core.Int64Ptr(int64(60))
@@ -4543,45 +4441,13 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(err).To(BeNil())
 			})
 			It(`Invoke NewCreateLoadBalancerOptions successfully`, func() {
-				// Construct an instance of the AzPools model
-				azPoolsModel := new(dnssvcsv1.AzPools)
-				Expect(azPoolsModel).ToNot(BeNil())
-				azPoolsModel.UsSouth1 = []string{"testString"}
-				azPoolsModel.UsSouth2 = []string{"testString"}
-				azPoolsModel.UsSouth3 = []string{"testString"}
-				azPoolsModel.UsEast1 = []string{"testString"}
-				azPoolsModel.UsEast2 = []string{"testString"}
-				azPoolsModel.UsEast3 = []string{"testString"}
-				azPoolsModel.EuGb1 = []string{"testString"}
-				azPoolsModel.EuGb2 = []string{"testString"}
-				azPoolsModel.EuGb3 = []string{"testString"}
-				azPoolsModel.EuDe1 = []string{"testString"}
-				azPoolsModel.EuDe2 = []string{"testString"}
-				azPoolsModel.EuDe3 = []string{"testString"}
-				azPoolsModel.AuSyd1 = []string{"testString"}
-				azPoolsModel.AuSyd2 = []string{"testString"}
-				azPoolsModel.AuSyd3 = []string{"testString"}
-				azPoolsModel.JpTok1 = []string{"testString"}
-				azPoolsModel.JpTok2 = []string{"testString"}
-				azPoolsModel.JpTok3 = []string{"testString"}
-				Expect(azPoolsModel.UsSouth1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsSouth2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsSouth3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsEast1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsEast2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsEast3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuGb1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuGb2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuGb3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuDe1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuDe2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuDe3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.AuSyd1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.AuSyd2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.AuSyd3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.JpTok1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.JpTok2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.JpTok3).To(Equal([]string{"testString"}))
+				// Construct an instance of the LoadBalancerAzPoolsItem model
+				loadBalancerAzPoolsItemModel := new(dnssvcsv1.LoadBalancerAzPoolsItem)
+				Expect(loadBalancerAzPoolsItemModel).ToNot(BeNil())
+				loadBalancerAzPoolsItemModel.AvailabilityZone = core.StringPtr("us-south-1")
+				loadBalancerAzPoolsItemModel.Pools = []string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}
+				Expect(loadBalancerAzPoolsItemModel.AvailabilityZone).To(Equal(core.StringPtr("us-south-1")))
+				Expect(loadBalancerAzPoolsItemModel.Pools).To(Equal([]string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}))
 
 				// Construct an instance of the CreateLoadBalancerOptions model
 				instanceID := "testString"
@@ -4595,7 +4461,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createLoadBalancerOptionsModel.SetTTL(int64(120))
 				createLoadBalancerOptionsModel.SetFallbackPool("24ccf79a-4ae0-4769-b4c8-17f8f230072e")
 				createLoadBalancerOptionsModel.SetDefaultPools([]string{"testString"})
-				createLoadBalancerOptionsModel.SetAzPools(azPoolsModel)
+				createLoadBalancerOptionsModel.SetAzPools([]dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel})
 				createLoadBalancerOptionsModel.SetXCorrelationID("testString")
 				createLoadBalancerOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(createLoadBalancerOptionsModel).ToNot(BeNil())
@@ -4607,7 +4473,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(createLoadBalancerOptionsModel.TTL).To(Equal(core.Int64Ptr(int64(120))))
 				Expect(createLoadBalancerOptionsModel.FallbackPool).To(Equal(core.StringPtr("24ccf79a-4ae0-4769-b4c8-17f8f230072e")))
 				Expect(createLoadBalancerOptionsModel.DefaultPools).To(Equal([]string{"testString"}))
-				Expect(createLoadBalancerOptionsModel.AzPools).To(Equal(azPoolsModel))
+				Expect(createLoadBalancerOptionsModel.AzPools).To(Equal([]dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel}))
 				Expect(createLoadBalancerOptionsModel.XCorrelationID).To(Equal(core.StringPtr("testString")))
 				Expect(createLoadBalancerOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
@@ -4625,7 +4491,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createMonitorOptionsModel := testService.NewCreateMonitorOptions(instanceID)
 				createMonitorOptionsModel.SetInstanceID("testString")
 				createMonitorOptionsModel.SetName("healthcheck-monitor")
-				createMonitorOptionsModel.SetDescription("Health check monitor")
+				createMonitorOptionsModel.SetDescription("Load balancer monitor for glb.example.com.")
 				createMonitorOptionsModel.SetType("HTTPS")
 				createMonitorOptionsModel.SetPort(int64(8080))
 				createMonitorOptionsModel.SetInterval(int64(60))
@@ -4643,7 +4509,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(createMonitorOptionsModel).ToNot(BeNil())
 				Expect(createMonitorOptionsModel.InstanceID).To(Equal(core.StringPtr("testString")))
 				Expect(createMonitorOptionsModel.Name).To(Equal(core.StringPtr("healthcheck-monitor")))
-				Expect(createMonitorOptionsModel.Description).To(Equal(core.StringPtr("Health check monitor")))
+				Expect(createMonitorOptionsModel.Description).To(Equal(core.StringPtr("Load balancer monitor for glb.example.com.")))
 				Expect(createMonitorOptionsModel.Type).To(Equal(core.StringPtr("HTTPS")))
 				Expect(createMonitorOptionsModel.Port).To(Equal(core.Int64Ptr(int64(8080))))
 				Expect(createMonitorOptionsModel.Interval).To(Equal(core.Int64Ptr(int64(60))))
@@ -4681,12 +4547,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.SetName("dal10-az-pool")
 				createPoolOptionsModel.SetDescription("Load balancer pool for dal10 availability zone.")
 				createPoolOptionsModel.SetEnabled(true)
-				createPoolOptionsModel.SetMinimumOrigins(int64(1))
 				createPoolOptionsModel.SetHealthyOriginsThreshold(int64(1))
 				createPoolOptionsModel.SetOrigins([]dnssvcsv1.Origin{*originModel})
 				createPoolOptionsModel.SetMonitor("7dd6841c-264e-11ea-88df-062967242a6a")
-				createPoolOptionsModel.SetNotificationType("email")
-				createPoolOptionsModel.SetNotificationChannel("xxx@mail.example.com")
+				createPoolOptionsModel.SetNotificationType("webhook")
+				createPoolOptionsModel.SetNotificationChannel("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.SetXCorrelationID("testString")
 				createPoolOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(createPoolOptionsModel).ToNot(BeNil())
@@ -4694,12 +4559,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(createPoolOptionsModel.Name).To(Equal(core.StringPtr("dal10-az-pool")))
 				Expect(createPoolOptionsModel.Description).To(Equal(core.StringPtr("Load balancer pool for dal10 availability zone.")))
 				Expect(createPoolOptionsModel.Enabled).To(Equal(core.BoolPtr(true)))
-				Expect(createPoolOptionsModel.MinimumOrigins).To(Equal(core.Int64Ptr(int64(1))))
 				Expect(createPoolOptionsModel.HealthyOriginsThreshold).To(Equal(core.Int64Ptr(int64(1))))
 				Expect(createPoolOptionsModel.Origins).To(Equal([]dnssvcsv1.Origin{*originModel}))
 				Expect(createPoolOptionsModel.Monitor).To(Equal(core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")))
-				Expect(createPoolOptionsModel.NotificationType).To(Equal(core.StringPtr("email")))
-				Expect(createPoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("xxx@mail.example.com")))
+				Expect(createPoolOptionsModel.NotificationType).To(Equal(core.StringPtr("webhook")))
+				Expect(createPoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("https://mywebsite.com/dns/webhook")))
 				Expect(createPoolOptionsModel.XCorrelationID).To(Equal(core.StringPtr("testString")))
 				Expect(createPoolOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
@@ -4839,45 +4703,13 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(listPoolsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewUpdateLoadBalancerOptions successfully`, func() {
-				// Construct an instance of the AzPools model
-				azPoolsModel := new(dnssvcsv1.AzPools)
-				Expect(azPoolsModel).ToNot(BeNil())
-				azPoolsModel.UsSouth1 = []string{"testString"}
-				azPoolsModel.UsSouth2 = []string{"testString"}
-				azPoolsModel.UsSouth3 = []string{"testString"}
-				azPoolsModel.UsEast1 = []string{"testString"}
-				azPoolsModel.UsEast2 = []string{"testString"}
-				azPoolsModel.UsEast3 = []string{"testString"}
-				azPoolsModel.EuGb1 = []string{"testString"}
-				azPoolsModel.EuGb2 = []string{"testString"}
-				azPoolsModel.EuGb3 = []string{"testString"}
-				azPoolsModel.EuDe1 = []string{"testString"}
-				azPoolsModel.EuDe2 = []string{"testString"}
-				azPoolsModel.EuDe3 = []string{"testString"}
-				azPoolsModel.AuSyd1 = []string{"testString"}
-				azPoolsModel.AuSyd2 = []string{"testString"}
-				azPoolsModel.AuSyd3 = []string{"testString"}
-				azPoolsModel.JpTok1 = []string{"testString"}
-				azPoolsModel.JpTok2 = []string{"testString"}
-				azPoolsModel.JpTok3 = []string{"testString"}
-				Expect(azPoolsModel.UsSouth1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsSouth2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsSouth3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsEast1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsEast2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.UsEast3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuGb1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuGb2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuGb3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuDe1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuDe2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.EuDe3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.AuSyd1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.AuSyd2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.AuSyd3).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.JpTok1).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.JpTok2).To(Equal([]string{"testString"}))
-				Expect(azPoolsModel.JpTok3).To(Equal([]string{"testString"}))
+				// Construct an instance of the LoadBalancerAzPoolsItem model
+				loadBalancerAzPoolsItemModel := new(dnssvcsv1.LoadBalancerAzPoolsItem)
+				Expect(loadBalancerAzPoolsItemModel).ToNot(BeNil())
+				loadBalancerAzPoolsItemModel.AvailabilityZone = core.StringPtr("us-south-1")
+				loadBalancerAzPoolsItemModel.Pools = []string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}
+				Expect(loadBalancerAzPoolsItemModel.AvailabilityZone).To(Equal(core.StringPtr("us-south-1")))
+				Expect(loadBalancerAzPoolsItemModel.Pools).To(Equal([]string{"0fc0bb7c-2fab-476e-8b9b-40fa14bf8e3d"}))
 
 				// Construct an instance of the UpdateLoadBalancerOptions model
 				instanceID := "testString"
@@ -4893,7 +4725,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateLoadBalancerOptionsModel.SetTTL(int64(120))
 				updateLoadBalancerOptionsModel.SetFallbackPool("24ccf79a-4ae0-4769-b4c8-17f8f230072e")
 				updateLoadBalancerOptionsModel.SetDefaultPools([]string{"testString"})
-				updateLoadBalancerOptionsModel.SetAzPools(azPoolsModel)
+				updateLoadBalancerOptionsModel.SetAzPools([]dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel})
 				updateLoadBalancerOptionsModel.SetXCorrelationID("testString")
 				updateLoadBalancerOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(updateLoadBalancerOptionsModel).ToNot(BeNil())
@@ -4906,7 +4738,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(updateLoadBalancerOptionsModel.TTL).To(Equal(core.Int64Ptr(int64(120))))
 				Expect(updateLoadBalancerOptionsModel.FallbackPool).To(Equal(core.StringPtr("24ccf79a-4ae0-4769-b4c8-17f8f230072e")))
 				Expect(updateLoadBalancerOptionsModel.DefaultPools).To(Equal([]string{"testString"}))
-				Expect(updateLoadBalancerOptionsModel.AzPools).To(Equal(azPoolsModel))
+				Expect(updateLoadBalancerOptionsModel.AzPools).To(Equal([]dnssvcsv1.LoadBalancerAzPoolsItem{*loadBalancerAzPoolsItemModel}))
 				Expect(updateLoadBalancerOptionsModel.XCorrelationID).To(Equal(core.StringPtr("testString")))
 				Expect(updateLoadBalancerOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
@@ -4926,7 +4758,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateMonitorOptionsModel.SetInstanceID("testString")
 				updateMonitorOptionsModel.SetMonitorID("testString")
 				updateMonitorOptionsModel.SetName("healthcheck-monitor")
-				updateMonitorOptionsModel.SetDescription("Health check monitor")
+				updateMonitorOptionsModel.SetDescription("Load balancer monitor for glb.example.com.")
 				updateMonitorOptionsModel.SetType("HTTPS")
 				updateMonitorOptionsModel.SetPort(int64(8080))
 				updateMonitorOptionsModel.SetInterval(int64(60))
@@ -4945,7 +4777,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(updateMonitorOptionsModel.InstanceID).To(Equal(core.StringPtr("testString")))
 				Expect(updateMonitorOptionsModel.MonitorID).To(Equal(core.StringPtr("testString")))
 				Expect(updateMonitorOptionsModel.Name).To(Equal(core.StringPtr("healthcheck-monitor")))
-				Expect(updateMonitorOptionsModel.Description).To(Equal(core.StringPtr("Health check monitor")))
+				Expect(updateMonitorOptionsModel.Description).To(Equal(core.StringPtr("Load balancer monitor for glb.example.com.")))
 				Expect(updateMonitorOptionsModel.Type).To(Equal(core.StringPtr("HTTPS")))
 				Expect(updateMonitorOptionsModel.Port).To(Equal(core.Int64Ptr(int64(8080))))
 				Expect(updateMonitorOptionsModel.Interval).To(Equal(core.Int64Ptr(int64(60))))
@@ -4985,12 +4817,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.SetName("dal10-az-pool")
 				updatePoolOptionsModel.SetDescription("Load balancer pool for dal10 availability zone.")
 				updatePoolOptionsModel.SetEnabled(true)
-				updatePoolOptionsModel.SetMinimumOrigins(int64(1))
 				updatePoolOptionsModel.SetHealthyOriginsThreshold(int64(1))
 				updatePoolOptionsModel.SetOrigins([]dnssvcsv1.Origin{*originModel})
 				updatePoolOptionsModel.SetMonitor("7dd6841c-264e-11ea-88df-062967242a6a")
-				updatePoolOptionsModel.SetNotificationType("email")
-				updatePoolOptionsModel.SetNotificationChannel("xxx@mail.example.com")
+				updatePoolOptionsModel.SetNotificationType("webhook")
+				updatePoolOptionsModel.SetNotificationChannel("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.SetXCorrelationID("testString")
 				updatePoolOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(updatePoolOptionsModel).ToNot(BeNil())
@@ -4999,12 +4830,11 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(updatePoolOptionsModel.Name).To(Equal(core.StringPtr("dal10-az-pool")))
 				Expect(updatePoolOptionsModel.Description).To(Equal(core.StringPtr("Load balancer pool for dal10 availability zone.")))
 				Expect(updatePoolOptionsModel.Enabled).To(Equal(core.BoolPtr(true)))
-				Expect(updatePoolOptionsModel.MinimumOrigins).To(Equal(core.Int64Ptr(int64(1))))
 				Expect(updatePoolOptionsModel.HealthyOriginsThreshold).To(Equal(core.Int64Ptr(int64(1))))
 				Expect(updatePoolOptionsModel.Origins).To(Equal([]dnssvcsv1.Origin{*originModel}))
 				Expect(updatePoolOptionsModel.Monitor).To(Equal(core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")))
-				Expect(updatePoolOptionsModel.NotificationType).To(Equal(core.StringPtr("email")))
-				Expect(updatePoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("xxx@mail.example.com")))
+				Expect(updatePoolOptionsModel.NotificationType).To(Equal(core.StringPtr("webhook")))
+				Expect(updatePoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("https://mywebsite.com/dns/webhook")))
 				Expect(updatePoolOptionsModel.XCorrelationID).To(Equal(core.StringPtr("testString")))
 				Expect(updatePoolOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
