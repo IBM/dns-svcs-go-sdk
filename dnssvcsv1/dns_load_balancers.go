@@ -2528,6 +2528,9 @@ type LoadBalancer struct {
 	// Name of the load balancer.
 	Name *string `json:"name,omitempty"`
 
+	// Descriptive text of the load balancer.
+	Description *string `json:"description,omitempty"`
+
 	// Whether the load balancer is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
 
@@ -2570,6 +2573,10 @@ func UnmarshalLoadBalancer(m map[string]json.RawMessage, result interface{}) (er
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
