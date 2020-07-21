@@ -450,6 +450,12 @@ func (dnsSvcs *DnsSvcsV1) CreatePool(createPoolOptions *CreatePoolOptions) (resu
 	if createPoolOptions.NotificationChannel != nil {
 		body["notification_channel"] = createPoolOptions.NotificationChannel
 	}
+	if createPoolOptions.HealthcheckRegion != nil {
+		body["healthcheck_region"] = createPoolOptions.HealthcheckRegion
+	}
+	if createPoolOptions.HealthcheckSubnets != nil {
+		body["healthcheck_subnets"] = createPoolOptions.HealthcheckSubnets
+	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
 		return
@@ -630,6 +636,12 @@ func (dnsSvcs *DnsSvcsV1) UpdatePool(updatePoolOptions *UpdatePoolOptions) (resu
 	if updatePoolOptions.NotificationChannel != nil {
 		body["notification_channel"] = updatePoolOptions.NotificationChannel
 	}
+	if updatePoolOptions.HealthcheckRegion != nil {
+		body["healthcheck_region"] = updatePoolOptions.HealthcheckRegion
+	}
+	if updatePoolOptions.HealthcheckSubnets != nil {
+		body["healthcheck_subnets"] = updatePoolOptions.HealthcheckSubnets
+	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
 		return
@@ -781,9 +793,6 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 	}
 	if createMonitorOptions.ExpectedBody != nil {
 		body["expected_body"] = createMonitorOptions.ExpectedBody
-	}
-	if createMonitorOptions.FollowRedirects != nil {
-		body["follow_redirects"] = createMonitorOptions.FollowRedirects
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -980,9 +989,6 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 	if updateMonitorOptions.ExpectedBody != nil {
 		body["expected_body"] = updateMonitorOptions.ExpectedBody
 	}
-	if updateMonitorOptions.FollowRedirects != nil {
-		body["follow_redirects"] = updateMonitorOptions.FollowRedirects
-	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
 		return
@@ -1168,9 +1174,6 @@ type CreateMonitorOptions struct {
 	// marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
 	ExpectedBody *string `json:"expected_body,omitempty"`
 
-	// Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
-	FollowRedirects *bool `json:"follow_redirects,omitempty"`
-
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
 
@@ -1284,12 +1287,6 @@ func (options *CreateMonitorOptions) SetExpectedBody(expectedBody string) *Creat
 	return options
 }
 
-// SetFollowRedirects : Allow user to set FollowRedirects
-func (options *CreateMonitorOptions) SetFollowRedirects(followRedirects bool) *CreateMonitorOptions {
-	options.FollowRedirects = core.BoolPtr(followRedirects)
-	return options
-}
-
 // SetXCorrelationID : Allow user to set XCorrelationID
 func (options *CreateMonitorOptions) SetXCorrelationID(xCorrelationID string) *CreateMonitorOptions {
 	options.XCorrelationID = core.StringPtr(xCorrelationID)
@@ -1333,6 +1330,12 @@ type CreatePoolOptions struct {
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
 
+	// Health check region of VSIs.
+	HealthcheckRegion *string `json:"healthcheck_region,omitempty"`
+
+	// Health check subnet IDs of VSIs.
+	HealthcheckSubnets []string `json:"healthcheck_subnets,omitempty"`
+
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
 
@@ -1344,6 +1347,17 @@ type CreatePoolOptions struct {
 // The type of the notification channel.
 const (
 	CreatePoolOptions_NotificationType_Webhook = "webhook"
+)
+
+// Constants associated with the CreatePoolOptions.HealthcheckRegion property.
+// Health check region of VSIs.
+const (
+	CreatePoolOptions_HealthcheckRegion_AuSyd   = "au-syd"
+	CreatePoolOptions_HealthcheckRegion_EuDu    = "eu-du"
+	CreatePoolOptions_HealthcheckRegion_EuGb    = "eu-gb"
+	CreatePoolOptions_HealthcheckRegion_JpTok   = "jp-tok"
+	CreatePoolOptions_HealthcheckRegion_UsEast  = "us-east"
+	CreatePoolOptions_HealthcheckRegion_UsSouth = "us-south"
 )
 
 // NewCreatePoolOptions : Instantiate CreatePoolOptions
@@ -1404,6 +1418,18 @@ func (options *CreatePoolOptions) SetNotificationType(notificationType string) *
 // SetNotificationChannel : Allow user to set NotificationChannel
 func (options *CreatePoolOptions) SetNotificationChannel(notificationChannel string) *CreatePoolOptions {
 	options.NotificationChannel = core.StringPtr(notificationChannel)
+	return options
+}
+
+// SetHealthcheckRegion : Allow user to set HealthcheckRegion
+func (options *CreatePoolOptions) SetHealthcheckRegion(healthcheckRegion string) *CreatePoolOptions {
+	options.HealthcheckRegion = core.StringPtr(healthcheckRegion)
+	return options
+}
+
+// SetHealthcheckSubnets : Allow user to set HealthcheckSubnets
+func (options *CreatePoolOptions) SetHealthcheckSubnets(healthcheckSubnets []string) *CreatePoolOptions {
+	options.HealthcheckSubnets = healthcheckSubnets
 	return options
 }
 
@@ -2041,9 +2067,6 @@ type UpdateMonitorOptions struct {
 	// marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
 	ExpectedBody *string `json:"expected_body,omitempty"`
 
-	// Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
-	FollowRedirects *bool `json:"follow_redirects,omitempty"`
-
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
 
@@ -2164,12 +2187,6 @@ func (options *UpdateMonitorOptions) SetExpectedBody(expectedBody string) *Updat
 	return options
 }
 
-// SetFollowRedirects : Allow user to set FollowRedirects
-func (options *UpdateMonitorOptions) SetFollowRedirects(followRedirects bool) *UpdateMonitorOptions {
-	options.FollowRedirects = core.BoolPtr(followRedirects)
-	return options
-}
-
 // SetXCorrelationID : Allow user to set XCorrelationID
 func (options *UpdateMonitorOptions) SetXCorrelationID(xCorrelationID string) *UpdateMonitorOptions {
 	options.XCorrelationID = core.StringPtr(xCorrelationID)
@@ -2216,6 +2233,12 @@ type UpdatePoolOptions struct {
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
 
+	// Health check region of VSIs.
+	HealthcheckRegion *string `json:"healthcheck_region,omitempty"`
+
+	// Health check subnet IDs of VSIs.
+	HealthcheckSubnets []string `json:"healthcheck_subnets,omitempty"`
+
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
 
@@ -2227,6 +2250,17 @@ type UpdatePoolOptions struct {
 // The type of the notification channel.
 const (
 	UpdatePoolOptions_NotificationType_Webhook = "webhook"
+)
+
+// Constants associated with the UpdatePoolOptions.HealthcheckRegion property.
+// Health check region of VSIs.
+const (
+	UpdatePoolOptions_HealthcheckRegion_AuSyd   = "au-syd"
+	UpdatePoolOptions_HealthcheckRegion_EuDu    = "eu-du"
+	UpdatePoolOptions_HealthcheckRegion_EuGb    = "eu-gb"
+	UpdatePoolOptions_HealthcheckRegion_JpTok   = "jp-tok"
+	UpdatePoolOptions_HealthcheckRegion_UsEast  = "us-east"
+	UpdatePoolOptions_HealthcheckRegion_UsSouth = "us-south"
 )
 
 // NewUpdatePoolOptions : Instantiate UpdatePoolOptions
@@ -2294,6 +2328,18 @@ func (options *UpdatePoolOptions) SetNotificationType(notificationType string) *
 // SetNotificationChannel : Allow user to set NotificationChannel
 func (options *UpdatePoolOptions) SetNotificationChannel(notificationChannel string) *UpdatePoolOptions {
 	options.NotificationChannel = core.StringPtr(notificationChannel)
+	return options
+}
+
+// SetHealthcheckRegion : Allow user to set HealthcheckRegion
+func (options *UpdatePoolOptions) SetHealthcheckRegion(healthcheckRegion string) *UpdatePoolOptions {
+	options.HealthcheckRegion = core.StringPtr(healthcheckRegion)
+	return options
+}
+
+// SetHealthcheckSubnets : Allow user to set HealthcheckSubnets
+func (options *UpdatePoolOptions) SetHealthcheckSubnets(healthcheckSubnets []string) *UpdatePoolOptions {
+	options.HealthcheckSubnets = healthcheckSubnets
 	return options
 }
 
@@ -2666,9 +2712,6 @@ type Monitor struct {
 	// marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
 	ExpectedBody *string `json:"expected_body,omitempty"`
 
-	// Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
-	FollowRedirects *bool `json:"follow_redirects,omitempty"`
-
 	// the time when a load balancer monitor is created.
 	CreatedOn *string `json:"created_on,omitempty"`
 
@@ -2742,10 +2785,6 @@ func UnmarshalMonitor(m map[string]json.RawMessage, result interface{}) (err err
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalPrimitive(m, "follow_redirects", &obj.FollowRedirects)
-	if err != nil {
-		return
-	}
 	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
@@ -2771,9 +2810,6 @@ type Origin struct {
 
 	// Whether the origin server is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
-
-	// Weight for traffic distribution.
-	Weight *int64 `json:"weight,omitempty"`
 }
 
 // UnmarshalOrigin unmarshals an instance of Origin from the specified map of raw messages.
@@ -2792,10 +2828,6 @@ func UnmarshalOrigin(m map[string]json.RawMessage, result interface{}) (err erro
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "weight", &obj.Weight)
 	if err != nil {
 		return
 	}
@@ -2837,6 +2869,12 @@ type Pool struct {
 	// Healthy state of the load balancer pool.
 	Health *string `json:"health,omitempty"`
 
+	// Health check region of VSIs.
+	HealthcheckRegion *string `json:"healthcheck_region,omitempty"`
+
+	// Health check subnet IDs of VSIs.
+	HealthcheckSubnets []string `json:"healthcheck_subnets,omitempty"`
+
 	// the time when a load balancer pool is created.
 	CreatedOn *string `json:"created_on,omitempty"`
 
@@ -2856,6 +2894,17 @@ const (
 	Pool_Health_Degraded = "DEGRADED"
 	Pool_Health_Down     = "DOWN"
 	Pool_Health_Up       = "UP"
+)
+
+// Constants associated with the Pool.HealthcheckRegion property.
+// Health check region of VSIs.
+const (
+	Pool_HealthcheckRegion_AuSyd   = "au-syd"
+	Pool_HealthcheckRegion_EuDu    = "eu-du"
+	Pool_HealthcheckRegion_EuGb    = "eu-gb"
+	Pool_HealthcheckRegion_JpTok   = "jp-tok"
+	Pool_HealthcheckRegion_UsEast  = "us-east"
+	Pool_HealthcheckRegion_UsSouth = "us-south"
 )
 
 // UnmarshalPool unmarshals an instance of Pool from the specified map of raw messages.
@@ -2898,6 +2947,14 @@ func UnmarshalPool(m map[string]json.RawMessage, result interface{}) (err error)
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "health", &obj.Health)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "healthcheck_region", &obj.HealthcheckRegion)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "healthcheck_subnets", &obj.HealthcheckSubnets)
 	if err != nil {
 		return
 	}

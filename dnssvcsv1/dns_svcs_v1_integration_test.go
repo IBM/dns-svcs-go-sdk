@@ -627,6 +627,9 @@ func TestDnsResourceRecordTXTOperation(t *testing.T) {
 func TestDnsLoadBalancerOperation(t *testing.T) {
 	shouldSkipTest(t)
 
+	subnetId := os.Getenv("SUBNET_ID")
+	assert.NotEmpty(t, subnetId)
+
 	headers := map[string]string{
 		"test": "teststring",
 	}
@@ -655,7 +658,6 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	createDnsGlbMonitorOptions.SetExpectedCodes("200")
 	createDnsGlbMonitorOptions.SetExpectedBody("alive")
 	createDnsGlbMonitorOptions.SetHeadersVar(healthcheckHeader)
-	createDnsGlbMonitorOptions.SetFollowRedirects(false)
 	createDnsGlbMonitorOptions.SetXCorrelationID("abc123")
 	createDnsGlbMonitorOptions.SetHeaders(headers)
 	monitorResult, response, reqErr := service.CreateMonitor(createDnsGlbMonitorOptions)
@@ -703,7 +705,6 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	updateDnsGlbMonitorOptions.SetAllowInsecure(false)
 	updateDnsGlbMonitorOptions.SetExpectedCodes("200")
 	updateDnsGlbMonitorOptions.SetExpectedBody("alive")
-	updateDnsGlbMonitorOptions.SetFollowRedirects(false)
 	updateDnsGlbMonitorOptions.SetXCorrelationID("abc123")
 	updateDnsGlbMonitorOptions.SetHeaders(headers)
 	monitorResult, response, reqErr = service.UpdateMonitor(updateDnsGlbMonitorOptions)
@@ -724,11 +725,12 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	origin1.Description = core.StringPtr("description of the origin server")
 	origin1.Address = core.StringPtr("10.10.16.8")
 	origin1.Enabled = core.BoolPtr(true)
-	origin1.Weight = core.Int64Ptr(int64(1))
 	createDnsGlbPoolOptions.SetOrigins([]dnssvcsv1.Origin{*origin1})
 	createDnsGlbPoolOptions.SetMonitor(*monitorID)
 	createDnsGlbPoolOptions.SetNotificationType(dnssvcsv1.CreatePoolOptions_NotificationType_Webhook)
 	createDnsGlbPoolOptions.SetNotificationChannel("https://mywebsite.com/dns/webhook")
+	createDnsGlbPoolOptions.SetHealthcheckRegion("us-south")
+	createDnsGlbPoolOptions.SetHealthcheckSubnets([]string{subnetId})
 	createDnsGlbPoolOptions.SetXCorrelationID("abc123")
 	createDnsGlbPoolOptions.SetHeaders(headers)
 	poolResult, response, reqErr := service.CreatePool(createDnsGlbPoolOptions)
@@ -773,11 +775,12 @@ func TestDnsLoadBalancerOperation(t *testing.T) {
 	origin2.Description = core.StringPtr("description of the origin server")
 	origin2.Address = core.StringPtr("10.10.16.9")
 	origin2.Enabled = core.BoolPtr(true)
-	origin2.Weight = core.Int64Ptr(int64(1))
 	updateDnsGlbPoolOptions.SetOrigins([]dnssvcsv1.Origin{*origin2})
 	updateDnsGlbPoolOptions.SetMonitor(*monitorID)
 	updateDnsGlbPoolOptions.SetNotificationType(dnssvcsv1.CreatePoolOptions_NotificationType_Webhook)
 	updateDnsGlbPoolOptions.SetNotificationChannel("https://mywebsite.com/dns/webhookupdate")
+	updateDnsGlbPoolOptions.SetHealthcheckRegion("us-south")
+	updateDnsGlbPoolOptions.SetHealthcheckSubnets([]string{subnetId})
 	updateDnsGlbPoolOptions.SetXCorrelationID("abc123")
 	updateDnsGlbPoolOptions.SetHeaders(headers)
 	poolResult, response, reqErr = service.UpdatePool(updateDnsGlbPoolOptions)

@@ -2686,7 +2686,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"pools": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
+					fmt.Fprintf(res, `{"pools": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
 				}))
 			})
 			It(`Invoke ListPools successfully`, func() {
@@ -2780,7 +2780,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				originModel.Description = core.StringPtr("description of the origin server")
 				originModel.Address = core.StringPtr("10.10.16.8")
 				originModel.Enabled = core.BoolPtr(true)
-				originModel.Weight = core.Int64Ptr(int64(1))
 
 				// Construct an instance of the CreatePoolOptions model
 				createPoolOptionsModel := new(dnssvcsv1.CreatePoolOptions)
@@ -2793,6 +2792,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
+				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
+				createPoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
 				createPoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createPoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
@@ -2821,7 +2822,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke CreatePool successfully`, func() {
@@ -2844,7 +2845,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				originModel.Description = core.StringPtr("description of the origin server")
 				originModel.Address = core.StringPtr("10.10.16.8")
 				originModel.Enabled = core.BoolPtr(true)
-				originModel.Weight = core.Int64Ptr(int64(1))
 
 				// Construct an instance of the CreatePoolOptions model
 				createPoolOptionsModel := new(dnssvcsv1.CreatePoolOptions)
@@ -2857,6 +2857,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
+				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
+				createPoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
 				createPoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createPoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
@@ -2880,7 +2882,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				originModel.Description = core.StringPtr("description of the origin server")
 				originModel.Address = core.StringPtr("10.10.16.8")
 				originModel.Enabled = core.BoolPtr(true)
-				originModel.Weight = core.Int64Ptr(int64(1))
 
 				// Construct an instance of the CreatePoolOptions model
 				createPoolOptionsModel := new(dnssvcsv1.CreatePoolOptions)
@@ -2893,6 +2894,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
+				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
+				createPoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
 				createPoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createPoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
@@ -3047,7 +3050,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke GetPool successfully`, func() {
@@ -3143,7 +3146,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				originModel.Description = core.StringPtr("description of the origin server")
 				originModel.Address = core.StringPtr("10.10.16.8")
 				originModel.Enabled = core.BoolPtr(true)
-				originModel.Weight = core.Int64Ptr(int64(1))
 
 				// Construct an instance of the UpdatePoolOptions model
 				updatePoolOptionsModel := new(dnssvcsv1.UpdatePoolOptions)
@@ -3157,6 +3159,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
+				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
+				updatePoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
 				updatePoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updatePoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
@@ -3185,7 +3189,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true, "weight": 1}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke UpdatePool successfully`, func() {
@@ -3208,7 +3212,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				originModel.Description = core.StringPtr("description of the origin server")
 				originModel.Address = core.StringPtr("10.10.16.8")
 				originModel.Enabled = core.BoolPtr(true)
-				originModel.Weight = core.Int64Ptr(int64(1))
 
 				// Construct an instance of the UpdatePoolOptions model
 				updatePoolOptionsModel := new(dnssvcsv1.UpdatePoolOptions)
@@ -3222,6 +3225,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
+				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
+				updatePoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
 				updatePoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updatePoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
@@ -3245,7 +3250,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				originModel.Description = core.StringPtr("description of the origin server")
 				originModel.Address = core.StringPtr("10.10.16.8")
 				originModel.Enabled = core.BoolPtr(true)
-				originModel.Weight = core.Int64Ptr(int64(1))
 
 				// Construct an instance of the UpdatePoolOptions model
 				updatePoolOptionsModel := new(dnssvcsv1.UpdatePoolOptions)
@@ -3259,6 +3263,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
+				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
+				updatePoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
 				updatePoolOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updatePoolOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
@@ -3435,7 +3441,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"monitors": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
+					fmt.Fprintf(res, `{"monitors": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
 				}))
 			})
 			It(`Invoke ListMonitors successfully`, func() {
@@ -3544,7 +3550,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createMonitorOptionsModel.AllowInsecure = core.BoolPtr(false)
 				createMonitorOptionsModel.ExpectedCodes = core.StringPtr("200")
 				createMonitorOptionsModel.ExpectedBody = core.StringPtr("alive")
-				createMonitorOptionsModel.FollowRedirects = core.BoolPtr(false)
 				createMonitorOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createMonitorOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
@@ -3573,7 +3578,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke CreateMonitor successfully`, func() {
@@ -3611,7 +3616,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createMonitorOptionsModel.AllowInsecure = core.BoolPtr(false)
 				createMonitorOptionsModel.ExpectedCodes = core.StringPtr("200")
 				createMonitorOptionsModel.ExpectedBody = core.StringPtr("alive")
-				createMonitorOptionsModel.FollowRedirects = core.BoolPtr(false)
 				createMonitorOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createMonitorOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
@@ -3650,7 +3654,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createMonitorOptionsModel.AllowInsecure = core.BoolPtr(false)
 				createMonitorOptionsModel.ExpectedCodes = core.StringPtr("200")
 				createMonitorOptionsModel.ExpectedBody = core.StringPtr("alive")
-				createMonitorOptionsModel.FollowRedirects = core.BoolPtr(false)
 				createMonitorOptionsModel.XCorrelationID = core.StringPtr("testString")
 				createMonitorOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
@@ -3805,7 +3808,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke GetMonitor successfully`, func() {
@@ -3917,7 +3920,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateMonitorOptionsModel.AllowInsecure = core.BoolPtr(false)
 				updateMonitorOptionsModel.ExpectedCodes = core.StringPtr("200")
 				updateMonitorOptionsModel.ExpectedBody = core.StringPtr("alive")
-				updateMonitorOptionsModel.FollowRedirects = core.BoolPtr(false)
 				updateMonitorOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updateMonitorOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
@@ -3946,7 +3948,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "follow_redirects": false, "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "healthcheck-monitor", "description": "Load balancer monitor for glb.example.com.", "type": "HTTPS", "port": 8080, "interval": 60, "retries": 2, "timeout": 5, "method": "GET", "path": "/health", "headers": [{"name": "Host", "value": ["origin.example.com"]}], "allow_insecure": false, "expected_codes": "200", "expected_body": "alive", "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke UpdateMonitor successfully`, func() {
@@ -3985,7 +3987,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateMonitorOptionsModel.AllowInsecure = core.BoolPtr(false)
 				updateMonitorOptionsModel.ExpectedCodes = core.StringPtr("200")
 				updateMonitorOptionsModel.ExpectedBody = core.StringPtr("alive")
-				updateMonitorOptionsModel.FollowRedirects = core.BoolPtr(false)
 				updateMonitorOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updateMonitorOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
@@ -4025,7 +4026,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateMonitorOptionsModel.AllowInsecure = core.BoolPtr(false)
 				updateMonitorOptionsModel.ExpectedCodes = core.StringPtr("200")
 				updateMonitorOptionsModel.ExpectedBody = core.StringPtr("alive")
-				updateMonitorOptionsModel.FollowRedirects = core.BoolPtr(false)
 				updateMonitorOptionsModel.XCorrelationID = core.StringPtr("testString")
 				updateMonitorOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
@@ -4503,7 +4503,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createMonitorOptionsModel.SetAllowInsecure(false)
 				createMonitorOptionsModel.SetExpectedCodes("200")
 				createMonitorOptionsModel.SetExpectedBody("alive")
-				createMonitorOptionsModel.SetFollowRedirects(false)
 				createMonitorOptionsModel.SetXCorrelationID("testString")
 				createMonitorOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(createMonitorOptionsModel).ToNot(BeNil())
@@ -4521,7 +4520,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(createMonitorOptionsModel.AllowInsecure).To(Equal(core.BoolPtr(false)))
 				Expect(createMonitorOptionsModel.ExpectedCodes).To(Equal(core.StringPtr("200")))
 				Expect(createMonitorOptionsModel.ExpectedBody).To(Equal(core.StringPtr("alive")))
-				Expect(createMonitorOptionsModel.FollowRedirects).To(Equal(core.BoolPtr(false)))
 				Expect(createMonitorOptionsModel.XCorrelationID).To(Equal(core.StringPtr("testString")))
 				Expect(createMonitorOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
@@ -4533,12 +4531,10 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				originModel.Description = core.StringPtr("description of the origin server")
 				originModel.Address = core.StringPtr("10.10.16.8")
 				originModel.Enabled = core.BoolPtr(true)
-				originModel.Weight = core.Int64Ptr(int64(1))
 				Expect(originModel.Name).To(Equal(core.StringPtr("app-server-1")))
 				Expect(originModel.Description).To(Equal(core.StringPtr("description of the origin server")))
 				Expect(originModel.Address).To(Equal(core.StringPtr("10.10.16.8")))
 				Expect(originModel.Enabled).To(Equal(core.BoolPtr(true)))
-				Expect(originModel.Weight).To(Equal(core.Int64Ptr(int64(1))))
 
 				// Construct an instance of the CreatePoolOptions model
 				instanceID := "testString"
@@ -4552,6 +4548,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.SetMonitor("7dd6841c-264e-11ea-88df-062967242a6a")
 				createPoolOptionsModel.SetNotificationType("webhook")
 				createPoolOptionsModel.SetNotificationChannel("https://mywebsite.com/dns/webhook")
+				createPoolOptionsModel.SetHealthcheckRegion("us-south")
+				createPoolOptionsModel.SetHealthcheckSubnets([]string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"})
 				createPoolOptionsModel.SetXCorrelationID("testString")
 				createPoolOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(createPoolOptionsModel).ToNot(BeNil())
@@ -4564,6 +4562,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(createPoolOptionsModel.Monitor).To(Equal(core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")))
 				Expect(createPoolOptionsModel.NotificationType).To(Equal(core.StringPtr("webhook")))
 				Expect(createPoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("https://mywebsite.com/dns/webhook")))
+				Expect(createPoolOptionsModel.HealthcheckRegion).To(Equal(core.StringPtr("us-south")))
+				Expect(createPoolOptionsModel.HealthcheckSubnets).To(Equal([]string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}))
 				Expect(createPoolOptionsModel.XCorrelationID).To(Equal(core.StringPtr("testString")))
 				Expect(createPoolOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
@@ -4770,7 +4770,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updateMonitorOptionsModel.SetAllowInsecure(false)
 				updateMonitorOptionsModel.SetExpectedCodes("200")
 				updateMonitorOptionsModel.SetExpectedBody("alive")
-				updateMonitorOptionsModel.SetFollowRedirects(false)
 				updateMonitorOptionsModel.SetXCorrelationID("testString")
 				updateMonitorOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(updateMonitorOptionsModel).ToNot(BeNil())
@@ -4789,7 +4788,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(updateMonitorOptionsModel.AllowInsecure).To(Equal(core.BoolPtr(false)))
 				Expect(updateMonitorOptionsModel.ExpectedCodes).To(Equal(core.StringPtr("200")))
 				Expect(updateMonitorOptionsModel.ExpectedBody).To(Equal(core.StringPtr("alive")))
-				Expect(updateMonitorOptionsModel.FollowRedirects).To(Equal(core.BoolPtr(false)))
 				Expect(updateMonitorOptionsModel.XCorrelationID).To(Equal(core.StringPtr("testString")))
 				Expect(updateMonitorOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
@@ -4801,12 +4799,10 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				originModel.Description = core.StringPtr("description of the origin server")
 				originModel.Address = core.StringPtr("10.10.16.8")
 				originModel.Enabled = core.BoolPtr(true)
-				originModel.Weight = core.Int64Ptr(int64(1))
 				Expect(originModel.Name).To(Equal(core.StringPtr("app-server-1")))
 				Expect(originModel.Description).To(Equal(core.StringPtr("description of the origin server")))
 				Expect(originModel.Address).To(Equal(core.StringPtr("10.10.16.8")))
 				Expect(originModel.Enabled).To(Equal(core.BoolPtr(true)))
-				Expect(originModel.Weight).To(Equal(core.Int64Ptr(int64(1))))
 
 				// Construct an instance of the UpdatePoolOptions model
 				instanceID := "testString"
@@ -4822,6 +4818,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.SetMonitor("7dd6841c-264e-11ea-88df-062967242a6a")
 				updatePoolOptionsModel.SetNotificationType("webhook")
 				updatePoolOptionsModel.SetNotificationChannel("https://mywebsite.com/dns/webhook")
+				updatePoolOptionsModel.SetHealthcheckRegion("us-south")
+				updatePoolOptionsModel.SetHealthcheckSubnets([]string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"})
 				updatePoolOptionsModel.SetXCorrelationID("testString")
 				updatePoolOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
 				Expect(updatePoolOptionsModel).ToNot(BeNil())
@@ -4835,6 +4833,8 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(updatePoolOptionsModel.Monitor).To(Equal(core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")))
 				Expect(updatePoolOptionsModel.NotificationType).To(Equal(core.StringPtr("webhook")))
 				Expect(updatePoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("https://mywebsite.com/dns/webhook")))
+				Expect(updatePoolOptionsModel.HealthcheckRegion).To(Equal(core.StringPtr("us-south")))
+				Expect(updatePoolOptionsModel.HealthcheckSubnets).To(Equal([]string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}))
 				Expect(updatePoolOptionsModel.XCorrelationID).To(Equal(core.StringPtr("testString")))
 				Expect(updatePoolOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
