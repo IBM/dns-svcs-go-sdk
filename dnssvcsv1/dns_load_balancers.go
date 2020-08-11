@@ -444,9 +444,6 @@ func (dnsSvcs *DnsSvcsV1) CreatePool(createPoolOptions *CreatePoolOptions) (resu
 	if createPoolOptions.Monitor != nil {
 		body["monitor"] = createPoolOptions.Monitor
 	}
-	if createPoolOptions.NotificationType != nil {
-		body["notification_type"] = createPoolOptions.NotificationType
-	}
 	if createPoolOptions.NotificationChannel != nil {
 		body["notification_channel"] = createPoolOptions.NotificationChannel
 	}
@@ -629,9 +626,6 @@ func (dnsSvcs *DnsSvcsV1) UpdatePool(updatePoolOptions *UpdatePoolOptions) (resu
 	}
 	if updatePoolOptions.Monitor != nil {
 		body["monitor"] = updatePoolOptions.Monitor
-	}
-	if updatePoolOptions.NotificationType != nil {
-		body["notification_type"] = updatePoolOptions.NotificationType
 	}
 	if updatePoolOptions.NotificationChannel != nil {
 		body["notification_channel"] = updatePoolOptions.NotificationChannel
@@ -1324,9 +1318,6 @@ type CreatePoolOptions struct {
 	// The ID of the load balancer monitor to be associated to this pool.
 	Monitor *string `json:"monitor,omitempty"`
 
-	// The type of the notification channel.
-	NotificationType *string `json:"notification_type,omitempty"`
-
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
 
@@ -1342,12 +1333,6 @@ type CreatePoolOptions struct {
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
-
-// Constants associated with the CreatePoolOptions.NotificationType property.
-// The type of the notification channel.
-const (
-	CreatePoolOptions_NotificationType_Webhook = "webhook"
-)
 
 // Constants associated with the CreatePoolOptions.HealthcheckRegion property.
 // Health check region of VSIs.
@@ -1406,12 +1391,6 @@ func (options *CreatePoolOptions) SetOrigins(origins []Origin) *CreatePoolOption
 // SetMonitor : Allow user to set Monitor
 func (options *CreatePoolOptions) SetMonitor(monitor string) *CreatePoolOptions {
 	options.Monitor = core.StringPtr(monitor)
-	return options
-}
-
-// SetNotificationType : Allow user to set NotificationType
-func (options *CreatePoolOptions) SetNotificationType(notificationType string) *CreatePoolOptions {
-	options.NotificationType = core.StringPtr(notificationType)
 	return options
 }
 
@@ -2227,9 +2206,6 @@ type UpdatePoolOptions struct {
 	// The ID of the load balancer monitor to be associated to this pool.
 	Monitor *string `json:"monitor,omitempty"`
 
-	// The type of the notification channel.
-	NotificationType *string `json:"notification_type,omitempty"`
-
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
 
@@ -2245,12 +2221,6 @@ type UpdatePoolOptions struct {
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
-
-// Constants associated with the UpdatePoolOptions.NotificationType property.
-// The type of the notification channel.
-const (
-	UpdatePoolOptions_NotificationType_Webhook = "webhook"
-)
 
 // Constants associated with the UpdatePoolOptions.HealthcheckRegion property.
 // Health check region of VSIs.
@@ -2316,12 +2286,6 @@ func (options *UpdatePoolOptions) SetOrigins(origins []Origin) *UpdatePoolOption
 // SetMonitor : Allow user to set Monitor
 func (options *UpdatePoolOptions) SetMonitor(monitor string) *UpdatePoolOptions {
 	options.Monitor = core.StringPtr(monitor)
-	return options
-}
-
-// SetNotificationType : Allow user to set NotificationType
-func (options *UpdatePoolOptions) SetNotificationType(notificationType string) *UpdatePoolOptions {
-	options.NotificationType = core.StringPtr(notificationType)
 	return options
 }
 
@@ -2860,9 +2824,6 @@ type Pool struct {
 	// The ID of the load balancer monitor to be associated to this pool.
 	Monitor *string `json:"monitor,omitempty"`
 
-	// The type of the notification channel.
-	NotificationType *string `json:"notification_type,omitempty"`
-
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
 
@@ -2881,12 +2842,6 @@ type Pool struct {
 	// the recent time when a load balancer pool is modified.
 	ModifiedOn *string `json:"modified_on,omitempty"`
 }
-
-// Constants associated with the Pool.NotificationType property.
-// The type of the notification channel.
-const (
-	Pool_NotificationType_Webhook = "webhook"
-)
 
 // Constants associated with the Pool.Health property.
 // Healthy state of the load balancer pool.
@@ -2935,10 +2890,6 @@ func UnmarshalPool(m map[string]json.RawMessage, result interface{}) (err error)
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "monitor", &obj.Monitor)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "notification_type", &obj.NotificationType)
 	if err != nil {
 		return
 	}
