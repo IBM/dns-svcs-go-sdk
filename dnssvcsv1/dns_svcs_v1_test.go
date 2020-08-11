@@ -2686,7 +2686,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"pools": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
+					fmt.Fprintf(res, `{"pools": [{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}], "offset": 1, "limit": 20, "count": 1, "total_count": 200, "first": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?limit=20"}, "next": {"href": "https://api.dns-svcs.cloud.ibm.com/v1/instances/434f6c3e-6014-4124-a61d-2e910bca19b1/dnszones/example.com:d04d3a7a-7f6d-47d4-b811-08c5478fa1a4/resource_records?offset=20&limit=20"}}`)
 				}))
 			})
 			It(`Invoke ListPools successfully`, func() {
@@ -2790,7 +2790,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
 				createPoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
@@ -2822,7 +2821,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke CreatePool successfully`, func() {
@@ -2855,7 +2854,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
 				createPoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
@@ -2892,7 +2890,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				createPoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
 				createPoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
@@ -3050,7 +3047,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke GetPool successfully`, func() {
@@ -3157,7 +3154,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
 				updatePoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
@@ -3189,7 +3185,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 					Expect(req.Header["X-Correlation-Id"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_type": "webhook", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
+					fmt.Fprintf(res, `{"id": "5365b73c-ce6f-4d6f-ad9f-d9c131b26370", "name": "dal10-az-pool", "description": "Load balancer pool for dal10 availability zone.", "enabled": true, "healthy_origins_threshold": 1, "origins": [{"name": "app-server-1", "description": "description of the origin server", "address": "10.10.16.8", "enabled": true}], "monitor": "7dd6841c-264e-11ea-88df-062967242a6a", "notification_channel": "https://mywebsite.com/dns/webhook", "health": "DEGRADED", "healthcheck_region": "us-south", "healthcheck_subnets": ["0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"], "created_on": "2019-01-01T12:00:00", "modified_on": "2019-01-01T12:00:00"}`)
 				}))
 			})
 			It(`Invoke UpdatePool successfully`, func() {
@@ -3223,7 +3219,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
 				updatePoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
@@ -3261,7 +3256,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
 				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
-				updatePoolOptionsModel.NotificationType = core.StringPtr("webhook")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
 				updatePoolOptionsModel.HealthcheckSubnets = []string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}
@@ -4546,7 +4540,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.SetHealthyOriginsThreshold(int64(1))
 				createPoolOptionsModel.SetOrigins([]dnssvcsv1.Origin{*originModel})
 				createPoolOptionsModel.SetMonitor("7dd6841c-264e-11ea-88df-062967242a6a")
-				createPoolOptionsModel.SetNotificationType("webhook")
 				createPoolOptionsModel.SetNotificationChannel("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.SetHealthcheckRegion("us-south")
 				createPoolOptionsModel.SetHealthcheckSubnets([]string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"})
@@ -4560,7 +4553,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(createPoolOptionsModel.HealthyOriginsThreshold).To(Equal(core.Int64Ptr(int64(1))))
 				Expect(createPoolOptionsModel.Origins).To(Equal([]dnssvcsv1.Origin{*originModel}))
 				Expect(createPoolOptionsModel.Monitor).To(Equal(core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")))
-				Expect(createPoolOptionsModel.NotificationType).To(Equal(core.StringPtr("webhook")))
 				Expect(createPoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("https://mywebsite.com/dns/webhook")))
 				Expect(createPoolOptionsModel.HealthcheckRegion).To(Equal(core.StringPtr("us-south")))
 				Expect(createPoolOptionsModel.HealthcheckSubnets).To(Equal([]string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}))
@@ -4816,7 +4808,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.SetHealthyOriginsThreshold(int64(1))
 				updatePoolOptionsModel.SetOrigins([]dnssvcsv1.Origin{*originModel})
 				updatePoolOptionsModel.SetMonitor("7dd6841c-264e-11ea-88df-062967242a6a")
-				updatePoolOptionsModel.SetNotificationType("webhook")
 				updatePoolOptionsModel.SetNotificationChannel("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.SetHealthcheckRegion("us-south")
 				updatePoolOptionsModel.SetHealthcheckSubnets([]string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"})
@@ -4831,7 +4822,6 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(updatePoolOptionsModel.HealthyOriginsThreshold).To(Equal(core.Int64Ptr(int64(1))))
 				Expect(updatePoolOptionsModel.Origins).To(Equal([]dnssvcsv1.Origin{*originModel}))
 				Expect(updatePoolOptionsModel.Monitor).To(Equal(core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")))
-				Expect(updatePoolOptionsModel.NotificationType).To(Equal(core.StringPtr("webhook")))
 				Expect(updatePoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("https://mywebsite.com/dns/webhook")))
 				Expect(updatePoolOptionsModel.HealthcheckRegion).To(Equal(core.StringPtr("us-south")))
 				Expect(updatePoolOptionsModel.HealthcheckSubnets).To(Equal([]string{"0716-a4c0c123-594c-4ef4-ace3-a08858540b5e"}))
