@@ -2774,12 +2774,12 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(testServiceErr).To(BeNil())
 				Expect(testService).ToNot(BeNil())
 
-				// Construct an instance of the Origin model
-				originModel := new(dnssvcsv1.Origin)
-				originModel.Name = core.StringPtr("app-server-1")
-				originModel.Description = core.StringPtr("description of the origin server")
-				originModel.Address = core.StringPtr("10.10.16.8")
-				originModel.Enabled = core.BoolPtr(true)
+				// Construct an instance of the OriginInput model
+				originInputModel := new(dnssvcsv1.OriginInput)
+				originInputModel.Name = core.StringPtr("app-server-1")
+				originInputModel.Description = core.StringPtr("description of the origin server")
+				originInputModel.Address = core.StringPtr("10.10.16.8")
+				originInputModel.Enabled = core.BoolPtr(true)
 
 				// Construct an instance of the CreatePoolOptions model
 				createPoolOptionsModel := new(dnssvcsv1.CreatePoolOptions)
@@ -2788,7 +2788,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				createPoolOptionsModel.Enabled = core.BoolPtr(true)
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
-				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
+				createPoolOptionsModel.Origins = []dnssvcsv1.OriginInput{*originInputModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
@@ -2838,12 +2838,12 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
 
-				// Construct an instance of the Origin model
-				originModel := new(dnssvcsv1.Origin)
-				originModel.Name = core.StringPtr("app-server-1")
-				originModel.Description = core.StringPtr("description of the origin server")
-				originModel.Address = core.StringPtr("10.10.16.8")
-				originModel.Enabled = core.BoolPtr(true)
+				// Construct an instance of the OriginInput model
+				originInputModel := new(dnssvcsv1.OriginInput)
+				originInputModel.Name = core.StringPtr("app-server-1")
+				originInputModel.Description = core.StringPtr("description of the origin server")
+				originInputModel.Address = core.StringPtr("10.10.16.8")
+				originInputModel.Enabled = core.BoolPtr(true)
 
 				// Construct an instance of the CreatePoolOptions model
 				createPoolOptionsModel := new(dnssvcsv1.CreatePoolOptions)
@@ -2852,7 +2852,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				createPoolOptionsModel.Enabled = core.BoolPtr(true)
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
-				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
+				createPoolOptionsModel.Origins = []dnssvcsv1.OriginInput{*originInputModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
@@ -2874,12 +2874,12 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(testServiceErr).To(BeNil())
 				Expect(testService).ToNot(BeNil())
 
-				// Construct an instance of the Origin model
-				originModel := new(dnssvcsv1.Origin)
-				originModel.Name = core.StringPtr("app-server-1")
-				originModel.Description = core.StringPtr("description of the origin server")
-				originModel.Address = core.StringPtr("10.10.16.8")
-				originModel.Enabled = core.BoolPtr(true)
+				// Construct an instance of the OriginInput model
+				originInputModel := new(dnssvcsv1.OriginInput)
+				originInputModel.Name = core.StringPtr("app-server-1")
+				originInputModel.Description = core.StringPtr("description of the origin server")
+				originInputModel.Address = core.StringPtr("10.10.16.8")
+				originInputModel.Enabled = core.BoolPtr(true)
 
 				// Construct an instance of the CreatePoolOptions model
 				createPoolOptionsModel := new(dnssvcsv1.CreatePoolOptions)
@@ -2888,7 +2888,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				createPoolOptionsModel.Enabled = core.BoolPtr(true)
 				createPoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
-				createPoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
+				createPoolOptionsModel.Origins = []dnssvcsv1.OriginInput{*originInputModel}
 				createPoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				createPoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
@@ -3137,12 +3137,12 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(testServiceErr).To(BeNil())
 				Expect(testService).ToNot(BeNil())
 
-				// Construct an instance of the Origin model
-				originModel := new(dnssvcsv1.Origin)
-				originModel.Name = core.StringPtr("app-server-1")
-				originModel.Description = core.StringPtr("description of the origin server")
-				originModel.Address = core.StringPtr("10.10.16.8")
-				originModel.Enabled = core.BoolPtr(true)
+				// Construct an instance of the OriginInput model
+				originInputModel := new(dnssvcsv1.OriginInput)
+				originInputModel.Name = core.StringPtr("app-server-1")
+				originInputModel.Description = core.StringPtr("description of the origin server")
+				originInputModel.Address = core.StringPtr("10.10.16.8")
+				originInputModel.Enabled = core.BoolPtr(true)
 
 				// Construct an instance of the UpdatePoolOptions model
 				updatePoolOptionsModel := new(dnssvcsv1.UpdatePoolOptions)
@@ -3152,7 +3152,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				updatePoolOptionsModel.Enabled = core.BoolPtr(true)
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
-				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
+				updatePoolOptionsModel.Origins = []dnssvcsv1.OriginInput{*originInputModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
@@ -3202,12 +3202,12 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
 
-				// Construct an instance of the Origin model
-				originModel := new(dnssvcsv1.Origin)
-				originModel.Name = core.StringPtr("app-server-1")
-				originModel.Description = core.StringPtr("description of the origin server")
-				originModel.Address = core.StringPtr("10.10.16.8")
-				originModel.Enabled = core.BoolPtr(true)
+				// Construct an instance of the OriginInput model
+				originInputModel := new(dnssvcsv1.OriginInput)
+				originInputModel.Name = core.StringPtr("app-server-1")
+				originInputModel.Description = core.StringPtr("description of the origin server")
+				originInputModel.Address = core.StringPtr("10.10.16.8")
+				originInputModel.Enabled = core.BoolPtr(true)
 
 				// Construct an instance of the UpdatePoolOptions model
 				updatePoolOptionsModel := new(dnssvcsv1.UpdatePoolOptions)
@@ -3217,7 +3217,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				updatePoolOptionsModel.Enabled = core.BoolPtr(true)
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
-				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
+				updatePoolOptionsModel.Origins = []dnssvcsv1.OriginInput{*originInputModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
@@ -3239,12 +3239,12 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(testServiceErr).To(BeNil())
 				Expect(testService).ToNot(BeNil())
 
-				// Construct an instance of the Origin model
-				originModel := new(dnssvcsv1.Origin)
-				originModel.Name = core.StringPtr("app-server-1")
-				originModel.Description = core.StringPtr("description of the origin server")
-				originModel.Address = core.StringPtr("10.10.16.8")
-				originModel.Enabled = core.BoolPtr(true)
+				// Construct an instance of the OriginInput model
+				originInputModel := new(dnssvcsv1.OriginInput)
+				originInputModel.Name = core.StringPtr("app-server-1")
+				originInputModel.Description = core.StringPtr("description of the origin server")
+				originInputModel.Address = core.StringPtr("10.10.16.8")
+				originInputModel.Enabled = core.BoolPtr(true)
 
 				// Construct an instance of the UpdatePoolOptions model
 				updatePoolOptionsModel := new(dnssvcsv1.UpdatePoolOptions)
@@ -3254,7 +3254,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.Description = core.StringPtr("Load balancer pool for dal10 availability zone.")
 				updatePoolOptionsModel.Enabled = core.BoolPtr(true)
 				updatePoolOptionsModel.HealthyOriginsThreshold = core.Int64Ptr(int64(1))
-				updatePoolOptionsModel.Origins = []dnssvcsv1.Origin{*originModel}
+				updatePoolOptionsModel.Origins = []dnssvcsv1.OriginInput{*originInputModel}
 				updatePoolOptionsModel.Monitor = core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")
 				updatePoolOptionsModel.NotificationChannel = core.StringPtr("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.HealthcheckRegion = core.StringPtr("us-south")
@@ -4518,17 +4518,17 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(createMonitorOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewCreatePoolOptions successfully`, func() {
-				// Construct an instance of the Origin model
-				originModel := new(dnssvcsv1.Origin)
-				Expect(originModel).ToNot(BeNil())
-				originModel.Name = core.StringPtr("app-server-1")
-				originModel.Description = core.StringPtr("description of the origin server")
-				originModel.Address = core.StringPtr("10.10.16.8")
-				originModel.Enabled = core.BoolPtr(true)
-				Expect(originModel.Name).To(Equal(core.StringPtr("app-server-1")))
-				Expect(originModel.Description).To(Equal(core.StringPtr("description of the origin server")))
-				Expect(originModel.Address).To(Equal(core.StringPtr("10.10.16.8")))
-				Expect(originModel.Enabled).To(Equal(core.BoolPtr(true)))
+				// Construct an instance of the OriginInput model
+				originInputModel := new(dnssvcsv1.OriginInput)
+				Expect(originInputModel).ToNot(BeNil())
+				originInputModel.Name = core.StringPtr("app-server-1")
+				originInputModel.Description = core.StringPtr("description of the origin server")
+				originInputModel.Address = core.StringPtr("10.10.16.8")
+				originInputModel.Enabled = core.BoolPtr(true)
+				Expect(originInputModel.Name).To(Equal(core.StringPtr("app-server-1")))
+				Expect(originInputModel.Description).To(Equal(core.StringPtr("description of the origin server")))
+				Expect(originInputModel.Address).To(Equal(core.StringPtr("10.10.16.8")))
+				Expect(originInputModel.Enabled).To(Equal(core.BoolPtr(true)))
 
 				// Construct an instance of the CreatePoolOptions model
 				instanceID := "testString"
@@ -4538,7 +4538,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				createPoolOptionsModel.SetDescription("Load balancer pool for dal10 availability zone.")
 				createPoolOptionsModel.SetEnabled(true)
 				createPoolOptionsModel.SetHealthyOriginsThreshold(int64(1))
-				createPoolOptionsModel.SetOrigins([]dnssvcsv1.Origin{*originModel})
+				createPoolOptionsModel.SetOrigins([]dnssvcsv1.OriginInput{*originInputModel})
 				createPoolOptionsModel.SetMonitor("7dd6841c-264e-11ea-88df-062967242a6a")
 				createPoolOptionsModel.SetNotificationChannel("https://mywebsite.com/dns/webhook")
 				createPoolOptionsModel.SetHealthcheckRegion("us-south")
@@ -4551,7 +4551,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(createPoolOptionsModel.Description).To(Equal(core.StringPtr("Load balancer pool for dal10 availability zone.")))
 				Expect(createPoolOptionsModel.Enabled).To(Equal(core.BoolPtr(true)))
 				Expect(createPoolOptionsModel.HealthyOriginsThreshold).To(Equal(core.Int64Ptr(int64(1))))
-				Expect(createPoolOptionsModel.Origins).To(Equal([]dnssvcsv1.Origin{*originModel}))
+				Expect(createPoolOptionsModel.Origins).To(Equal([]dnssvcsv1.OriginInput{*originInputModel}))
 				Expect(createPoolOptionsModel.Monitor).To(Equal(core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")))
 				Expect(createPoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("https://mywebsite.com/dns/webhook")))
 				Expect(createPoolOptionsModel.HealthcheckRegion).To(Equal(core.StringPtr("us-south")))
@@ -4784,17 +4784,17 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(updateMonitorOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewUpdatePoolOptions successfully`, func() {
-				// Construct an instance of the Origin model
-				originModel := new(dnssvcsv1.Origin)
-				Expect(originModel).ToNot(BeNil())
-				originModel.Name = core.StringPtr("app-server-1")
-				originModel.Description = core.StringPtr("description of the origin server")
-				originModel.Address = core.StringPtr("10.10.16.8")
-				originModel.Enabled = core.BoolPtr(true)
-				Expect(originModel.Name).To(Equal(core.StringPtr("app-server-1")))
-				Expect(originModel.Description).To(Equal(core.StringPtr("description of the origin server")))
-				Expect(originModel.Address).To(Equal(core.StringPtr("10.10.16.8")))
-				Expect(originModel.Enabled).To(Equal(core.BoolPtr(true)))
+				// Construct an instance of the OriginInput model
+				originInputModel := new(dnssvcsv1.OriginInput)
+				Expect(originInputModel).ToNot(BeNil())
+				originInputModel.Name = core.StringPtr("app-server-1")
+				originInputModel.Description = core.StringPtr("description of the origin server")
+				originInputModel.Address = core.StringPtr("10.10.16.8")
+				originInputModel.Enabled = core.BoolPtr(true)
+				Expect(originInputModel.Name).To(Equal(core.StringPtr("app-server-1")))
+				Expect(originInputModel.Description).To(Equal(core.StringPtr("description of the origin server")))
+				Expect(originInputModel.Address).To(Equal(core.StringPtr("10.10.16.8")))
+				Expect(originInputModel.Enabled).To(Equal(core.BoolPtr(true)))
 
 				// Construct an instance of the UpdatePoolOptions model
 				instanceID := "testString"
@@ -4806,7 +4806,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				updatePoolOptionsModel.SetDescription("Load balancer pool for dal10 availability zone.")
 				updatePoolOptionsModel.SetEnabled(true)
 				updatePoolOptionsModel.SetHealthyOriginsThreshold(int64(1))
-				updatePoolOptionsModel.SetOrigins([]dnssvcsv1.Origin{*originModel})
+				updatePoolOptionsModel.SetOrigins([]dnssvcsv1.OriginInput{*originInputModel})
 				updatePoolOptionsModel.SetMonitor("7dd6841c-264e-11ea-88df-062967242a6a")
 				updatePoolOptionsModel.SetNotificationChannel("https://mywebsite.com/dns/webhook")
 				updatePoolOptionsModel.SetHealthcheckRegion("us-south")
@@ -4820,7 +4820,7 @@ var _ = Describe(`DnsSvcsV1`, func() {
 				Expect(updatePoolOptionsModel.Description).To(Equal(core.StringPtr("Load balancer pool for dal10 availability zone.")))
 				Expect(updatePoolOptionsModel.Enabled).To(Equal(core.BoolPtr(true)))
 				Expect(updatePoolOptionsModel.HealthyOriginsThreshold).To(Equal(core.Int64Ptr(int64(1))))
-				Expect(updatePoolOptionsModel.Origins).To(Equal([]dnssvcsv1.Origin{*originModel}))
+				Expect(updatePoolOptionsModel.Origins).To(Equal([]dnssvcsv1.OriginInput{*originInputModel}))
 				Expect(updatePoolOptionsModel.Monitor).To(Equal(core.StringPtr("7dd6841c-264e-11ea-88df-062967242a6a")))
 				Expect(updatePoolOptionsModel.NotificationChannel).To(Equal(core.StringPtr("https://mywebsite.com/dns/webhook")))
 				Expect(updatePoolOptionsModel.HealthcheckRegion).To(Equal(core.StringPtr("us-south")))
