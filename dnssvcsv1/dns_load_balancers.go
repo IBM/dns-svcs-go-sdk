@@ -1313,7 +1313,7 @@ type CreatePoolOptions struct {
 
 	// The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy
 	// origins, provided the pool itself is healthy.
-	Origins []Origin `json:"origins,omitempty"`
+	Origins []OriginInput `json:"origins,omitempty"`
 
 	// The ID of the load balancer monitor to be associated to this pool.
 	Monitor *string `json:"monitor,omitempty"`
@@ -1383,7 +1383,7 @@ func (options *CreatePoolOptions) SetHealthyOriginsThreshold(healthyOriginsThres
 }
 
 // SetOrigins : Allow user to set Origins
-func (options *CreatePoolOptions) SetOrigins(origins []Origin) *CreatePoolOptions {
+func (options *CreatePoolOptions) SetOrigins(origins []OriginInput) *CreatePoolOptions {
 	options.Origins = origins
 	return options
 }
@@ -2201,7 +2201,7 @@ type UpdatePoolOptions struct {
 
 	// The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy
 	// origins, provided the pool itself is healthy.
-	Origins []Origin `json:"origins,omitempty"`
+	Origins []OriginInput `json:"origins,omitempty"`
 
 	// The ID of the load balancer monitor to be associated to this pool.
 	Monitor *string `json:"monitor,omitempty"`
@@ -2278,7 +2278,7 @@ func (options *UpdatePoolOptions) SetHealthyOriginsThreshold(healthyOriginsThres
 }
 
 // SetOrigins : Allow user to set Origins
-func (options *UpdatePoolOptions) SetOrigins(origins []Origin) *UpdatePoolOptions {
+func (options *UpdatePoolOptions) SetOrigins(origins []OriginInput) *UpdatePoolOptions {
 	options.Origins = origins
 	return options
 }
@@ -2570,9 +2570,9 @@ type LoadBalancer struct {
 // Constants associated with the LoadBalancer.Health property.
 // Healthy state of the load balancer.
 const (
+	LoadBalancer_Health_Critical = "CRITICAL"
 	LoadBalancer_Health_Degraded = "DEGRADED"
-	LoadBalancer_Health_Down     = "DOWN"
-	LoadBalancer_Health_Up       = "UP"
+	LoadBalancer_Health_Healthy  = "HEALTHY"
 )
 
 // UnmarshalLoadBalancer unmarshals an instance of LoadBalancer from the specified map of raw messages.
@@ -2774,11 +2774,63 @@ type Origin struct {
 
 	// Whether the origin server is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
+
+	// The health state of the origin server.
+	Health *bool `json:"health,omitempty"`
+
+	// The failure reason of the origin server if it is unhealthy.
+	HealthFailureReason *string `json:"health_failure_reason,omitempty"`
 }
 
 // UnmarshalOrigin unmarshals an instance of Origin from the specified map of raw messages.
 func UnmarshalOrigin(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Origin)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health", &obj.Health)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health_failure_reason", &obj.HealthFailureReason)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// OriginInput : The request data of origin server.
+type OriginInput struct {
+	// The name of the origin server.
+	Name *string `json:"name,omitempty"`
+
+	// Description of the origin server.
+	Description *string `json:"description,omitempty"`
+
+	// The address of the origin server. It can be a hostname or an IP address.
+	Address *string `json:"address,omitempty"`
+
+	// Whether the origin server is enabled.
+	Enabled *bool `json:"enabled,omitempty"`
+}
+
+// UnmarshalOriginInput unmarshals an instance of OriginInput from the specified map of raw messages.
+func UnmarshalOriginInput(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(OriginInput)
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -2846,9 +2898,9 @@ type Pool struct {
 // Constants associated with the Pool.Health property.
 // Healthy state of the load balancer pool.
 const (
+	Pool_Health_Critical = "CRITICAL"
 	Pool_Health_Degraded = "DEGRADED"
-	Pool_Health_Down     = "DOWN"
-	Pool_Health_Up       = "UP"
+	Pool_Health_Healthy  = "HEALTHY"
 )
 
 // Constants associated with the Pool.HealthcheckRegion property.
