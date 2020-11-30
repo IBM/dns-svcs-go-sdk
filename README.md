@@ -1,4 +1,4 @@
-# IBM Cloud DNS Services Go SDK
+# ~IBM Cloud DNS Services Go SDK~ - [DEPRECATED](https://github.com/IBM/networking-go-sdk/blob/master/DEPRECATION-NOTICE.md)
 
 Go client library to use the [IBM Cloud DNS Services API](https://cloud.ibm.com/docs/dns-svcs?topic=dns-svcs-dns-svcs-api).
 
@@ -336,3 +336,7 @@ Every call from the SDK will receive a response which will contain a transaction
 ## License
 
 The IBM Cloud DNS Services Go SDK is released under the Apache 2.0 license. The license's full text can be found in [LICENSE](LICENSE).
+
+## Deprecation Notice
+
+For deprecation notice, please see [this link](https://github.com/IBM/networking-go-sdk/blob/master/DEPRECATION-NOTICE.md)
