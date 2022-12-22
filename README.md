@@ -1,6 +1,8 @@
 # ~IBM Cloud DNS Services Go SDK~ - [DEPRECATED](https://github.com/IBM/networking-go-sdk/blob/master/DEPRECATION-NOTICE.md)
 
-Go client library to use the [IBM Cloud DNS Services API](https://cloud.ibm.com/docs/dns-svcs?topic=dns-svcs-dns-svcs-api).
+**This repository has been deprecated.** For the most current SDK repository, see [https://github.com/IBM/networking-go-sdk/](https://github.com/IBM/networking-go-sdk/).
+
+Go client library to use the [IBM Cloud DNS Services API](https://cloud.ibm.com/apidocs/dns-svcs).
 
 <details>
 <summary>Table of Contents</summary>
